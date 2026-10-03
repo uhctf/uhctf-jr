@@ -1,0 +1,33 @@
+type = "generated"
+antwoord = "passwords"
+
+[opties]
+taal = "nl"
+seed = 2025
+grootte = 7
+# ja: woorden mogen ook achterstevoren en schuin omhoog staan
+moeilijk = false
+woorden = ["encrypt", "flag", "puzzle", "byte", "code", "key", "shift", "file", "web", "hash", "bit", "login"]
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "5–10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Woordzoeker"
+onderwerp = "Puzzelen, observeren"
+materiaal = "geprinte woordzoeker (`deelnemer.pdf`), potlood"
+beschrijving = '''
+Soms zit de meeste waarde verborgen in het volle zicht.
+'''
+hints = [
+  "Zoek eerst alle woorden uit de lijst en kruis ze af.",
+  "Niet elke letter hoort bij een woord.",
+  "Lees de overgebleven letters in leesrichting (links naar rechts, boven naar onder).",
+]
+opzet = '''
+Print `deelnemer.pdf` en geef potloden mee. Met `moeilijk = true` mogen woorden ook achterstevoren en schuin omhoog staan. `grootte` en `woorden` bepalen het raster; de overgebleven letters spellen altijd het antwoord.
+'''

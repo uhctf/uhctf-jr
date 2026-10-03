@@ -22,13 +22,25 @@ We make security approachable and fun for children and teens, through digital an
 
 - Dutch is the main language. Some challenges or events are available in multiple languages (e.g., Dutch `README.md` and English `README.en.md`).
 - Low prerequisites. Preferably everything works offline in the browser or on paper.
-- Flags use the `uhctf{...}` format.
+- Flags are preferably just the answer (like a riddle). The `uhctf{...}` format can be used for older participants.
 
 ## License
 
 - Challenges, documentation and printable material: [CC BY-NC-SA 4.0](LICENSE-CONTENT)
 - Code: [MIT](LICENSE)
 - Commercial use? Get in touch via [uhctf.be](https://uhctf.be).
+
+## Getting started
+
+```
+./jr setup                          # once: virtual environment and requirements
+./jr list                           # all challenges
+./jr build doolhof                  # build a challenge with its default answer
+./jr event add my-event doolhof --antwoord kangoeroe
+./jr event build my-event           # PDFs + answer list in events/my-event/out/
+```
+
+Generated challenges always have a default answer, but each event can pick its own. Static challenges have fixed material.
 
 ## Contributing
 

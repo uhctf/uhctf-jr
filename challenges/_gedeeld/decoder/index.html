@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Decoder</title>
+  <style>
+    :root{--accent:#d7263d;--bg:#f6f7fb;--card:#fff;--rand:#e5e7eb;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#111;margin:0;padding:16px}
+    main{max-width:960px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    h1{margin:0 0 4px;font-size:22px}
+    .kaart{background:var(--card);border:1px solid var(--rand);border-radius:10px;padding:14px;margin-top:14px}
+    .kolommen{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:700px){.kolommen{grid-template-columns:1fr}}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+    textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;border:1px solid var(--rand);border-radius:6px;padding:8px;resize:vertical}
+    textarea[readonly]{background:#f3f4f6}
+    button,select,input{font:inherit;padding:6px 10px;border:1px solid #bbb;border-radius:6px;background:#fff}
+    button{cursor:pointer}
+    button.primair{background:var(--accent);border-color:var(--accent);color:#fff}
+    .taal button.actief{background:var(--accent);border-color:var(--accent);color:#fff}
+    .stap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--rand)}
+    .stap:first-child{border-top:0}
+    .stap .nr{color:var(--muted);width:1.5em}
+    .stap input{width:140px}
+    .fout{color:#b00020;font-size:13px;flex-basis:100%}
+    .rij{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .klein{color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1 id="titel"></h1>
+      <div class="klein" id="uitleg"></div>
+    </div>
+    <div class="taal">
+      <button id="taal-nl">NL</button>
+      <button id="taal-en">EN</button>
+    </div>
+  </header>
+
+  <div class="kolommen">
+    <div class="kaart">
+      <label for="invoer" id="l-invoer"></label>
+      <textarea id="invoer" spellcheck="false"></textarea>
+    </div>
+    <div class="kaart">
+      <label for="uitvoer" id="l-uitvoer"></label>
+      <textarea id="uitvoer" readonly></textarea>
+      <div class="rij"><button id="kopieer"></button></div>
+    </div>
+  </div>
+
+  <div class="kaart">
+    <label id="l-stappen"></label>
+    <div id="stappen"></div>
+    <div class="rij">
+      <select id="nieuw"></select>
+      <button id="voegtoe" class="primair"></button>
+      <button id="wis"></button>
+    </div>
+  </div>
+</main>
+
+<script>
+  // ----- teksten -----
+  const TEKST = {
+    nl: {
+      titel: "Decoder", uitleg: "Plak een bericht, kies stappen en zie wat eruit komt. De stappen worden van boven naar onder uitgevoerd.",
+      invoer: "Invoer", uitvoer: "Uitvoer", stappen: "Stappen", kopieer: "Kopieer", gekopieerd: "Gekopieerd!",
+      voegtoe: "Stap toevoegen", wis: "Alles wissen", verwijder: "Verwijder", omhoog: "Omhoog", omlaag: "Omlaag",
+      sleutel: "sleutel", n: "N",
+      ops: {
+        "van-base64": "Base64 → tekst", "naar-base64": "Tekst → Base64",
+        "van-hex": "Hexadecimaal → tekst", "naar-hex": "Tekst → hexadecimaal",
+        "van-binair": "Binair → tekst", "naar-binair": "Tekst → binair",
+        "van-morse": "Morse → tekst", "naar-morse": "Tekst → morse",
+        "rot": "ROT-N (letters verschuiven)",
+        "xor-naar-hex": "XOR met sleutel (tekst → hex)", "xor-van-hex": "XOR met sleutel (hex → tekst)",
+      },
+      fouten: {
+        base64: "Dit is geen geldige Base64.", hex: "Dit is geen geldige hexadecimale tekst.",
+        binair: "Dit is geen geldige binaire tekst (enkel 0 en 1).", tekst: "Het resultaat is geen leesbare tekst.",
+        sleutel: "Vul een sleutel in.", morse: "Onbekend morseteken.", onbekend: "Onbekende stap.",
+      },
+    },
+    en: {
+      titel: "Decoder", uitleg: "Paste a message, pick steps and see what comes out. Steps run from top to bottom.",
+      invoer: "Input", uitvoer: "Output", stappen: "Steps", kopieer: "Copy", gekopieerd: "Copied!",
+      voegtoe: "Add step", wis: "Clear all", verwijder: "Remove", omhoog: "Up", omlaag: "Down",
+      sleutel: "key", n: "N",
+      ops: {
+        "van-base64": "Base64 → text", "naar-base64": "Text → Base64",
+        "van-hex": "Hexadecimal → text", "naar-hex": "Text → hexadecimal",
+        "van-binair": "Binary → text", "naar-binair": "Text → binary",
+        "van-morse": "Morse → text", "naar-morse": "Text → morse",
+        "rot": "ROT-N (shift letters)",
+        "xor-naar-hex": "XOR with key (text → hex)", "xor-van-hex": "XOR with key (hex → text)",
+      },
+      fouten: {
+        base64: "This is not valid Base64.", hex: "This is not valid hexadecimal text.",
+        binair: "This is not valid binary text (only 0 and 1).", tekst: "The result is not readable text.",
+        sleutel: "Enter a key.", morse: "Unknown morse symbol.", onbekend: "Unknown step.",
+      },
+    },
+  };
+  const MORSE = {
+    A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.", G: "--.", H: "....", I: "..", J: ".---", K: "-.-",
+    L: ".-..", M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.", S: "...", T: "-", U: "..-", V: "...-",
+    W: ".--", X: "-..-", Y: "-.--", Z: "--..", 0: "-----", 1: ".----", 2: "..---", 3: "...--", 4: "....-",
+    5: ".....", 6: "-....", 7: "--...", 8: "---..", 9: "----.", "-": "-....-",
+  };
+  const OMGEKEERD = Object.fromEntries(Object.entries(MORSE).map(([k, v]) => [v, k]));
+  const MET_PARAM = { rot: { type: "number", standaard: "13" }, "xor-naar-hex": { type: "text" }, "xor-van-hex": { type: "text" } };
+
+  // ----- bewerkingen: tekst -> tekst -----
+  class Fout extends Error {}
+  const enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
+  const naarTekst = (bytes) => { try { return dec.decode(bytes); } catch { throw new Fout("tekst"); } };
+  const hexNaarBytes = (s) => {
+    s = s.replace(/\s+/g, "").replace(/^0x/i, "");
+    if (!/^[0-9a-f]*$/i.test(s) || s.length % 2) throw new Fout("hex");
+    return Uint8Array.from(s.match(/../g) || [], (h) => parseInt(h, 16));
+  };
+  const bytesNaarHex = (b) => Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("").toUpperCase();
+  const xor = (bytes, sleutel) => {
+    const k = enc.encode(sleutel);
+    if (!k.length) throw new Fout("sleutel");
+    return bytes.map((b, i) => b ^ k[i % k.length]);
+  };
+  const BEWERKINGEN = {
+    "van-base64": (s) => {
+      s = s.replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+      s += "=".repeat((4 - (s.length % 4)) % 4);
+      try { return naarTekst(Uint8Array.from(atob(s), (c) => c.charCodeAt(0))); }
+      catch (e) { throw e instanceof Fout ? e : new Fout("base64"); }
+    },
+    "naar-base64": (s) => btoa(String.fromCharCode(...enc.encode(s))),
+    "van-hex": (s) => naarTekst(hexNaarBytes(s)),
+    "naar-hex": (s) => bytesNaarHex(enc.encode(s)),
+    "van-binair": (s) => {
+      const delen = s.trim().split(/\s+/).filter(Boolean);
+      const groepen = delen.length === 1 && delen[0].length > 8 ? delen[0].match(/.{1,8}/g) : delen;
+      if (!groepen.every((g) => /^[01]+$/.test(g))) throw new Fout("binair");
+      return naarTekst(Uint8Array.from(groepen, (g) => parseInt(g, 2)));
+    },
+    "naar-binair": (s) => Array.from(enc.encode(s), (b) => b.toString(2).padStart(8, "0")).join(" "),
+    "van-morse": (s) => s.trim().split(/\s{3,}|\s*[\/|]\s*/).map((w) => w.split(/\s+/).filter(Boolean).map((c) => {
+      if (!(c in OMGEKEERD)) throw new Fout("morse");
+      return OMGEKEERD[c];
+    }).join("")).join(" "),
+    "naar-morse": (s) => Array.from(s.toUpperCase(), (c) => (c === " " ? "/" : MORSE[c] ?? "?")).join(" "),
+    "rot": (s, p) => {
+      const n = (((parseInt(p, 10) || 0) % 26) + 26) % 26;
+      return s.replace(/[a-z]/gi, (c) => {
+        const basis = c <= "Z" ? 65 : 97;
+        return String.fromCharCode(((c.charCodeAt(0) - basis + n) % 26) + basis);
+      });
+    },
+    "xor-naar-hex": (s, p) => bytesNaarHex(xor(enc.encode(s), p || "")),
+    "xor-van-hex": (s, p) => naarTekst(xor(hexNaarBytes(s), p || "")),
+  };
+
+  // ----- toestand: staat ook in de URL (#...) zodat je een opstelling kunt delen -----
+  let taal = "nl";
+  let stappen = []; // { op, param }
+  const $ = (id) => document.getElementById(id);
+
+  function lees() {
+    const q = new URLSearchParams(location.hash.slice(1));
+    taal = TEKST[q.get("t")] ? q.get("t") : (localStorage.getItem("taal") || (navigator.language.startsWith("en") ? "en" : "nl"));
+    if (!TEKST[taal]) taal = "nl";
+    $("invoer").value = q.get("i") || "";
+    stappen = (q.get("s") || "").split(",").filter(Boolean).map((x) => {
+      const [op, ...rest] = x.split(":");
+      return { op, param: decodeURIComponent(rest.join(":")) };
+    }).filter((x) => BEWERKINGEN[x.op]);
+  }
+  function bewaar() {
+    const q = new URLSearchParams();
+    q.set("t", taal);
+    if ($("invoer").value) q.set("i", $("invoer").value);
+    if (stappen.length) q.set("s", stappen.map((x) => x.op + (x.param ? ":" + encodeURIComponent(x.param) : "")).join(","));
+    history.replaceState(null, "", "#" + q.toString());
+    try { localStorage.setItem("taal", taal); } catch {}
+  }
+
+  // ----- uitvoeren -----
+  function uitvoeren() {
+    const t = TEKST[taal];
+    let waarde = $("invoer").value, mislukt = false;
+    document.querySelectorAll(".fout").forEach((e) => e.remove());
+    stappen.forEach((st, i) => {
+      if (mislukt) return;
+      try { waarde = BEWERKINGEN[st.op](waarde, st.param); }
+      catch (e) {
+        mislukt = true;
+        const rij = document.querySelectorAll(".stap")[i];
+        const div = document.createElement("div");
+        div.className = "fout";
+        div.textContent = t.fouten[e instanceof Fout ? e.message : "onbekend"];
+        rij.appendChild(div);
+      }
+    });
+    $("uitvoer").value = mislukt ? "" : waarde;
+    $("uitvoer").textContent = $("uitvoer").value;
+    bewaar();
+  }
+
+  // ----- tekenen -----
+  function tekenStappen() {
+    const t = TEKST[taal], houder = $("stappen");
+    houder.innerHTML = "";
+    stappen.forEach((st, i) => {
+      const rij = document.createElement("div");
+      rij.className = "stap";
+      rij.innerHTML = `<span class="nr">${i + 1}.</span><strong>${t.ops[st.op]}</strong>`;
+      const meta = MET_PARAM[st.op];
+      if (meta) {
+        const inp = document.createElement("input");
+        inp.type = meta.type;
+        inp.placeholder = st.op === "rot" ? t.n : t.sleutel;
+        inp.value = st.param ?? "";
+        inp.addEventListener("input", () => { st.param = inp.value; uitvoeren(); });
+        rij.appendChild(inp);
+      }
+      const knop = (tekst, actie) => {
+        const b = document.createElement("button");
+        b.textContent = tekst; b.addEventListener("click", actie); rij.appendChild(b);
+      };
+      knop("↑", () => { if (i) { [stappen[i - 1], stappen[i]] = [stappen[i], stappen[i - 1]]; teken(); } });
+      knop("↓", () => { if (i < stappen.length - 1) { [stappen[i + 1], stappen[i]] = [stappen[i], stappen[i + 1]]; teken(); } });
+      knop("✕", () => { stappen.splice(i, 1); teken(); });
+      houder.appendChild(rij);
+    });
+  }
+  function tekenTaal() {
+    const t = TEKST[taal];
+    document.documentElement.lang = taal;
+    $("titel").textContent = t.titel; $("uitleg").textContent = t.uitleg;
+    $("l-invoer").textContent = t.invoer; $("l-uitvoer").textContent = t.uitvoer; $("l-stappen").textContent = t.stappen;
+    $("kopieer").textContent = t.kopieer; $("voegtoe").textContent = t.voegtoe; $("wis").textContent = t.wis;
+    const keuze = $("nieuw"), huidig = keuze.value;
+    keuze.innerHTML = Object.entries(t.ops).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+    if (huidig) keuze.value = huidig;
+    $("taal-nl").classList.toggle("actief", taal === "nl"); $("taal-en").classList.toggle("actief", taal === "en");
+  }
+  function teken() { tekenTaal(); tekenStappen(); uitvoeren(); }
+
+  $("invoer").addEventListener("input", uitvoeren);
+  $("voegtoe").addEventListener("click", () => {
+    const op = $("nieuw").value;
+    stappen.push({ op, param: MET_PARAM[op]?.standaard ?? "" });
+    teken();
+  });
+  $("wis").addEventListener("click", () => { stappen = []; $("invoer").value = ""; teken(); });
+  $("kopieer").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("uitvoer").value); } catch { $("uitvoer").select(); document.execCommand("copy"); }
+    const t = TEKST[taal]; $("kopieer").textContent = t.gekopieerd; setTimeout(() => ($("kopieer").textContent = t.kopieer), 1200);
+  });
+  $("taal-nl").addEventListener("click", () => { taal = "nl"; teken(); });
+  $("taal-en").addEventListener("click", () => { taal = "en"; teken(); });
+  window.addEventListener("hashchange", () => { lees(); teken(); });
+
+  lees();
+  teken();
+</script>
+</body>
+</html>

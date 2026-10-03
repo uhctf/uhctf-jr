@@ -1,0 +1,30 @@
+# Statische uitdaging: vast materiaal, geen event-specifieke versie mogelijk.
+# De README wordt hieruit gegenereerd: pas dit bestand aan en draai ./jr readme.
+type = "static"
+materiaal = ["src"]
+# Vlaggen als [label, waarde]. Eén of meer.
+vlaggen = [["antwoord", "<+antwoord+>"]]
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"           # booth | klas | thuis
+leeftijd = "8–12"           # 8–12 | 12–15 | 15–18 | 18+
+duur = "10 min"
+vlag_formaat = "antwoord"   # antwoord (het antwoord zelf) | uhctf (uhctf{...})
+
+# Nederlandse tekst (hoofdtaal). Voeg een [en]-tabel met dezelfde sleutels toe voor een README.en.md.
+[nl]
+naam = "<+Naam+>"
+onderwerp = "<+bv. Inspect Element+>"
+materiaal = "<+laptop, afdruk, ...+>"
+beschrijving = '''
+<+Verhaal voor de deelnemers+>
+'''
+hints = [
+  "<+Zachte hint+>",
+  "<+Duidelijkere hint+>",
+  "<+Bijna het antwoord+>",
+]
+opzet = '''
+<+Materiaal, voorbereiding, tips+>
+'''

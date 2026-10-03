@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beeldbewerker</title>
+  <style>
+    :root{--accent:#d7263d;--bg:#f6f7fb;--card:#fff;--rand:#e5e7eb;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#111;margin:0;padding:16px}
+    main{max-width:1100px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    h1{margin:0 0 4px;font-size:22px}
+    .klein{color:var(--muted);font-size:13px}
+    .kolommen{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;margin-top:14px;align-items:start}
+    @media(max-width:850px){.kolommen{grid-template-columns:1fr}}
+    .kaart{background:var(--card);border:1px solid var(--rand);border-radius:10px;padding:14px}
+    #scherm{display:block;max-width:100%;height:auto;margin:0 auto;background:#ddd}
+    #drop{border:2px dashed transparent;border-radius:10px}
+    #drop.over{border-color:var(--accent)}
+    .regel{margin-bottom:10px}
+    .regel label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px}
+    .regel input[type=range]{width:100%}
+    button,input[type=number]{font:inherit;padding:6px 10px;border:1px solid #bbb;border-radius:6px;background:#fff;cursor:pointer}
+    button.primair{background:var(--accent);border-color:var(--accent);color:#fff}
+    .taal button.actief{background:var(--accent);border-color:var(--accent);color:#fff}
+    .rij{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .melding{color:#b00020;font-size:13px;margin-top:8px}
+    input[type=file]{display:none}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1 id="titel"></h1>
+      <div class="klein" id="uitleg"></div>
+    </div>
+    <div class="taal"><button id="taal-nl">NL</button><button id="taal-en">EN</button></div>
+  </header>
+
+  <div class="kolommen">
+    <div class="kaart" id="drop">
+      <canvas id="scherm" width="400" height="300"></canvas>
+      <div class="melding" id="melding"></div>
+    </div>
+    <div class="kaart">
+      <div class="rij">
+        <button id="open" class="primair"></button>
+        <button id="bewaar"></button>
+        <button id="reset"></button>
+        <button id="standaard" hidden></button>
+      </div>
+      <input type="file" id="bestand" accept="image/*">
+      <div class="rij">
+        <button data-voorinstelling="blauw"></button>
+        <button data-voorinstelling="bw"></button>
+        <button data-voorinstelling="invert"></button>
+      </div>
+      <div id="regelaars"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const TEKST = {
+    nl: {
+      titel: "Beeldbewerker", uitleg: "Open een afbeelding en speel met de schuifjes. Soms zie je dan meer dan op het eerste zicht.",
+      open: "Open afbeelding", bewaar: "Bewaar als png", reset: "Terugzetten", standaard: "Standaardafbeelding",
+      voorinstellingen: { blauw: "Alleen blauw", bw: "Zwart-wit", invert: "Inverteren" },
+      geenAfbeelding: "Kies een afbeelding met 'Open afbeelding' of sleep er een op deze pagina.",
+      kanNietLaden: "Deze afbeelding kon niet geladen worden. Kies ze met 'Open afbeelding'.",
+      beveiligd: "Je browser laat bewerken van deze afbeelding niet toe via de URL. Kies ze met 'Open afbeelding'.",
+      regelaars: {
+        belichting: "Belichting (EV)", gamma: "Gamma", helderheid: "Helderheid", contrast: "Contrast", verzadiging: "Verzadiging",
+        kleurtoon: "Kleurtoon (°)", grijs: "Grijstinten (%)", invert: "Inverteren (%)",
+        rood: "Rood (%)", groen: "Groen (%)", blauw: "Blauw (%)", vervaging: "Vervagen (px)", zoom: "Zoom (x)",
+      },
+    },
+    en: {
+      titel: "Image editor", uitleg: "Open an image and play with the sliders. Sometimes you see more than meets the eye.",
+      open: "Open image", bewaar: "Save as png", reset: "Reset", standaard: "Default image",
+      voorinstellingen: { blauw: "Blue only", bw: "Black and white", invert: "Invert" },
+      geenAfbeelding: "Pick an image with 'Open image' or drop one on this page.",
+      kanNietLaden: "This image could not be loaded. Pick it with 'Open image'.",
+      beveiligd: "Your browser does not allow editing this image through the URL. Pick it with 'Open image'.",
+      regelaars: {
+        belichting: "Exposure (EV)", gamma: "Gamma", helderheid: "Brightness", contrast: "Contrast", verzadiging: "Saturation",
+        kleurtoon: "Hue (°)", grijs: "Grayscale (%)", invert: "Invert (%)",
+        rood: "Red (%)", groen: "Green (%)", blauw: "Blue (%)", vervaging: "Blur (px)", zoom: "Zoom (x)",
+      },
+    },
+  };
+  // sleutel: [min, max, stap, standaard]
+  const REGELAARS = {
+    belichting: [-3, 6, 0.1, 0], gamma: [0.1, 3, 0.05, 1], helderheid: [-100, 100, 1, 0], contrast: [-100, 100, 1, 0],
+    verzadiging: [-100, 100, 1, 0], kleurtoon: [-180, 180, 1, 0], grijs: [0, 100, 1, 0], invert: [0, 100, 1, 0],
+    rood: [0, 1000, 5, 100], groen: [0, 1000, 5, 100], blauw: [0, 1000, 5, 100], vervaging: [0, 10, 1, 0], zoom: [0.2, 3, 0.05, 1],
+  };
+  const VOORINSTELLINGEN = {
+    blauw: { rood: 0, groen: 0, blauw: 1000 },
+    bw: { grijs: 100 },
+    invert: { invert: 100 },
+  };
+  // Worden bij het bouwen ingevuld: ./jr shared build beeldbewerker --set afbeelding=pad/naar/afbeelding.png --set taal=en
+  // De afbeelding zit dan ingebouwd (data-URL), zodat de pagina ook zonder webserver of internet werkt.
+  const STANDAARD_AFBEELDING = "";
+  const STANDAARD_TAAL = "nl";
+  const MAX_ZIJDE = 1600;
+  const $ = (id) => document.getElementById(id);
+  const doek = $("scherm"), ctx = doek.getContext("2d", { willReadFrequently: true });
+  let taal = "nl", waarden = {}, bron = null, origineel = null, urlAfbeelding = "";
+
+  const standaard = () => Object.fromEntries(Object.entries(REGELAARS).map(([k, v]) => [k, v[3]]));
+  waarden = standaard();
+
+  // ----- toestand in de URL (#...) -----
+  function lees() {
+    const q = new URLSearchParams(location.hash.slice(1));
+    taal = TEKST[q.get("t")] ? q.get("t") : (TEKST[STANDAARD_TAAL] ? STANDAARD_TAAL : "nl");
+    waarden = standaard();
+    for (const k of Object.keys(REGELAARS)) if (q.has(k) && !isNaN(parseFloat(q.get(k)))) waarden[k] = parseFloat(q.get(k));
+    urlAfbeelding = q.get("afbeelding") || "";
+  }
+  function bewaar() {
+    const q = new URLSearchParams();
+    q.set("t", taal);
+    if (urlAfbeelding) q.set("afbeelding", urlAfbeelding);
+    const s = standaard();
+    for (const k of Object.keys(REGELAARS)) if (waarden[k] !== s[k]) q.set(k, waarden[k]);
+    history.replaceState(null, "", "#" + q.toString());
+  }
+
+  // ----- beeldbewerking -----
+  function toepassen() {
+    if (!origineel) return;
+    const w = waarden, b = origineel.width, h = origineel.height;
+    const data = new ImageData(new Uint8ClampedArray(origineel.data), b, h), d = data.data;
+    const exp = Math.pow(2, w.belichting), invGamma = 1 / w.gamma, helder = w.helderheid * 2.55;
+    const c = (259 * (w.contrast * 2.55 + 255)) / (255 * (259 - w.contrast * 2.55));
+    const kanaal = [w.rood / 100, w.groen / 100, w.blauw / 100];
+    const hoek = (w.kleurtoon * Math.PI) / 180, cos = Math.cos(hoek), sin = Math.sin(hoek);
+    const sat = 1 + w.verzadiging / 100, grijs = w.grijs / 100, inv = w.invert / 100;
+    for (let i = 0; i < d.length; i += 4) {
+      let v = [d[i], d[i + 1], d[i + 2]];
+      for (let k = 0; k < 3; k++) {
+        let x = (v[k] / 255) * exp;                 // belichting
+        x = Math.pow(Math.max(x, 0), invGamma) * 255; // gamma
+        x = x * kanaal[k] + helder;                 // kanaalversterking en helderheid
+        v[k] = c * (x - 128) + 128;                 // contrast
+      }
+      const l = 0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2];
+      v = v.map((x) => l + (x - l) * sat);          // verzadiging
+      if (w.kleurtoon) {                            // kleurtoon (rotatie in YIQ-achtige ruimte)
+        const [r, g, bl] = v;
+        v = [
+          (0.299 + 0.701 * cos + 0.168 * sin) * r + (0.587 - 0.587 * cos + 0.330 * sin) * g + (0.114 - 0.114 * cos - 0.497 * sin) * bl,
+          (0.299 - 0.299 * cos - 0.328 * sin) * r + (0.587 + 0.413 * cos + 0.035 * sin) * g + (0.114 - 0.114 * cos + 0.292 * sin) * bl,
+          (0.299 - 0.300 * cos + 1.250 * sin) * r + (0.587 - 0.588 * cos - 1.050 * sin) * g + (0.114 + 0.886 * cos - 0.203 * sin) * bl,
+        ];
+      }
+      if (grijs) { const g2 = 0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2]; v = v.map((x) => x + (g2 - x) * grijs); }
+      if (inv) v = v.map((x) => x + (255 - 2 * Math.max(0, Math.min(255, x))) * inv);
+      d[i] = v[0]; d[i + 1] = v[1]; d[i + 2] = v[2];
+    }
+    const tmp = document.createElement("canvas");
+    tmp.width = b; tmp.height = h;
+    tmp.getContext("2d").putImageData(data, 0, 0);
+    const maxB = 900, schaal = Math.min(1, maxB / b) * w.zoom;
+    doek.width = Math.max(1, Math.round(b * schaal)); doek.height = Math.max(1, Math.round(h * schaal));
+    ctx.imageSmoothingEnabled = false;                // harde pixels, handig bij QR-codes
+    ctx.filter = w.vervaging ? `blur(${w.vervaging}px)` : "none";
+    ctx.drawImage(tmp, 0, 0, doek.width, doek.height);
+    ctx.filter = "none";
+    bewaar();
+  }
+
+  // ----- afbeelding laden -----
+  function toon(img, melding = "") {
+    // Grote foto's verkleinen we tot MAX_ZIJDE, anders worden de schuifjes traag. Kleine afbeeldingen blijven onaangetast.
+    const f = Math.min(1, MAX_ZIJDE / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.naturalWidth * f); c.height = Math.round(img.naturalHeight * f);
+    const cx = c.getContext("2d", { willReadFrequently: true });
+    cx.imageSmoothingQuality = "high";
+    cx.drawImage(img, 0, 0, c.width, c.height);
+    try { origineel = cx.getImageData(0, 0, c.width, c.height); }
+    catch { origineel = null; $("melding").textContent = TEKST[taal].beveiligd; return; }
+    $("melding").textContent = melding;
+    toepassen();
+  }
+  function laadBestand(f) {
+    if (!f || !f.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(f), img = new Image();
+    img.onload = () => { urlAfbeelding = ""; toon(img); URL.revokeObjectURL(url); };
+    img.onerror = () => { $("melding").textContent = TEKST[taal].kanNietLaden; };
+    img.src = url;
+  }
+  // Volgorde bij het openen: afbeelding uit de URL (#afbeelding=...), anders de ingebouwde standaardafbeelding.
+  function laadStartafbeelding() {
+    const src = urlAfbeelding || STANDAARD_AFBEELDING;
+    if (!src) { $("melding").textContent = TEKST[taal].geenAfbeelding; return; }
+    const img = new Image();
+    img.onload = () => toon(img);
+    img.onerror = () => { $("melding").textContent = TEKST[taal].kanNietLaden; };
+    img.src = src;
+  }
+  function laadStandaard() {
+    urlAfbeelding = "";
+    const img = new Image();
+    img.onload = () => toon(img);
+    img.src = STANDAARD_AFBEELDING;
+    bewaar();
+  }
+
+  // ----- tekenen van de bediening -----
+  function tekenRegelaars() {
+    const t = TEKST[taal], houder = $("regelaars");
+    houder.innerHTML = "";
+    for (const [k, [min, max, stap]] of Object.entries(REGELAARS)) {
+      const div = document.createElement("div");
+      div.className = "regel";
+      div.innerHTML = `<label><span>${t.regelaars[k]}</span><span id="w-${k}"></span></label>
+        <input type="range" id="r-${k}" min="${min}" max="${max}" step="${stap}">`;
+      houder.appendChild(div);
+      const inp = div.querySelector("input"), uit = div.querySelector(`#w-${k}`);
+      inp.value = waarden[k]; uit.textContent = waarden[k];
+      inp.addEventListener("input", () => { waarden[k] = parseFloat(inp.value); uit.textContent = waarden[k]; toepassen(); });
+    }
+  }
+  function tekenTaal() {
+    const t = TEKST[taal];
+    document.documentElement.lang = taal;
+    $("titel").textContent = t.titel; $("uitleg").textContent = t.uitleg;
+    $("open").textContent = t.open; $("bewaar").textContent = t.bewaar; $("reset").textContent = t.reset;
+    $("standaard").textContent = t.standaard; $("standaard").hidden = !STANDAARD_AFBEELDING;
+    document.querySelectorAll("[data-voorinstelling]").forEach((b) => (b.textContent = t.voorinstellingen[b.dataset.voorinstelling]));
+    $("taal-nl").classList.toggle("actief", taal === "nl"); $("taal-en").classList.toggle("actief", taal === "en");
+    tekenRegelaars();
+  }
+
+  $("open").addEventListener("click", () => $("bestand").click());
+  $("bestand").addEventListener("change", (e) => laadBestand(e.target.files[0]));
+  $("standaard").addEventListener("click", laadStandaard);
+  $("reset").addEventListener("click", () => { waarden = standaard(); tekenRegelaars(); toepassen(); });
+  $("bewaar").addEventListener("click", () => {
+    doek.toBlob((blob) => {
+      if (!blob) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "bewerkt.png"; a.click();
+    });
+  });
+  document.querySelectorAll("[data-voorinstelling]").forEach((b) => b.addEventListener("click", () => {
+    waarden = { ...standaard(), ...VOORINSTELLINGEN[b.dataset.voorinstelling] };
+    tekenRegelaars(); toepassen();
+  }));
+  $("taal-nl").addEventListener("click", () => { taal = "nl"; tekenTaal(); bewaar(); });
+  $("taal-en").addEventListener("click", () => { taal = "en"; tekenTaal(); bewaar(); });
+  const drop = $("drop");
+  ["dragenter", "dragover"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", (e) => laadBestand(e.dataTransfer.files[0]));
+
+  lees();
+  tekenTaal();
+  laadStartafbeelding();
+</script>
+</body>
+</html>

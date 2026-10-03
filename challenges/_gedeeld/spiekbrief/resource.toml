@@ -1,0 +1,15 @@
+# Gedeeld hulpmiddel, door uitdagingen mee te leveren. De README van _gedeeld wordt hieruit gegenereerd (./jr readme).
+type = "generated"
+
+[opties]
+taal = "nl"
+
+[nl]
+naam = "Spiekbrief"
+beschrijving = "Afdrukbare spiekbrief (pdf) over binair, hexadecimaal, Base64, ROT-N, XOR en morse, met voorbeelden die de generator zelf uitrekent."
+gebruik = "Bouw met `./jr shared build spiekbrief` (optie `--set taal=en`). Uitdagingen die codering gebruiken, leveren de spiekbrief mee in hun uitvoer."
+
+[en]
+naam = "Cheat sheet"
+beschrijving = "Printable cheat sheet (PDF) on binary, hexadecimal, Base64, ROT-N, XOR and morse, with examples that the generator computes itself."
+gebruik = "Build with `./jr shared build spiekbrief` (option `--set taal=en`). Challenges that use encoding include the cheat sheet in their output."

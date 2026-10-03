@@ -1,0 +1,26 @@
+type = "static"
+materiaal = ["src"]
+vlaggen = [["antwoord", "work-in-progress-flag"]]
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "5–10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "De verloren uitdaging"
+onderwerp = "URL's, foutmeldingen lezen"
+materiaal = "laptop, Python 3 (voor [src/server.py](src/server.py))"
+beschrijving = '''
+Er was hier vroeger een uitdaging, maar die lijkt te ontbreken. Kun je hem vinden?
+'''
+hints = [
+  "Foutmeldingen proberen je meestal te helpen.",
+  "Lees goed welk adres er precies gevraagd werd. Zie je een verschil met wat je verwacht?",
+  "Sommige hoofdletters en kleine letters lijken sterk op elkaar (`I` en `l`). Probeer het adres met kleine letters.",
+]
+opzet = '''
+Start de server met `python3 server.py` in de map [src/](src/) en open `http://localhost:8000`. De server toont bij een onbekende pagina een foutmelding met details van het verzoek. Zonder server werkt de foutmelding niet.
+'''

@@ -1,0 +1,36 @@
+# Gegenereerde uitdaging: ./jr build <naam> maakt de pdf's met de standaardwaarden.
+# Events kunnen het antwoord en de opties overschrijven (./jr event add <event> <naam> --antwoord ...).
+# De README wordt hieruit gegenereerd: pas dit bestand aan en draai ./jr readme.
+type = "generated"
+# Standaardantwoord. Laat weg als het antwoord berekend wordt (zie kraak-de-code).
+antwoord = "voorbeeld"
+
+# Opties die generate.py kent. Events kunnen ze overschrijven.
+[opties]
+taal = "nl"
+seed = 1
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"           # booth | klas | thuis
+leeftijd = "8–12"           # 8–12 | 12–15 | 15–18 | 18+
+duur = "10 min"
+vlag_formaat = "antwoord"   # antwoord (het antwoord zelf) | uhctf (uhctf{...}) | geen (de actie zelf is de opdracht)
+
+# Nederlandse tekst (hoofdtaal). Voeg een [en]-tabel met dezelfde sleutels toe voor een README.en.md.
+[nl]
+naam = "<+Naam+>"
+onderwerp = "<+bv. Caesarcijfer, binair+>"
+materiaal = "<+deelnemer.pdf, potlood, laptop, ...+>"
+beschrijving = '''
+<+Verhaal voor de deelnemers+>
+'''
+hints = [
+  "<+Zachte hint+>",
+  "<+Duidelijkere hint+>",
+  "<+Bijna het antwoord+>",
+]
+# Extra uitleg voor begeleiders (de bouwinstructies en opties worden automatisch toegevoegd).
+opzet = '''
+<+Materiaal, voorbereiding, tips+>
+'''

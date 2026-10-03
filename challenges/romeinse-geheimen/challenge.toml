@@ -1,0 +1,31 @@
+type = "generated"
+antwoord = "salad"
+
+[opties]
+taal = "nl"
+verschuiving = 3
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "5–10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Romeinse geheimen"
+onderwerp = "Caesarcijfer (ROT-N)"
+materiaal = "geprint bericht (`deelnemer.pdf`), laptop of tablet met de [decoder](../_gedeeld/decoder/), [spiekbrief](../_gedeeld/spiekbrief/) (optioneel)"
+beschrijving = '''
+Een archeoloog vond een bericht dat lijkt te zijn gecodeerd door een keizer.
+
+Het bericht: `PXIXA`
+'''
+hints = [
+  "Welke keizer gebruikte een geheimschrift waarbij je letters verschuift?",
+  "Het is een Caesarcijfer: elke letter is een vast aantal plaatsen verschoven.",
+  "Probeer in de [decoder](../_gedeeld/decoder/) de stap ROT-N met kleine getallen.",
+]
+opzet = '''
+Deelnemers gebruiken de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig) of de strook op `deelnemer.pdf`. De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. `verschuiving` is het aantal letters. Het bericht staat ook in `bericht.txt`.
+'''

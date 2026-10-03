@@ -1,0 +1,42 @@
+type = "generated"
+antwoord = "dietrich"
+
+[opties]
+taal = "nl"
+# Standaard geen vlag: de deelnemer opent het slot onder toezicht van een volwassene.
+# Met 'met_vlag = true' ligt er in een afgesloten doos een briefje met 'antwoord'.
+met_vlag = false
+# aantal briefjes met het antwoord (8 per pagina), enkel met een vlag
+briefjes = 8
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–18"
+duur = "10–20 min"
+vlag_formaat = "geen"   # geen vlag standaard; zie opties.met_vlag
+
+[nl]
+naam = "Lockpicking"
+onderwerp = "Hoe sloten werken, ethiek van beveiligingsonderzoek"
+materiaal = "lockpicking-sets (spanstuk + pick), oefensloten (bij voorkeur doorzichtig of een eenvoudig hangslot); in de variant met vlag ook een afsluitbare doos per slot en geprinte briefjes (`briefjes.pdf`)"
+beschrijving = '''
+Ook sloten kunnen open gemaakt worden zonder sleutel, en wie begrijpt hoe, kan ze beter maken. Deelnemers proberen een oefenslot te openen met een lockpicking-set, samen met een volwassen begeleider die meekijkt. Het openen van het slot is de opdracht: er is geen vlag.
+
+Er is ook een variant mét vlag: dan zit in een afgesloten doos een briefje met het antwoord (zie Opzet).
+'''
+hints = [
+  "Duw zachtjes aan het spanstuk, niet te hard.",
+  "Voel je een klikje bij een pennetje? Dan zit het goed.",
+  "Lukt het niet? Laat los en begin opnieuw met minder kracht.",
+]
+opzet = '''
+Er zijn twee vormen:
+
+1. **Zonder vlag (standaard).** De deelnemer opent een oefenslot onder toezicht van een volwassen begeleider, die uitleg geeft en bevestigt dat het gelukt is. Er is niets in te leveren.
+2. **Met vlag.** Zet `met_vlag = true` in het event (`./jr event add <event> lockpicking --set met_vlag=ja --antwoord <woord>`). Dan bevat `briefjes.pdf` briefjes met het antwoord (standaard `dietrich`, optie `briefjes`, 8 per pagina) om uit te knippen en in een afgesloten doos te leggen. Wie de doos opent, vindt het antwoord.
+
+`deelnemer.pdf` is de opdrachtkaart voor aan de tafel en `begeleider.pdf` heeft de opzet en tips. Het `antwoord` wordt enkel gebruikt in de variant met vlag.
+
+Veiligheid: enkel oefenen op eigen sloten, nooit op sloten van anderen, en altijd onder toezicht van een volwassene. Tel de sets na afloop na.
+'''

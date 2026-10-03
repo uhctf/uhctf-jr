@@ -1,0 +1,31 @@
+type = "generated"
+antwoord = "securityrocks"
+
+[opties]
+taal = "nl"
+seed = 2025
+breedte = 14
+hoogte = 18
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "5–10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Doolhof"
+onderwerp = "Puzzelen, geduld"
+materiaal = "geprint doolhof (`deelnemer.pdf`), potlood"
+beschrijving = '''
+Vind je weg door het doolhof, de reis brengt de beloning.
+'''
+hints = [
+  "Het doolhof staat vol letters.",
+  "Volg de route van Start naar End.",
+  "Schrijf de letters op die je tegenkomt, in de juiste volgorde.",
+]
+opzet = '''
+Print `deelnemer.pdf` (1 per deelnemer of team) en geef potloden mee. Dezelfde `seed` geeft altijd hetzelfde doolhof; verander hem voor een nieuw doolhof. `begeleider.pdf` bevat een afbeelding van de juiste route.
+'''

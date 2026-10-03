@@ -1,0 +1,32 @@
+# Het antwoord wordt berekend: pas 'functie', 'a' en 'b' aan in plaats van een antwoord.
+type = "generated"
+
+[opties]
+taal = "nl"
+functie = "fibonacci"
+a = 9
+b = 10
+hulp = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–15"
+duur = "10–15 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Kraak de code"
+onderwerp = "Programmeren, recursie"
+materiaal = "geprinte opgave (`deelnemer.pdf`), pen en papier of een computer"
+beschrijving = '''
+Geen mens zal dit ooit oplossen, je hebt zeker een computer nodig om deze code uit te voeren!
+'''
+hints = [
+  "De functie roept zichzelf op.",
+  "Begin klein: reken Code(2), Code(3), Code(4) uit.",
+  "Dit is de rij van Fibonacci. Plak daarna de twee uitkomsten (Code(9) en Code(10)) aan elkaar.",
+]
+opzet = '''
+Het antwoord wordt berekend uit `functie` (`fibonacci`, `driehoek` of `verdubbel`), `a` en `b`. Er is dus geen vrij antwoord: pas die opties aan voor een ander event. Zet `hulp = true` voor een invultabel voor jongere deelnemers. Deelnemers kunnen de functie met de hand uitrekenen of in een programmeeromgeving naar keuze uitvoeren.
+'''

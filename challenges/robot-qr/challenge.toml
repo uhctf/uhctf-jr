@@ -1,0 +1,38 @@
+type = "generated"
+# Opties die een pad naar een bestand zijn. In een event is het pad relatief ten opzichte van de eventmap.
+paden = ["afbeelding"]
+antwoord = "night-vision"
+
+[opties]
+taal = "nl"
+schaal = 12
+# Kleur van de QR-code op zwart. Hoe donkerder, hoe moeilijker te zien; probeer #000014 tot #00004a.
+kleur = "#000028"
+# Eigen afbeelding (bv. een foto van de 3D-geprinte robot) in plaats van de gegenereerde QR-code. Leeg = gegenereerde code.
+# Het antwoord moet overeenkomen met de QR-code in die afbeelding.
+afbeelding = ""
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–15"
+duur = "10–15 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Robot-QR"
+onderwerp = "Afbeeldingen bewerken, QR-codes, verborgen informatie"
+materiaal = "laptop of tablet met de [beeldbewerker](../_gedeeld/beeldbewerker/) (met de QR-code ingebouwd); een telefoon om de QR-code te scannen; optioneel een 3D-geprinte robot"
+beschrijving = '''
+Afbeeldingen kunnen meer bevatten dan op het eerste zicht lijkt.
+
+Op de foto staat een zwarte 3D-geprinte robot met een QR-code op zijn borst. De code is donkerblauw op zwart en dus bijna onzichtbaar. Met de afbeeldingsbewerker kun je de foto aanpassen.
+'''
+hints = [
+  "Je ogen zien de QR-code nauwelijks. Een beeld kan aangepast worden.",
+  "Speel met belichting en de kleurkanalen in de bewerker.",
+  "Een QR-code is meestal zwart op wit. Probeer ook Inverteren, en scan dan met een telefoon.",
+]
+opzet = '''
+De QR-code wordt gegenereerd uit het antwoord, in donkerblauw op zwart. Deelnemers openen `beeldbewerker/index.html` lokaal in de browser (geen internet nodig). De QR-code is als standaardafbeelding ingebouwd, dus de afbeelding staat meteen klaar. `qr.png` is de afbeelding zelf, handig om te printen. Optie `schaal` stelt de grootte van de pixels in. Voor extra beleving kan de QR-code in donkerblauw op zwart filament op een 3D-geprinte robot staan. Een event kan een foto van die robot gebruiken: zet `afbeelding = "robot.jpg"` in `uitdagingen.toml` (pad vanaf de eventmap, bv. `./jr event add <event> robot-qr --set afbeelding=robot.jpg`). De foto wordt dan in de beeldbewerker ingebouwd in plaats van de gegenereerde code, en het antwoord moet overeenkomen met de QR-code op de foto.
+'''

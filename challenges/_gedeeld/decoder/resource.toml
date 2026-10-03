@@ -1,0 +1,12 @@
+# Gedeeld hulpmiddel, door uitdagingen mee te leveren. De README van _gedeeld wordt hieruit gegenereerd (./jr readme).
+type = "static"
+
+[nl]
+naam = "Decoder"
+beschrijving = "Webpagina om berichten te coderen en decoderen: Base64, hexadecimaal, binair, morse, ROT-N en XOR, met meerdere stappen na elkaar. Werkt offline in de browser, in het Nederlands en Engels."
+gebruik = "Open `decoder/index.html` in een browser. De opstelling (invoer en stappen) staat in de URL na `#`, zodat een begeleider een kant-en-klare link kan delen. Voorbeeld: `index.html#t=nl&i=PXIXA&s=rot:3`."
+
+[en]
+naam = "Decoder"
+beschrijving = "Web page to encode and decode messages: Base64, hexadecimal, binary, morse, ROT-N and XOR, with several steps in a row. Works offline in the browser, in Dutch and English."
+gebruik = "Open `decoder/index.html` in a browser. The setup (input and steps) is kept in the URL after `#`, so a facilitator can share a ready-made link. Example: `index.html#t=en&i=PXIXA&s=rot:3`."

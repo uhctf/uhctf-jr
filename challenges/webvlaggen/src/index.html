@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Dag</title>
+  <style>
+    :root{--accent:#d7263d;--muted:#6b7280}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;color:#1f2933;line-height:1.6}
+    header{background:var(--accent);color:#fff;padding:.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+    header a{color:#fff;margin-right:1rem;text-decoration:none}
+    .lang button{border:1px solid #fff;background:transparent;color:#fff;padding:.25rem .7rem;cursor:pointer}
+    .lang button.active{background:#fff;color:var(--accent)}
+    main{max-width:960px;margin:0 auto;padding:0 1.2rem}
+    section{padding:1.5rem 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+    .card{border:1px solid #e5e7eb;border-radius:.6rem;padding:1rem}
+    .small,.muted{color:var(--muted)}
+    .btn{display:inline-block;border:1px solid var(--accent);color:var(--accent);padding:.25rem .8rem;border-radius:.3rem;text-decoration:none}
+    code{background:#f3f4f6;padding:.1rem .4rem;border-radius:.3rem}
+    footer{border-top:1px solid #e5e7eb;color:var(--muted);padding:1rem 1.2rem;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="#about" data-i18n="nav.about"></a>
+      <a href="#program" data-i18n="nav.program"></a>
+      <a href="#practical" data-i18n="nav.practical"></a>
+    </nav>
+    <div class="lang">
+      <button id="btn-nl">NL</button>
+      <button id="btn-en">EN</button>
+      <!-- <button id="btn-fr">FR</button> TODO: Frans toevoegen -->
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h1 data-i18n="hero.title"></h1>
+      <p class="muted" data-i18n="hero.subtitle"></p>
+      <p><strong data-i18n="hero.date"></strong> · <span class="muted" data-i18n="hero.location"></span></p>
+      <p><a class="btn" href="#program" data-i18n="hero.cta1"></a> <a class="btn" href="#practical" data-i18n="hero.cta2"></a></p>
+      <p class="small" data-i18n="hero.card"></p>
+    </section>
+
+    <section id="about">
+      <h2 data-i18n="about.title"></h2>
+      <p class="muted" data-i18n="about.lead"></p>
+      <h3 data-i18n="about.missionTitle"></h3>
+      <p data-i18n="about.mission"></p>
+      <h3 data-i18n="about.audienceTitle"></h3>
+      <p data-i18n="about.audience"></p>
+    </section>
+
+    <section id="program">
+      <h2 data-i18n="program.title"></h2>
+      <p class="muted" data-i18n="program.lead"></p>
+      <div class="grid">
+        <article class="card">
+          <h3 data-i18n="program.activity1.title"></h3>
+          <p data-i18n="program.activity1.desc"></p>
+          <p class="small" data-i18n="program.activity1.time"></p>
+          <!-- Vlag 1: web-not-so-hidden -->
+          <p><span data-i18n="ctf.flagText"></span> <code data-i18n="ctf.flag">web-flag-in-transit</code></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+        <article class="card">
+          <h3 data-i18n="program.activity2.title"></h3>
+          <p data-i18n="program.activity2.desc"></p>
+          <p class="small" data-i18n="program.activity2.time"></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+        <article class="card">
+          <h3 data-i18n="program.activity3.title"></h3>
+          <p data-i18n="program.activity3.desc"></p>
+          <p class="small" data-i18n="program.activity3.time"></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+        <article class="card">
+          <h3 data-i18n="program.activity4.title"></h3>
+          <p data-i18n="program.activity4.desc"></p>
+          <p class="small" data-i18n="program.activity4.time"></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+        <article class="card">
+          <h3 data-i18n="program.activity5.title"></h3>
+          <p data-i18n="program.activity5.desc"></p>
+          <p class="small" data-i18n="program.activity5.time"></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+        <article class="card">
+          <h3 data-i18n="program.activity6.title"></h3>
+          <p data-i18n="program.activity6.desc"></p>
+          <p class="small" data-i18n="program.activity6.time"></p>
+          <a href="#" class="btn" data-i18n="program.register"></a>
+        </article>
+      </div>
+    </section>
+
+    <section id="practical">
+      <h2 data-i18n="practical.title"></h2>
+      <p class="muted" data-i18n="practical.lead"></p>
+      <ul>
+        <li data-i18n="practical.transport"></li>
+        <li data-i18n="practical.accessibility"></li>
+        <li data-i18n="practical.contact"></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>Open Dag &mdash; oefenwebsite voor een UHCTF-uitdaging</footer>
+
+  <script>
+    const talen = { en: "taal/en.json", nl: "taal/nl.json" };
+
+    async function setLang(lang) {
+      if (!talen[lang]) lang = "nl";
+      localStorage.setItem("siteLang", lang);
+      document.documentElement.lang = lang;
+      const tekst = await fetch(talen[lang]).then(r => r.json()).catch(() => ({}));
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.innerHTML = tekst[el.getAttribute("data-i18n")] || "";
+      });
+      document.getElementById("btn-nl").classList.toggle("active", lang === "nl");
+      document.getElementById("btn-en").classList.toggle("active", lang === "en");
+    }
+
+    document.getElementById("btn-nl").addEventListener("click", () => setLang("nl"));
+    document.getElementById("btn-en").addEventListener("click", () => setLang("en"));
+    setLang(localStorage.getItem("siteLang") || (navigator.language.startsWith("nl") ? "nl" : "en"));
+  </script>
+</body>
+</html>

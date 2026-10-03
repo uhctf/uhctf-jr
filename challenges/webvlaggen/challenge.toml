@@ -1,0 +1,30 @@
+type = "static"
+materiaal = ["src"]
+vlaggen = [["web 1 (makkelijk)", "web-not-so-hidden"], ["web 2 (moeilijk)", "web-flag-in-transit"], ["web 3 (extreem)", "le-langue-secrete"]]
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–18"
+duur = "15–20 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Webvlaggen"
+onderwerp = "Webpagina's bekijken, bronnen en bestanden, talen"
+materiaal = "laptop met browser, Python 3 (`python3 -m http.server` in [src/](src/))"
+beschrijving = '''
+Op de website van de Open Dag staat een gratis flag, maar die is niet altijd zichtbaar. Er zijn drie vlaggen te vinden, in oplopende moeilijkheid:
+
+1. **De "verborgen" webvlag.** De website probeert enkele vlaggen te verbergen, er was er een die niet meteen werd gezien. Tip: de inhoud begint met `web-n`.
+2. **De standaardvlag.** Men zou zich kunnen afvragen welke vlag wordt weergegeven als er geen taal is geselecteerd. Tip: de inhoud begint met `web-f`.
+3. **De meertalige vlag.** De website is beschikbaar in meerdere talen, maar de vlag lijkt in de meeste ervan gecensureerd. Tip: zoek in een andere taal.
+'''
+hints = [
+  "Een browser kan de broncode van een pagina tonen (rechtsklik, 'Paginabron weergeven', of Ctrl+U).",
+  "Zoek in de bron naar 'flag'. Kijk ook naar commentaar en naar wat er staat voordat de taal geladen wordt.",
+  "De tekst van de pagina komt uit bestanden per taal. Kijk in het tabblad Netwerk van de ontwikkelaarstools welk bestand geladen wordt, en probeer een andere taal.",
+]
+opzet = '''
+Start in [src/](src/) een lokale server: `python3 -m http.server` en open `http://localhost:8000`. Openen vanaf schijf werkt niet, omdat de pagina taalbestanden inlaadt met `fetch`. De pagina gebruikt geen externe bibliotheken en werkt offline.
+'''

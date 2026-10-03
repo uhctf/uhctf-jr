@@ -1,0 +1,35 @@
+type = "generated"
+antwoord = "layers-of-security"
+
+[opties]
+taal = "nl"
+# Volgorde waarin het antwoord wordt ingepakt. Deelnemers pakken in omgekeerde volgorde uit.
+# Mogelijk: binair, hex, base64, rot13, morse
+lagen = ["binair", "hex", "base64"]
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–15"
+duur = "10–15 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Laag na laag"
+onderwerp = "Base64, hexadecimaal, binair"
+materiaal = "geprint bericht (`deelnemer.pdf`, ook als `bericht.txt`), laptop of tablet met de [decoder](../_gedeeld/decoder/), [spiekbrief](../_gedeeld/spiekbrief/)"
+beschrijving = '''
+Dit bericht lijkt moeilijker te ontcijferen, alsof iemand het meerdere lagen diep heeft verborgen.
+
+```
+MzAzMTMxMzAzMTMxMzAzMDIwMzAzMTMxMzAzMDMwMzAzMTIwMzAzMTMxMzEzMTMwMzAzMTIwMzAzMTMxMzAzMDMxMzAzMTIwMzAzMTMxMzEzMDMwMzEzMDIwMzAzMTMxMzEzMDMwMzEzMTIwMzAzMDMxMzAzMTMxMzAzMTIwMzAzMTMxMzAzMTMxMzEzMTIwMzAzMTMxMzAzMDMxMzEzMDIwMzAzMDMxMzAzMTMxMzAzMTIwMzAzMTMxMzEzMDMwMzEzMTIwMzAzMTMxMzAzMDMxMzAzMTIwMzAzMTMxMzAzMDMwMzEzMTIwMzAzMTMxMzEzMDMxMzAzMTIwMzAzMTMxMzEzMDMwMzEzMDIwMzAzMTMxMzAzMTMwMzAzMTIwMzAzMTMxMzEzMDMxMzAzMDIwMzAzMTMxMzEzMTMwMzAzMQ==
+```
+'''
+hints = [
+  "Het einde van het bericht eindigt op `==`. Dat is een kenmerk van Base64.",
+  "Na Base64 krijg je cijfers en letters (hexadecimaal). Decodeer die ook.",
+  "De derde laag is binair (nullen en enen). Gebruik in de decoder drie stappen na elkaar.",
+]
+opzet = '''
+`lagen` is de volgorde waarin het antwoord wordt ingepakt, uit `binair`, `hex`, `base64`, `rot13` en `morse`. Deelnemers pakken in omgekeerde volgorde uit met de meegeleverde [decoder](../_gedeeld/decoder/), waar meerdere stappen na elkaar kunnen. Het bericht staat ook in `bericht.txt` om te kopiëren. Zie ook [Romeinse geheimen](../romeinse-geheimen/README.md).
+'''

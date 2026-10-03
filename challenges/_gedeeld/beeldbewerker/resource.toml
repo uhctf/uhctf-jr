@@ -1,0 +1,17 @@
+# Gedeeld hulpmiddel, door uitdagingen mee te leveren. De README van _gedeeld wordt hieruit gegenereerd (./jr readme).
+type = "generated"
+
+[opties]
+taal = "nl"
+# Pad naar een afbeelding die bij het openen al geladen is (ingebouwd in index.html). Leeg = geen standaardafbeelding.
+afbeelding = ""
+
+[nl]
+naam = "Beeldbewerker"
+beschrijving = "Webpagina om een afbeelding te bekijken en te bewerken: helderheid, contrast, kleurkanalen, inverteren en meer. Handig voor verborgen informatie in afbeeldingen. Werkt offline in de browser, in het Nederlands en Engels. Een standaardafbeelding kan ingebouwd worden, zodat die meteen geladen is."
+gebruik = "Bouw met `./jr shared build beeldbewerker --set afbeelding=pad/naar/afbeelding.png` (opties `afbeelding` en `taal`). De afbeelding zit dan in `beeldbewerker/index.html` zelf, zodat de pagina ook vanaf schijf zonder internet werkt. Andere afbeeldingen opent een deelnemer met 'Open afbeelding' of door ze op de pagina te slepen; met een webserver kan ook `index.html#afbeelding=qr.png`. De knop 'Standaardafbeelding' laadt de ingebouwde afbeelding opnieuw."
+
+[en]
+naam = "Image editor"
+beschrijving = "Web page to view and edit an image: brightness, contrast, colour channels, invert and more. Handy for information hidden in images. Works offline in the browser, in Dutch and English. A default image can be built in, so it is loaded right away."
+gebruik = "Build with `./jr shared build beeldbewerker --set afbeelding=path/to/image.png` (options `afbeelding` and `taal`). The image is then part of `beeldbewerker/index.html` itself, so the page also works from disk without internet. Other images are opened by a participant with 'Open image' or by dropping them on the page; with a web server `index.html#afbeelding=qr.png` also works. The 'Default image' button reloads the built-in image."

@@ -1,0 +1,3 @@
+# Algemene vereisten voor de tooling en alle generatoren.
+# Uitdaging-specifieke vereisten staan in challenges/<naam>/requirements.txt
+reportlab>=4
