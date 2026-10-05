@@ -15,8 +15,8 @@ We maken security toegankelijk en leuk voor kinderen en jongeren, met digitale e
 | Event | Doelgroep |
 | --- | --- |
 | [Dag van de Wetenschap](events/dag-van-de-wetenschap/) | families, kinderen en jongeren |
-| [Workshop voor jongvolwassenen](events/workshop-jongvolwassenen/) | jongvolwassenen |
-| [Tienerdemo](events/tienerdemo/) | tieners |
+| [DFL-workshop](events/dfl-workshop/) | 3e graad secundair (17–18 jaar) |
+| [TALim-workshop](events/talim-workshop/) | leerlingen 5e leerjaar (10–11 jaar) |
 
 ## Uitgangspunten
 

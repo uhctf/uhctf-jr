@@ -15,8 +15,8 @@ We make security approachable and fun for children and teens, through digital an
 | Event | Audience |
 | --- | --- |
 | [Dag van de Wetenschap](events/dag-van-de-wetenschap/) | families, children and teens |
-| [Young Adult Workshop](events/workshop-jongvolwassenen/) | young adults |
-| [Teen Showcase](events/tienerdemo/) | teens |
+| [DFL workshop](events/dfl-workshop/) | 3rd grade of secondary school (17–18 years) |
+| [TALim workshop](events/talim-workshop/) | 5th-grade pupils (10–11 years) |
 
 ## Principles
 

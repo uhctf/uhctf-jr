@@ -1,0 +1,18 @@
+# Uitdagingen voor dit event. Elke tabel is een uitdaging; sleutels overschrijven de standaardwaarden.
+
+[laag-na-laag]
+antwoord = "defense-in-depth"
+lagen = ["rot13", "binair", "hex", "base64"]
+
+[robot-qr]
+antwoord = "zero-trust"
+
+[kraak-de-code]
+a = 12
+b = 15
+
+[webvlaggen]
+
+[verloren-uitdaging]
+
+[lockpicking]

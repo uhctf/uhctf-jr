@@ -30,7 +30,6 @@ Dit maakt `challenges/mijn-uitdaging/` met:
 - `challenge.toml`: **alle** gegevens van de uitdaging (zie hieronder)
 - `README.md`: wordt **gegenereerd** uit `challenge.toml`, niet met de hand aanpassen
 - `SOLUTION.md`: de oplossing, met de hand geschreven (aparte file, zodat testers niets per ongeluk zien)
-- `requirements.txt`: extra vereisten enkel voor deze uitdaging
 - `generate.py` (gegenereerd) of `src/` (statisch)
 
 ### challenge.toml
@@ -76,7 +75,7 @@ def check(params) -> None          # optionele zelftest, gooit een fout als iets
 
 `params` bevat `antwoord` en alles uit `[opties]` van `challenge.toml`, met eventuele overrides. Gebruik `from jr.pdf import Pdf, begeleider` voor pdf's, `from jr import codecs` voor coderingen en `from jr.shared import gebruik` om gedeeld materiaal mee te leveren (`gebruik(uit, taal, "decoder", "spiekbrief")`, zie hieronder). Lever minstens `deelnemer.pdf` en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Heeft een uitdaging een extra bibliotheek nodig, zet die in haar eigen `requirements.txt`. Installeren kan met `./jr install mijn-uitdaging`.
+Heeft een uitdaging een extra bibliotheek nodig, maak dan een `requirements.txt` in haar map met enkel die vereisten (er is er geen tot dat nodig is). Installeren kan met `./jr install mijn-uitdaging`.
 
 Is het antwoord berekend (zoals bij `kraak-de-code`), laat dan `antwoord` weg uit `challenge.toml`.
 

@@ -1,0 +1,16 @@
+# Uitdagingen voor dit event. Elke tabel is een uitdaging; sleutels overschrijven de standaardwaarden.
+
+[romeinse-geheimen]
+antwoord = "wachtwoord"
+
+[doolhof]
+antwoord = "veilig"
+breedte = 10
+hoogte = 12
+
+[woordzoeker]
+antwoord = "veiligheid"
+grootte = 8
+woorden = ["slot", "sleutel", "geheim", "code", "robot", "cijfer", "wolk", "muis", "scherm", "toets", "hacker", "bericht"]
+
+[lockpicking]
