@@ -12,7 +12,7 @@
 
 - Topic: Caesarcijfer (ROT-N)
 
-- Materials: geprint bericht (`deelnemer.pdf`), laptop of tablet met de [decoder](../_gedeeld/decoder/), [spiekbrief](../_gedeeld/spiekbrief/) (optioneel)
+- Materials: geprint bericht (`deelnemer.pdf`), potlood; optioneel een laptop of tablet met de [decoder](../_gedeeld/decoder/) en de [spiekbrief](../_gedeeld/spiekbrief/)
 
 - Flag Format: het antwoord zelf (hoofdletterongevoelig)
 
@@ -32,11 +32,11 @@ Het bericht: `PXIXA`
 
 1. Welke keizer gebruikte een geheimschrift waarbij je letters verschuift?
 2. Het is een Caesarcijfer: elke letter is een vast aantal plaatsen verschoven.
-3. Probeer in de [decoder](../_gedeeld/decoder/) de stap ROT-N met kleine getallen.
+3. Probeer het met kleine getallen: verschuif 1, 2, 3 plaatsen.
 
 ## Opzet
 
-Deelnemers gebruiken de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig) of de strook op `deelnemer.pdf`. De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. `verschuiving` is het aantal letters. Het bericht staat ook in `bericht.txt`.
+Deelnemers gebruiken de strook op `deelnemer.pdf`, of de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig). De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. Zet `met_decoder = false` voor een versie volledig op papier. `verschuiving` is het aantal letters. Met `oefenwoorden` (bv. `["kat", "hond"]`) en een `oefenhint` (bv. "Veel voorkomende huisdieren") komen er korte, makkelijk te raden woorden op het blad met dezelfde verschuiving: raad ze en je vindt de verschuiving, om daarna het moeilijkere bericht te ontcijferen. Het bericht staat ook in `bericht.txt`.
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 
@@ -53,6 +53,6 @@ Voor een event met een eigen antwoord:
 
 De uitvoer bevat minstens `deelnemer.pdf` (uitdelen) en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Opties (standaardwaarde): `taal` ("nl"), `verschuiving` (3).
+Opties (standaardwaarde): `taal` ("nl"), `verschuiving` (3), `met_decoder` (true), `oefenwoorden` ([]), `oefenhint` ("").
 
 [SOLUTION.md](SOLUTION.md)

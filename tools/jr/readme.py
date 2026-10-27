@@ -52,6 +52,9 @@ def standaardantwoord(ch: Challenge) -> str:
     if ch.standaard_antwoord:
         return ch.standaard_antwoord
     venv.ensure_venv()
+    vast = getattr(ch._module(), "README_ANTWOORD", None)  # generator met een willekeurig antwoord
+    if vast:
+        return vast
     with tempfile.TemporaryDirectory() as tmp:
         return ch.build(Path(tmp))
 

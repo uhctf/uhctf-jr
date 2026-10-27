@@ -2,6 +2,9 @@
 
 [romeinse-geheimen]
 antwoord = "wachtwoord"
+met_decoder = false
+oefenwoorden = ["kat", "hond", "vis", "hamster"]
+oefenhint = "Veel voorkomende huisdieren"
 
 [doolhof]
 antwoord = "veilig"
@@ -14,3 +17,5 @@ grootte = 8
 woorden = ["slot", "sleutel", "geheim", "code", "robot", "cijfer", "wolk", "muis", "scherm", "toets", "hacker", "bericht"]
 
 [lockpicking]
+
+[wachtwoord-mastermind]

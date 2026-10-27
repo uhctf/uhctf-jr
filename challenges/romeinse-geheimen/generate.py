@@ -12,23 +12,35 @@ TEKST = {
         "titel": "Romeinse geheimen",
         "verhaal": "Een archeoloog vond een bericht dat lijkt te zijn gecodeerd door een keizer.",
         "bericht": "Het bericht:",
-        "tip": "Elke letter is een vast aantal plaatsen in het alfabet verschoven. Hoeveel? Gebruik de strook hieronder, "
-               "of de decoder op de computer. Schrijf het antwoord op.",
+        "tip": "Elke letter is een vast aantal plaatsen in het alfabet verschoven. Hoeveel? Gebruik de strook hieronder. "
+               "Schrijf het antwoord op.",
+        "tip_decoder": "Elke letter is een vast aantal plaatsen in het alfabet verschoven. Hoeveel? Gebruik de strook hieronder, "
+                       "of de decoder op de computer. Schrijf het antwoord op.",
+        "oefen_kop": "Eerst oefenen",
+        "oefen_hint": "Hint: {hint}",
+        "oefen_tip": "Deze woorden zijn op dezelfde manier verschoven als het bericht. Het zijn korte, gewone woorden. "
+                     "Raad er één en tel hoeveel plaatsen elke letter is opgeschoven: zo vind je de verschuiving.",
         "oplossing": "Verschuif elke letter {n} plaatsen terug in het alfabet (Caesar, ROT-{n} bij het ontcijferen).",
         "hints": ["Welke keizer gebruikte een geheimschrift waarbij je letters verschuift?",
                   "Het is een Caesarcijfer: elke letter is een vast aantal plaatsen verschoven.",
-                  "Probeer in de decoder de stap ROT-N met kleine getallen."],
+                  "Probeer het met kleine getallen: verschuif 1, 2, 3 plaatsen."],
     },
     "en": {
         "titel": "Roman secrets",
         "verhaal": "An archaeologist found a message that seems to have been encoded by an emperor.",
         "bericht": "The message:",
-        "tip": "Every letter is shifted a fixed number of places in the alphabet. How many? Use the strip below, "
-               "or the decoder on the computer. Write down the answer.",
+        "tip": "Every letter is shifted a fixed number of places in the alphabet. How many? Use the strip below. "
+               "Write down the answer.",
+        "tip_decoder": "Every letter is shifted a fixed number of places in the alphabet. How many? Use the strip below, "
+                       "or the decoder on the computer. Write down the answer.",
+        "oefen_kop": "Practice first",
+        "oefen_hint": "Hint: {hint}",
+        "oefen_tip": "These words are shifted the same way as the message. They are short, common words. "
+                     "Guess one and count how many places each letter moved: that gives you the shift.",
         "oplossing": "Shift every letter {n} places back in the alphabet (Caesar, ROT-{n} when decoding).",
         "hints": ["Which emperor used a secret writing where you shift the letters?",
                   "It is a Caesar cipher: every letter is shifted a fixed number of places.",
-                  "Try the ROT-N step in the decoder with small numbers."],
+                  "Try small numbers: shift 1, 2, 3 places."],
     },
 }
 
@@ -51,7 +63,17 @@ def generate(params: dict, uit: Path) -> str:
     p.c.setFont("Courier-Bold", 28)
     p.c.drawString(MARGE, p.y - 10, bericht)
     p.ruimte(50)
-    p.regel(t["tip"])
+    oefen = [w for w in params["oefenwoorden"] if w]
+    if oefen:
+        p.kop(t["oefen_kop"])
+        p.regel(t["oefen_tip"])
+        if params["oefenhint"]:
+            p.c.setFont("Helvetica-Bold", 12)
+            p.regel(t["oefen_hint"].format(hint=params["oefenhint"]))
+        p.c.setFont("Courier-Bold", 20)
+        p.c.drawString(MARGE, p.y - 6, "     ".join(versleutel(w, n) for w in oefen))
+        p.ruimte(34)
+    p.regel(t["tip_decoder"] if params["met_decoder"] else t["tip"])
     p.ruimte(10)
     # Alfabetstrook: bovenste rij ingevuld, onderste rij leeg om de verschoven letters in te vullen.
     breedte = (595 - 2 * MARGE) / 26
@@ -67,7 +89,8 @@ def generate(params: dict, uit: Path) -> str:
     b = begeleider(uit / "begeleider.pdf", t["titel"], antwoord,
                    [f"Bericht: {bericht}", t["oplossing"].format(n=n)], t["hints"], params["taal"])
     b.opslaan()
-    gebruik(uit, params["taal"], "decoder", "spiekbrief")
+    if params["met_decoder"]:
+        gebruik(uit, params["taal"], "decoder", "spiekbrief")
     return antwoord
 
 
