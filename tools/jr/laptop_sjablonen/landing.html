@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITEL}}</title>
+  <link rel="stylesheet" href="stijl.css">
+  <style>
+    .team{display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+    .team .veld{flex:1;min-width:240px}
+    .sloten{display:flex;gap:10px;align-items:center}
+    .sloten .tekst{font-family:var(--mono);font-weight:700;margin-right:4px}
+    .slotje{width:34px;height:34px;border:3px solid var(--lijn);background:#fff;display:grid;place-items:center;font-weight:900;font-size:16px}
+    .slotje.open{background:var(--cyaan);box-shadow:2px 2px 0 var(--magenta)}
+  </style>
+</head>
+<body>
+<main>
+  {{NAV}}
+  <h1>{{TITEL}}</h1>
+  <p>{{INTRO}}</p>
+
+  <div class="kaart">
+    <h2>Jullie team</h2>
+    <div class="team">
+      <div class="veld">
+        <label for="team">Teamnaam</label>
+        <div class="rij" style="margin-top:6px"><input type="text" id="team" maxlength="40" placeholder="De Slimme Vossen" autocomplete="off"></div>
+      </div>
+      <div class="sloten" id="sloten" aria-label="Geopende sloten"></div>
+    </div>
+  </div>
+
+{{OPDRACHTEN}}  <h2 class="sectie">Hulpmiddelen</h2>
+  <div class="raster">
+{{KAARTEN}}
+  </div>
+</main>
+<script>
+  const nodig = {{NODIG}};
+  const lees = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const veld = document.getElementById("team");
+  veld.value = lees("uhctf-team-{{EVENT}}") || "";
+  veld.addEventListener("input", () => { try { localStorage.setItem("uhctf-team-{{EVENT}}", veld.value); } catch (e) {} });
+  let open = [];
+  try { open = JSON.parse(lees("uhctf-kluis-{{EVENT}}") || "[]"); } catch (e) {}
+  for (const t of document.querySelectorAll("a.tegel[data-id]")) if (open.includes(t.dataset.id)) t.classList.add("klaar");
+  const sloten = document.getElementById("sloten");
+  sloten.innerHTML = '<span class="tekst">Sloten</span>';
+  for (let i = 0; i < nodig; i++) {
+    const s = document.createElement("span");
+    s.className = "slotje" + (i < open.length ? " open" : "");
+    s.textContent = i < open.length ? "\u2713" : "?";
+    sloten.appendChild(s);
+  }
+</script>
+</body>
+</html>

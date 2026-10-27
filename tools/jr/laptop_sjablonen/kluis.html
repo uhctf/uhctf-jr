@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>De kluis</title>
+  <link rel="stylesheet" href="../stijl.css">
+  <style>
+    .kluis-wrap{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start}
+    @media(max-width:760px){.kluis-wrap{grid-template-columns:1fr}}
+    .sloten{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 20px}
+    .slot{width:84px;height:84px;border:4px solid var(--lijn);display:grid;place-items:center;font-family:var(--mono);font-size:36px;font-weight:900;background:#fff;transition:all .4s}
+    .slot.open{background:var(--cyaan);transform:rotate(360deg);box-shadow:4px 4px 0 var(--magenta)}
+    #formulier{flex-wrap:nowrap}
+    #antwoord{flex:1;width:auto;min-width:0;max-width:none}
+    ul.gevonden{list-style:none;padding:0;margin:14px 0 0;display:flex;gap:8px;flex-wrap:wrap}
+    ul.gevonden li{background:var(--cyaan-zacht);border:3px solid var(--lijn);padding:2px 14px;font-weight:700;font-size:15px}
+    #kluissvg{width:100%;height:auto;display:block}
+    #kluissvg .deur{transform-origin:34px 130px;transition:transform .9s cubic-bezier(.6,0,.2,1)}
+    #kluissvg.open .deur{transform:scaleX(.16)}
+    #kluissvg .binnen{opacity:0;transition:opacity .6s .3s}
+    #kluissvg.open .binnen{opacity:1}
+    #kluisdeur{display:none;text-align:center}
+    #kluisdeur.open{display:block;animation:op .8s ease-out}
+    @keyframes op{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+    #diploma{border:8px double var(--lijn);padding:32px 20px;background:#fff;margin-top:24px;box-shadow:8px 8px 0 var(--cyaan),16px 16px 0 var(--magenta)}
+    #diploma .klein{letter-spacing:.2em;text-transform:uppercase;font-family:var(--mono)}
+    #diploma h2{font-size:clamp(24px,4vw,36px);margin:6px 0;text-shadow:-2px 0 var(--magenta),2px 0 var(--cyaan)}
+    #dipl-team{font-family:var(--mono);font-size:clamp(26px,4vw,38px);font-weight:900;margin:14px 0;color:var(--magenta-donker)}
+    #dipl-lijst{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;list-style:none;padding:0;margin:8px 0}
+    #dipl-lijst li{border:3px solid var(--lijn);padding:2px 14px;background:var(--cyaan-zacht);font-weight:700;font-size:15px}
+    @media print{
+      body{background:#fff;padding:0}
+      body > main > :not(#kluisdeur), #kluisdeur > :not(#diploma){display:none !important}
+      #kluisdeur{display:block !important;animation:none}
+      #diploma{margin:0;box-shadow:none}
+      #diploma h2{text-shadow:none}
+      #dipl-team{color:#000}
+    }
+  </style>
+</head>
+<body>
+<main>
+  {{NAV}}
+  <h1>De kluis</h1>
+  <p>Typ je antwoorden. Open <strong id="nodig"></strong> sloten.</p>
+
+  <div class="kluis-wrap">
+    <div class="kaart" style="margin-top:0">
+      <h2>Sloten</h2>
+      <div class="sloten" id="sloten"></div>
+      <label for="antwoord">Antwoord</label>
+      <form class="rij" id="formulier" autocomplete="off" style="margin-top:6px">
+        <input type="text" id="antwoord" maxlength="80" spellcheck="false" autocapitalize="off">
+        <button class="primair" type="submit">Probeer</button>
+      </form>
+      <div class="melding" id="melding" role="status" style="margin-top:12px"></div>
+      <ul class="gevonden" id="gevonden"></ul>
+    </div>
+    <svg id="kluissvg" viewBox="0 0 260 260" role="img" aria-label="Kluis">
+      <rect x="8" y="8" width="244" height="244" fill="#fff" stroke="#222" stroke-width="7"/>
+      <rect x="34" y="34" width="192" height="192" fill="#222"/>
+      <g class="binnen">
+        <rect x="60" y="150" width="140" height="10" fill="#ff00cc"/><rect x="72" y="166" width="116" height="10" fill="#00efe1"/>
+        <path d="M130 70l9 18 20 3-14 14 3 20-18-10-18 10 3-20-14-14 20-3z" fill="#fff"/>
+      </g>
+      <g class="deur">
+        <rect x="34" y="34" width="192" height="192" fill="#00efe1" stroke="#222" stroke-width="7"/>
+        <rect x="82" y="82" width="96" height="96" fill="#fff" stroke="#222" stroke-width="7" transform="rotate(45 130 130)"/>
+        <rect x="112" y="112" width="36" height="36" fill="#ff00cc" stroke="#222" stroke-width="5" transform="rotate(45 130 130)"/>
+        <path d="M130 56v22M130 182v22M56 130h22M182 130h22" stroke="#222" stroke-width="7" stroke-linecap="square"/>
+        <rect x="40" y="70" width="10" height="26" fill="#222"/><rect x="40" y="164" width="10" height="26" fill="#222"/>
+      </g>
+    </svg>
+  </div>
+
+  <div id="kluisdeur">
+    <div id="diploma">
+      <div class="klein">UHCTF Jr</div>
+      <h2>Diploma Junior Security Expert</h2>
+      <p>voor het team</p>
+      <div id="dipl-team"></div>
+      <p>Opgelost:</p>
+      <ul id="dipl-lijst"></ul>
+      <p class="klein" id="dipl-datum"></p>
+    </div>
+    <div class="rij" style="justify-content:center">
+      <input type="text" id="dipl-naam" maxlength="40" placeholder="Teamnaam" aria-label="Teamnaam">
+      <button class="primair" id="print" type="button">Print het diploma</button>
+    </div>
+  </div>
+
+  <div class="rij" style="margin-top:32px"><button id="reset" type="button" class="klein">Nieuw team (begeleider)</button></div>
+</main>
+<script>
+  const data = {{DATA}};
+
+  // SHA-256 in gewone JavaScript: werkt ook vanaf schijf (file://), waar crypto.subtle niet altijd beschikbaar is.
+  const K = [], H0 = [];
+  (function () {
+    for (let n = 2, i = 0; i < 64; n++) {
+      let priem = true;
+      for (let d = 2; d * d <= n; d++) if (n % d === 0) { priem = false; break; }
+      if (!priem) continue;
+      K[i] = (Math.pow(n, 1 / 3) % 1 * 4294967296) | 0;
+      if (i < 8) H0[i] = (Math.pow(n, 1 / 2) % 1 * 4294967296) | 0;
+      i++;
+    }
+  })();
+  function sha256(tekst) {
+    const bytes = new TextEncoder().encode(tekst), l = bytes.length, bits = l * 8;
+    const n = ((l + 9 + 63) >> 6) << 6, w = new Uint8Array(n);
+    w.set(bytes); w[l] = 0x80;
+    const dv = new DataView(w.buffer);
+    dv.setUint32(n - 4, bits >>> 0); dv.setUint32(n - 8, Math.floor(bits / 4294967296));
+    let h = H0.slice();
+    const x = new Int32Array(64);
+    for (let o = 0; o < n; o += 64) {
+      for (let i = 0; i < 16; i++) x[i] = dv.getInt32(o + i * 4);
+      for (let i = 16; i < 64; i++) {
+        const p = x[i - 15], q = x[i - 2];
+        const s0 = ((p >>> 7) | (p << 25)) ^ ((p >>> 18) | (p << 14)) ^ (p >>> 3);
+        const s1 = ((q >>> 17) | (q << 15)) ^ ((q >>> 19) | (q << 13)) ^ (q >>> 10);
+        x[i] = (x[i - 16] + s0 + x[i - 7] + s1) | 0;
+      }
+      let [a, b, c, d, e, f, g, hh] = h;
+      for (let i = 0; i < 64; i++) {
+        const S1 = ((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7));
+        const t1 = (hh + S1 + ((e & f) ^ (~e & g)) + K[i] + x[i]) | 0;
+        const S0 = ((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10));
+        const t2 = (S0 + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      h = [h[0] + a | 0, h[1] + b | 0, h[2] + c | 0, h[3] + d | 0, h[4] + e | 0, h[5] + f | 0, h[6] + g | 0, h[7] + hh | 0];
+    }
+    return h.map(v => (v >>> 0).toString(16).padStart(8, "0")).join("");
+  }
+  // Hoofdletters, spaties, accenten en leestekens tellen niet mee. Gelijk aan de normalisatie bij het bouwen.
+  const normaliseer = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const hash = s => sha256(data.salt + ":" + normaliseer(s));
+
+  const $ = id => document.getElementById(id);
+  const OPSLAG = "uhctf-kluis-" + data.event, TEAM = "uhctf-team-" + data.event;
+  let open = [];  // ids van geopende sloten
+  const lees = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const schrijf = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  try { open = JSON.parse(lees(OPSLAG) || "[]").filter(id => data.opdrachten.some(o => o.id === id)); } catch (e) { open = []; }
+
+  function toon() {
+    $("nodig").textContent = data.nodig;
+    $("sloten").innerHTML = "";
+    for (let i = 0; i < data.nodig; i++) {
+      const s = document.createElement("div");
+      s.className = "slot" + (i < open.length ? " open" : "");
+      s.textContent = i < open.length ? "✓" : "?";
+      $("sloten").appendChild(s);
+    }
+    $("gevonden").innerHTML = "";
+    for (const id of open) {
+      const li = document.createElement("li");
+      li.textContent = data.opdrachten.find(o => o.id === id).naam;
+      $("gevonden").appendChild(li);
+    }
+    const klaar = open.length >= data.nodig;
+    $("kluisdeur").classList.toggle("open", klaar);
+    $("kluissvg").classList.toggle("open", klaar);
+    if (klaar) {
+      const team = lees(TEAM) || "";
+      $("dipl-naam").value = team;
+      $("dipl-team").textContent = team || "(vul de teamnaam in)";
+      $("dipl-datum").textContent = data.datum;
+      $("dipl-lijst").innerHTML = "";
+      for (const id of open) {
+        const li = document.createElement("li");
+        li.textContent = data.opdrachten.find(o => o.id === id).naam;
+        $("dipl-lijst").appendChild(li);
+      }
+    }
+  }
+  function melding(tekst, soort) { $("melding").textContent = tekst; $("melding").className = "melding " + soort; }
+
+  $("formulier").addEventListener("submit", e => {
+    e.preventDefault();
+    const invoer = $("antwoord").value;
+    if (!normaliseer(invoer)) return melding("Typ eerst een antwoord.", "fout");
+    const h = hash(invoer);
+    const o = data.opdrachten.find(o => o.hashes.includes(h));
+    if (!o) return melding("Dat klopt niet. Probeer opnieuw.", "fout");
+    if (open.includes(o.id)) return melding("Dat slot is al open.", "fout");
+    open.push(o.id);
+    schrijf(OPSLAG, JSON.stringify(open));
+    $("antwoord").value = "";
+    melding("Goed zo! " + o.naam + " is open.", "goed");
+    toon();
+  });
+  $("dipl-naam").addEventListener("input", () => {
+    schrijf(TEAM, $("dipl-naam").value);
+    $("dipl-team").textContent = $("dipl-naam").value || "(vul de teamnaam in)";
+  });
+  $("print").addEventListener("click", () => window.print());
+  $("reset").addEventListener("click", () => {
+    if (!confirm("Alles wissen voor een nieuw team?")) return;
+    schrijf(OPSLAG, "[]"); schrijf(TEAM, "");
+    open = []; melding("", "");
+    toon();
+  });
+  toon();
+</script>
+</body>
+</html>

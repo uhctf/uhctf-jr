@@ -4,10 +4,13 @@ from pathlib import Path
 
 import tomllib
 
+from . import laptop
 from .challenge import Challenge, toml_waarde
 from .paths import EVENTS, ToolError
 
-KOP = "# Uitdagingen voor dit event. Elke tabel is een uitdaging; sleutels overschrijven de standaardwaarden.\n"
+KOP = ("# Instellingen en uitdagingen voor dit event. [laptop] (optioneel) bevat de instellingen van de laptopmap; elke andere tabel is een uitdaging.\n"
+       "# Sleutels in een uitdaging overschrijven de standaardwaarden. digitaal = true bouwt ook een versie voor op de laptop.\n")
+LAPTOP = "laptop"  # gereserveerde tabel: de instellingen van de laptopmap, geen uitdaging
 
 
 def alle() -> list[str]:
@@ -21,14 +24,25 @@ class Event:
         self.dir = EVENTS / naam
         if not NAAM_RE.match(naam) or not self.dir.is_dir():
             raise ToolError(f"Onbekend event '{naam}'. Beschikbaar: {', '.join(alle())}. Nieuw event: ./jr event new {naam}")
-        self.bestand = self.dir / "uitdagingen.toml"
+        self.bestand = self.dir / "event.toml"
 
-    def lees(self) -> dict[str, dict]:
+    def _lees_alles(self) -> dict[str, dict]:
         if not self.bestand.exists():
             return {}
         return tomllib.loads(self.bestand.read_text())
 
+    def lees(self) -> dict[str, dict]:
+        """De uitdagingen van het event (zonder de [laptop]-tabel)."""
+        return {naam: o for naam, o in self._lees_alles().items() if naam != LAPTOP}
+
+    def laptop_config(self) -> dict | None:
+        """De instellingen van de laptopmap, of None als het event er geen heeft."""
+        return self._lees_alles().get(LAPTOP)
+
     def schrijf(self, data: dict[str, dict]) -> None:
+        laptop = self.laptop_config()
+        if laptop is not None:
+            data = {LAPTOP: laptop, **data}
         delen = [KOP]
         for naam, overrides in data.items():
             delen.append(f"\n[{naam}]\n")
@@ -89,11 +103,12 @@ class Event:
         if uit.exists():
             shutil.rmtree(uit)
         uit.mkdir()
-        rijen = []
+        rijen, resultaten = [], []
         for ch, overrides in items:
             print(f"- {ch.naam} ...", end=" ", flush=True)
             antwoord = ch.build(uit / ch.naam, self._pad_overrides(ch, overrides))
             print("ok")
+            resultaten.append({"naam": ch.naam, "config": ch.config, "antwoord": antwoord, "uit": uit / ch.naam})
             titel = ch.config.get("nl", {}).get("naam", ch.naam)
             if ch.is_static:
                 vlaggen = "\n".join(f"{label}: {waarde}" for label, waarde in ch.config.get("vlaggen", []))
@@ -102,6 +117,8 @@ class Event:
                 bron = "event" if overrides else "standaard"
                 rijen.append((titel, antwoord if antwoord is not None else "(geen vlag)", bron))
         self._antwoorden_pdf(uit / "ANTWOORDEN.pdf", rijen)
+        print("- laptopmap ...", end=" ", flush=True)
+        print("ok" if laptop.bouw(self.naam, self.laptop_config(), resultaten, uit) else "overgeslagen (geen [laptop] in event.toml)")
         return uit
 
 
@@ -115,5 +132,5 @@ def nieuw(naam: str, template: Path) -> Path:
     doel.mkdir(parents=True)
     tekst = template.read_text().replace("<+Naam+>", naam.replace("-", " ").title())
     (doel / "README.md").write_text(tekst)
-    (doel / "uitdagingen.toml").write_text(KOP)
+    (doel / "event.toml").write_text(KOP)
     return doel

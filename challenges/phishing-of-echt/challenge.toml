@@ -1,0 +1,42 @@
+# Gegenereerde uitdaging: ./jr build phishing-of-echt maakt de pdf's met de standaardwaarden.
+type = "generated"
+# Het antwoord: 3 tot 8 letters, één nepbericht per letter. Met komma's (bv. "vissen, hengel, lokaas") krijg je een variant per woord.
+antwoord = "vissen"
+
+[opties]
+taal = "nl"
+# Dezelfde seed geeft altijd dezelfde kaartjes in dezelfde volgorde
+seed = 2025
+# Aantal echte berichten tussen de nepberichten (1 tot 5)
+echt = 2
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt, per variant
+digitaal = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Phishing of echt?"
+onderwerp = "Phishing herkennen, veilig omgaan met berichten"
+materiaal = "geprinte kaartjes (`deelnemer.pdf`), potlood"
+beschrijving = '''
+Je krijgt elke dag berichten: van vrienden, van familie, van spelletjes. Maar soms probeert iemand je te beetnemen om je wachtwoord of gegevens te stelen. Dat heet phishing. Welke berichten zijn nep? Zoek de rode vlaggen.
+'''
+hints = [
+  "Kijk eerst naar de afzender: ken je die?",
+  "Vraagt het bericht je wachtwoord of gegevens, of is er haast? Dan is het nep.",
+  "Een link met rare tekens of spelfouten in de naam is een rode vlag.",
+]
+opzet = '''
+Print `deelnemer.pdf` per kind of team en geef potloden mee. Op het blad staan berichtenkaartjes (sms, e-mail, chat, pop-up), elk met een nummer en een letter. Een deel is nep, de rest is echt. De kinderen zoeken de rode vlaggen (onbekende afzender, haast of dreigen, te mooi om waar te zijn, vraagt wachtwoord of gegevens, rare link of spelling), zetten een kruisje bij elk nepbericht en schrijven de letters van de nepberichten op, in de volgorde van de nummers. Dat spelt het antwoord. `begeleider.pdf` toont per kaartje of het echt of nep is, welke rode vlaggen erin zitten en waarom een echt bericht in orde is.
+
+Het aantal nepberichten is het aantal letters van het antwoord (3 tot 8); `echt` bepaalt hoeveel echte berichten ertussen staan (1 tot 5). Zet je meerdere woorden in `antwoord`, gescheiden door een komma, dan krijg je een variant per woord (`deelnemer.pdf`, `deelnemer-2.pdf`, `deelnemer-3.pdf`) met andere kaartjes en een ander antwoord, zodat een volgend groepje het niet kan doorvertellen.
+
+Met `digitaal = true` komt er per variant ook een versie bij voor op een laptop (`digitaal.html`, `digitaal-2.html`, ...): de kinderen vinken per bericht de rode vlaggen aan en markeren de berichten die ze nep vinden; onderaan staan de letters van die berichten. De pagina controleert niets. De uitleg per bericht staat alleen in `begeleider.pdf`.
+
+Bespreek na afloop: wat doe je als je een nepbericht krijgt? Niet klikken, niets invullen, en het aan een volwassene tonen. De berichten in de generator zijn verzonnen voor 10 à 11 jaar; je vindt ze in `generate.py`.
+'''

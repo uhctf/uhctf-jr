@@ -10,10 +10,13 @@ Herbruikbare uitdagingen. Eén map per uitdaging; elke README wordt gegenereerd 
 | [Kraak de code](kraak-de-code/) | gegenereerd | booth | 12–15 | 10–15 min | Programmeren, recursie |
 | [Laag na laag](laag-na-laag/) | gegenereerd | booth | 12–15 | 10–15 min | Base64, hexadecimaal, binair |
 | [Lockpicking](lockpicking/) | gegenereerd | booth | 12–18 | 10–20 min | Hoe sloten werken, ethiek van beveiligingsonderzoek |
+| [Phishing of echt?](phishing-of-echt/) | gegenereerd | booth | 8–12 | 10 min | Phishing herkennen, veilig omgaan met berichten |
 | [Robot-QR](robot-qr/) | gegenereerd | booth | 12–15 | 10–15 min | Afbeeldingen bewerken, QR-codes, verborgen informatie |
 | [Romeinse geheimen](romeinse-geheimen/) | gegenereerd | booth | 8–12 | 5–10 min | Caesarcijfer (ROT-N) |
-| [De verloren uitdaging](verloren-uitdaging/) | statisch | booth | 8–12 | 5–10 min | URL's, foutmeldingen lezen |
+| [Schatkaart](schatkaart/) | gegenereerd | booth | 8–12 | 10 min | Raadsels oplossen, coördinaten |
+| [Wachtwoord-mastermind](wachtwoord-mastermind/) | gegenereerd | booth | 8–12 | 10 min | Veilige wachtwoorden, logisch redeneren |
 | [Webvlaggen](webvlaggen/) | statisch | booth | 12–18 | 15–20 min | Webpagina's bekijken, bronnen en bestanden, talen |
+| [Wie is de hacker?](wie-is-de-hacker/) | gegenereerd | booth | 8–12 | 10 min | Logisch redeneren, deductie |
 | [Woordzoeker](woordzoeker/) | gegenereerd | booth | 8–12 | 5–10 min | Puzzelen, observeren |
 
 Gegenereerde uitdagingen bouw je met `./jr build <naam>`; zie [CONTRIBUTING.md](../CONTRIBUTING.md). Statische uitdagingen hebben vast materiaal.

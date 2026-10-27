@@ -11,7 +11,7 @@
 
 ## Uitdagingen
 
-De uitdagingen en eventuele eigen antwoorden staan in [uitdagingen.toml](uitdagingen.toml).
+De uitdagingen en eventuele eigen antwoorden staan in [event.toml](event.toml).
 Beheer ze met `./jr event add|remove|show` en bouw alles met `./jr event build <event>`.
 
 ## Materiaal

@@ -6,17 +6,16 @@ from pathlib import Path
 
 from reportlab.lib.units import cm
 
+from jr.digitaal import schrijf
 from jr.pdf import H, MARGE, W, Pdf, begeleider
 
 TEKST = {
-    "nl": {"titel": "Doolhof", "intro": "Vind je weg door het doolhof van Start naar Einde. De reis brengt de beloning: "
-                                         "schrijf de letters op die je onderweg tegenkomt.",
+    "nl": {"titel": "Doolhof", "intro": "Vind je weg van Start naar Einde. Schrijf de letters op die je onderweg tegenkomt.",
            "start": "Start", "einde": "Einde", "oplossing_titel": "oplossing",
            "oplossing": "Volg de route van Start naar Einde en lees de letters in volgorde. Letters naast de route zijn afleiding.",
            "hints": ["Het doolhof staat vol letters.", "Volg de route van Start naar Einde.",
                      "Schrijf enkel de letters op die op jouw route staan, in de juiste volgorde."]},
-    "en": {"titel": "Maze", "intro": "Find your way through the maze from Start to End. The journey brings the reward: "
-                                     "write down the letters you meet along the way.",
+    "en": {"titel": "Maze", "intro": "Find your way from Start to End. Write down the letters you meet on the way.",
            "start": "Start", "einde": "End", "oplossing_titel": "solution",
            "oplossing": "Follow the route from Start to End and read the letters in order. Letters off the route are decoys.",
            "hints": ["The maze is full of letters.", "Follow the route from Start to End.",
@@ -148,7 +147,32 @@ def generate(params: dict, uit: Path) -> str:
     b.pagina(t["titel"] + " - " + t["oplossing_titel"])
     teken(b, params, data, t, toon_route=True)
     b.opslaan()
+    if params.get("digitaal"):
+        digitaal(params, data, uit, t)
     return antwoord
+
+
+def digitaal(params: dict, data, uit: Path, t: dict) -> None:
+    """Spelbare versie: de kinderen lopen zelf door het doolhof en de letters op hun route komen onderaan."""
+    open_, start, einde, _, letters, afleiding = data
+    b, h = params["breedte"], params["hoogte"]
+    gegevens = {"breedte": b, "hoogte": h, "start": list(start), "einde": list(einde),
+                "open": [["".join(sorted(open_[(x, y)])) for x in range(b)] for y in range(h)],
+                "letters": {f"{x},{y}": letter for (x, y), letter in {**afleiding, **letters}.items()}}
+    body = """  <div class="kaart">
+    <h2>Doolhof</h2>
+    <canvas id="doolhof" style="max-width:100%;height:auto;display:block;margin:0 auto" aria-label="Doolhof"></canvas>
+    <div class="rij" style="justify-content:center">
+      <button data-richting="W" type="button" aria-label="Links">&larr;</button>
+      <button data-richting="N" type="button" aria-label="Omhoog">&uarr;</button>
+      <button data-richting="S" type="button" aria-label="Omlaag">&darr;</button>
+      <button data-richting="O" type="button" aria-label="Rechts">&rarr;</button>
+      <button id="opnieuw" type="button">Opnieuw beginnen</button>
+    </div>
+    <p class="klein" style="text-align:center">Pijltjestoetsen of WASD.</p>
+    <p><strong>Letters op jouw route:</strong> <span id="letters" class="antwoordbalk"></span></p>
+  </div>"""
+    schrijf(uit, "Doolhof", "Vind je weg van boven naar onder.", body, Path(__file__).parent / "digitaal.js", gegevens, t["hints"])
 
 
 def check(params: dict) -> None:

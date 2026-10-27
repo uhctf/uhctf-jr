@@ -4,18 +4,17 @@ from pathlib import Path
 
 from reportlab.lib.units import cm
 
+from jr.digitaal import schrijf
 from jr.pdf import MARGE, W, Pdf, begeleider
 
 MIN_WOORDEN = 4  # een woordzoeker met minder woorden is geen puzzel
 RICHTINGEN = [(0, 1), (1, 0), (1, 1), (-1, 1), (0, -1), (-1, 0), (-1, -1), (1, -1)]  # eerste vier: vooruit
 TEKST = {
-    "nl": {"titel": "Woordzoeker", "oplossing_titel": "oplossing", "intro": "Zoek de woorden uit de lijst en kruis ze af. Welke letters blijven over? "
-                                            "Lees ze van links naar rechts, van boven naar onder.",
+    "nl": {"titel": "Woordzoeker", "oplossing_titel": "oplossing", "intro": "Zoek de woorden en kruis ze af. De letters die overblijven, van links naar rechts en van boven naar onder, vormen het antwoord.",
            "oplossing": "Alle woorden staan in het raster. De {n} overgebleven letters spellen, in leesrichting, het antwoord.",
            "hints": ["Zoek eerst alle woorden uit de lijst en kruis ze af.", "Niet elke letter hoort bij een woord.",
                      "Lees de overgebleven letters in leesrichting."]},
-    "en": {"titel": "Word search", "oplossing_titel": "solution", "intro": "Find the words in the list and cross them out. Which letters are left? "
-                                            "Read them left to right, top to bottom.",
+    "en": {"titel": "Word search", "oplossing_titel": "solution", "intro": "Find the words and cross them out. The letters left over, left to right and top to bottom, are the answer.",
            "oplossing": "All words are in the grid. The {n} remaining letters spell the answer in reading order.",
            "hints": ["First find all words in the list and cross them out.", "Not every letter belongs to a word.",
                      "Read the remaining letters in reading order."]},
@@ -120,7 +119,37 @@ def generate(params: dict, uit: Path) -> str:
     gemarkeerd = {cel for cellen in plaatsen.values() for cel in cellen}
     teken(b, raster, gebruikt, markeer=gemarkeerd, cirkel=set(vrij))
     b.opslaan()
+    if params.get("digitaal"):
+        digitaal(raster, gebruikt, uit, t)
     return antwoord
+
+
+def digitaal(raster, gebruikt, uit: Path, t: dict) -> None:
+    """Digitaal potlood: letters markeren en woorden doorstrepen. Onderaan staan de letters die niet gemarkeerd zijn; de pagina controleert niets."""
+    css = """
+.raster-cellen{display:grid;gap:4px;max-width:580px;margin:0 auto}
+.cel{padding:0;aspect-ratio:1;font-family:var(--mono);font-size:clamp(16px,3.4vw,28px);font-weight:900;box-shadow:none;border-width:2px;background:#fff}
+.cel:hover{background:var(--cyaan-zacht);transform:none;box-shadow:none}
+.cel.gevonden{background:var(--cyaan)}
+#woorden{list-style:none;padding:0;columns:3;gap:8px;margin:12px 0}
+#woorden .woord{width:100%;text-align:left;box-shadow:none;border-width:2px;padding:3px 10px;margin:3px 0;font-family:var(--mono);font-size:15px;}
+#woorden .woord.klaar{text-decoration:line-through;text-decoration-color:var(--magenta);text-decoration-thickness:3px;color:var(--muted);background:#ececf2}
+@media(max-width:600px){#woorden{columns:2}}
+"""
+    body = """  <div class="kaart">
+    <h2>Raster</h2>
+    <div id="raster" class="raster-cellen"></div>
+    <div class="rij"><button id="wis" type="button">Alle markeringen wissen</button></div>
+    <p class="klein">Klik op een letter om te markeren, op een woord om door te strepen.</p>
+    <ul id="woorden"></ul>
+  </div>
+  <div class="kaart">
+    <h2>Letters die overblijven</h2>
+    <div id="rest" class="antwoordbalk"></div>
+  </div>"""
+    gegevens = {"raster": ["".join(rij) for rij in raster], "woorden": sorted(gebruikt)}
+    schrijf(uit, t["titel"], "Markeer de woorden uit de lijst. Welke letters blijven over?", body,
+            Path(__file__).parent / "digitaal.js", gegevens, t["hints"], css)
 
 
 def check(params: dict) -> None:

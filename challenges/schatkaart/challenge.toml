@@ -1,0 +1,38 @@
+# Gegenereerde uitdaging: ./jr build schatkaart maakt de pdf's met de standaardwaarden.
+type = "generated"
+# Het wachtwoord van de schatkist: 3 tot 12 letters, één raadsel per letter
+antwoord = "sleutel"
+
+[opties]
+taal = "nl"
+# Dezelfde seed geeft altijd dezelfde kaart
+seed = 2025
+# Totaal aantal stippen op de kaart (de rest zijn afleiders), hoogstens 70
+punten = 45
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt
+digitaal = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Schatkaart"
+onderwerp = "Raadsels oplossen, coördinaten"
+materiaal = "geprinte kaart met raadsels (`deelnemer.pdf`), potlood"
+beschrijving = '''
+Piraat Rik heeft zijn schat verstopt, maar de kaart staat vol stippen. Welke stippen zijn de juiste? Alleen de raadsels weten het.
+'''
+hints = [
+  "Los eerst alle raadsels op: schrijf per raadsel een letter en een getal op.",
+  "Een plaats heet bv. C4: kolom C, rij 4. Zoek de stip daar.",
+  "Veel stippen horen bij geen enkel raadsel. Negeer die.",
+]
+opzet = '''
+Print `deelnemer.pdf` per kind of team en geef potloden mee. Op het blad staat een kaart met een raster (kolommen A tot J, rijen 1 tot 10) en veel stippen, elk met een letter. Elk raadsel bestaat uit twee delen: een kolomraadsel (het antwoord is een letter) en een rijraadsel (het antwoord is een getal). Samen wijzen ze één stip aan. De letters bij die stippen, in volgorde van de raadsels, spellen het antwoord. De meeste stippen zijn afleiders: zonder de raadsels weet je niet welke de juiste zijn.
+
+Met `antwoord` bepaal je het wachtwoord (3 tot 12 letters, één raadsel per letter) en met `punten` hoeveel stippen er in totaal staan. `begeleider.pdf` bevat de oplossing per raadsel en een kaart met de juiste stippen omcirkeld en met een lijn verbonden. De raadsels zijn zelf geschreven voor 10 à 11 jaar; ze komen uit vaste lijsten in `generate.py`. Voeg daar eigen raadsels aan toe voor een andere doelgroep. Met `digitaal = true` komt er ook een klikbare kaart bij voor op een laptop (`digitaal.html`): de kinderen kiezen een raadsel en klikken op de stip die erbij hoort.
+'''

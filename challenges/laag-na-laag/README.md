@@ -38,7 +38,7 @@ MzAzMTMxMzAzMTMxMzAzMDIwMzAzMTMxMzAzMDMwMzAzMTIwMzAzMTMxMzEzMTMwMzAzMTIwMzAzMTMx
 
 ## Opzet
 
-`lagen` is de volgorde waarin het antwoord wordt ingepakt, uit `binair`, `hex`, `base64`, `rot13` en `morse`. Deelnemers pakken in omgekeerde volgorde uit met de meegeleverde [decoder](../_gedeeld/decoder/), waar meerdere stappen na elkaar kunnen. Het bericht staat ook in `bericht.txt` om te kopiëren. Zie ook [Romeinse geheimen](../romeinse-geheimen/README.md).
+`lagen` is de volgorde waarin het antwoord wordt ingepakt, uit `binair`, `hex`, `base64`, `rot13` en `morse`. Deelnemers pakken in omgekeerde volgorde uit met de meegeleverde [decoder](../_gedeeld/decoder/), waar meerdere stappen na elkaar kunnen. Het bericht staat ook in `bericht.txt` om te kopiëren. Met `digitaal = true` komt er ook een pagina bij (`digitaal.html`) met het bericht, een kopieerknop, een knop die het in de decoder opent en hints die je een voor een toont. Zie ook [Romeinse geheimen](../romeinse-geheimen/README.md).
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 
@@ -55,6 +55,6 @@ Voor een event met een eigen antwoord:
 
 De uitvoer bevat minstens `deelnemer.pdf` (uitdelen) en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Opties (standaardwaarde): `taal` ("nl"), `lagen` (["binair", "hex", "base64"]).
+Opties (standaardwaarde): `taal` ("nl"), `lagen` (["binair", "hex", "base64"]), `digitaal` (false).
 
 [SOLUTION.md](SOLUTION.md)

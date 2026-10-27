@@ -4,6 +4,7 @@ from pathlib import Path
 
 from reportlab.lib.units import cm
 
+from jr.digitaal import schrijf
 from jr.pdf import MARGE, W, Pdf, begeleider
 
 LETTERS = "ABCDEFGHIJ"
@@ -25,13 +26,16 @@ NAMEN = ["Lotte", "Yasmine", "Finn", "Arne", "Elise", "Jonas", "Maya", "Lars"]
 TEKST = {
     "nl": {
         "titel": "Wachtwoord-mastermind",
-        "intro": "{naam} is het wachtwoord vergeten! Het enige wat {naam} nog weet: er zitten {n} favoriete dingen uit het profiel in (zie het andere blad), in een bepaalde volgorde. Kun jij helpen om het wachtwoord terug te vinden?",
+        "intro": "{naam} is het wachtwoord vergeten. Het bestaat uit {n} dingen uit het profiel (het andere blad), in een bepaalde volgorde.",
         "regels": ["Schrijf {n} letters uit het profiel in een rij.",
-                   "De begeleider zegt per vak of het juist is, fout, of juist maar op de verkeerde plaats. Markeer dat met het juiste rondje.",
+                   "De begeleider zegt per vak: juist, fout of verkeerde plaats. Markeer dat met het juiste rondje.",
                    "Het wachtwoord is de {n} dingen aan elkaar, in kleine letters."],
+        "voorbeeld": "Voorbeeld (grijze rij): het wachtwoord is {geheim}, je gokt {gok}.",
+        "soort": {"juist": "juist", "fout": "fout", "plaats": "juist maar verkeerde plaats"},
+        "variant": "Variant {i}: {naam}",
         "profiel": "Profiel van {naam}", "bio": "Hoi! Dit is mijn profiel. Volg me!",
         "gok": "Gok", "legenda": "juist", "legenda2": "fout", "legenda3": "juist, verkeerde plaats",
-        "oplossing": "Het wachtwoord van {naam} is, in volgorde, {letters}: {delen}. Aan elkaar geplakt: {antwoord}. (seed {seed}: bouw opnieuw met --set seed={seed} voor hetzelfde profiel)",
+        "oplossing": "Het wachtwoord van {naam} is, in volgorde, {letters}: {delen}. Aan elkaar geplakt: {antwoord}. (seed {seed}: zet seed = {seed} bij de opties van deze uitdaging om hetzelfde profiel opnieuw te bouwen)",
         "controle": "Controle van een gok, per letter: staat de letter op die plaats in het wachtwoord, zeg dan juist. Zit hij wel in het wachtwoord maar op een andere plaats, zeg dan juist maar verkeerde plaats. "
                     "Zit hij er niet in, zeg dan fout. Een kind markeert dat in het vak.",
         "hints": ["Alle {n} delen van het wachtwoord staan in het profiel.",
@@ -40,13 +44,16 @@ TEKST = {
     },
     "en": {
         "titel": "Password mastermind",
-        "intro": "{naam} forgot the password! All {naam} still remembers is that it contains {n} favourite things from the profile (see the other sheet), in a certain order. Can you help find the password?",
+        "intro": "{naam} forgot the password. It consists of {n} things from the profile (the other sheet), in a certain order.",
         "regels": ["Write {n} letters from the profile in a row.",
-                   "The facilitator says for each box whether it is right, wrong, or right but in the wrong place. Mark it with the matching circle.",
+                   "The facilitator says for each box: right, wrong or wrong place. Mark it with the matching circle.",
                    "The password is the {n} things glued together, in lower case."],
+        "voorbeeld": "Example (grey row): the password is {geheim}, you guess {gok}.",
+        "soort": {"juist": "right", "fout": "wrong", "plaats": "right but wrong place"},
+        "variant": "Variant {i}: {naam}",
         "profiel": "{naam}'s profile", "bio": "Hi! This is my profile. Follow me!",
         "gok": "Guess", "legenda": "right", "legenda2": "wrong", "legenda3": "right, wrong place",
-        "oplossing": "{naam}'s password is, in order, {letters}: {delen}. Glued together: {antwoord}. (seed {seed}: rebuild with --set seed={seed} for the same profile)",
+        "oplossing": "{naam}'s password is, in order, {letters}: {delen}. Glued together: {antwoord}. (seed {seed}: set seed = {seed} in this challenge's options to rebuild the same profile)",
         "controle": "Checking a guess, per letter: if the letter is at that position in the password, say right. If it is in the password but at another position, say right but wrong place. "
                     "If it is not in the password, say wrong. The child marks that in the box.",
         "hints": ["All {n} parts of the password are in the profile.",
@@ -66,17 +73,19 @@ def los_seed(params: dict) -> dict:
     return params
 
 
-def maak_profiel(params: dict) -> dict:
+def maak_profiel(params: dict, taboe: tuple = ()) -> dict:
     n, aantal = params["lengte"], params["aantal"]
     if not 1 <= params["pogingen"] <= 10:
         raise ValueError("pogingen moet tussen 1 en 10 liggen (meer rijen passen niet op de pagina)")
+    if not 1 <= params["varianten"] <= len(NAMEN):
+        raise ValueError(f"varianten moet tussen 1 en {len(NAMEN)} liggen (elke variant krijgt een andere naam)")
     if not 2 <= n <= aantal <= min(len(CATEGORIEEN), len(LETTERS)):
         raise ValueError(f"Kies 2 <= lengte <= aantal <= {min(len(CATEGORIEEN), len(LETTERS))}")
     rng = random.Random(params["seed"])
     cats = rng.sample(list(CATEGORIEEN), aantal)  # volgorde in het profiel = volgorde van de letters
     waarden = {c: rng.choice(CATEGORIEEN[c][2]) for c in cats}
     geheim = rng.sample(range(aantal), n)  # indexen in het profiel, in wachtwoordvolgorde
-    return {"naam": rng.choice(NAMEN), "cats": cats, "waarden": waarden, "geheim": geheim,
+    return {"naam": rng.choice([x for x in NAMEN if x not in taboe]), "cats": cats, "waarden": waarden, "geheim": geheim,
             "wachtwoord": "".join(waarden[cats[i]] for i in geheim)}
 
 
@@ -105,13 +114,29 @@ def vinkje(c, x: float, y: float, r: float, soort: str) -> None:
 SOORTEN = ("juist", "fout", "plaats")
 
 
-def teken_schema(p: Pdf, n: int, pogingen: int, t: dict) -> None:
+def voorbeeld(n: int, aantal: int) -> tuple[list[int], list[int]]:
+    """Voorbeeldgok bij een verzonnen wachtwoord: een juiste plek, twee verwisselde en (als er afleiders zijn) een foute."""
+    geheim = list(range(n))
+    gok = geheim[:]
+    if n >= 3:
+        gok[1], gok[2] = gok[2], gok[1]
+    if aantal > n:
+        gok[-1] = n
+    return geheim, gok
+
+
+def teken_schema(p: Pdf, n: int, aantal: int, pogingen: int, t: dict) -> None:
     """Lijst met gokken. In elk vak schrijf je een letter en markeer je het als juist, fout of juist maar verkeerde plaats."""
     c = p.c
     gat = 0.15 * cm
     x_vak = MARGE + 0.9 * cm
     vak_b = (W - MARGE - x_vak - (n - 1) * gat) / n
-    vak_h, rij_h = 2.0 * cm, 2.4 * cm
+    vak_h, rij_h = 1.8 * cm, 2.2 * cm
+    geheim, gok = voorbeeld(n, aantal)
+    # het voorbeeld (een extra rij) komt er enkel bij als het op de pagina past
+    met_voorbeeld = p.y - 3 * 10 * 1.4 - 4 - 0.3 * cm - (pogingen + 1) * rij_h > MARGE + 1 * cm
+    if met_voorbeeld:
+        p.regel(t["voorbeeld"].format(geheim=" ".join(LETTERS[i] for i in geheim), gok=" ".join(LETTERS[i] for i in gok)), 10)
     p.ruimte(4)
     kop_y = p.y - 0.3 * cm
     c.setFont("Helvetica-Bold", 9)
@@ -123,17 +148,37 @@ def teken_schema(p: Pdf, n: int, pogingen: int, t: dict) -> None:
         c.setFont("Helvetica", 9)
         c.drawString(x + 0.35 * cm, kop_y, label)
         x += 0.7 * cm + c.stringWidth(label, "Helvetica", 9) + 0.5 * cm
-    for g in range(pogingen):
-        y = kop_y - 0.3 * cm - (g + 1) * rij_h
+
+    def rij(y: float, label: str, letters: list[int] | None = None) -> None:
         c.setFont("Helvetica-Bold", 12)
-        c.drawString(MARGE, y + rij_h / 2 - 0.1 * cm, str(g + 1))
+        c.drawString(MARGE, y + rij_h / 2 - 0.1 * cm, label)
+        gekozen = feedback(geheim, letters) if letters else []
         for k in range(n):
             x = x_vak + k * (vak_b + gat)
             c.setLineWidth(1)
-            c.roundRect(x, y + 0.1 * cm, vak_b, vak_h, 4)
+            if letters:  # voorbeeldrij: grijs, met letter en de juiste markering aangeduid
+                c.setFillGray(0.9)
+                c.roundRect(x, y + 0.1 * cm, vak_b, vak_h, 4, fill=1)
+                c.setFillGray(0)
+                c.setFont("Helvetica-Bold", 20)
+                c.drawCentredString(x + vak_b / 2, y + 0.1 * cm + 1.1 * cm, LETTERS[letters[k]])
+            else:
+                c.roundRect(x, y + 0.1 * cm, vak_b, vak_h, 4)
             for i, soort in enumerate(SOORTEN):
-                vinkje(c, x + vak_b * (0.25 + 0.25 * i), y + 0.1 * cm + 0.4 * cm, 0.22 * cm, soort)
-    p.y = kop_y - 0.3 * cm - pogingen * rij_h
+                cx, cy = x + vak_b * (0.25 + 0.25 * i), y + 0.1 * cm + 0.4 * cm
+                if letters and soort == gekozen[k]:
+                    c.setFillGray(0.6)
+                    c.circle(cx, cy, 0.22 * cm, fill=1, stroke=0)
+                    c.setFillGray(0)
+                vinkje(c, cx, cy, 0.22 * cm, soort)
+
+    rijen = 0
+    if met_voorbeeld:
+        rij(kop_y - 0.3 * cm - rij_h, "bv.", gok)
+        rijen = 1
+    for g in range(pogingen):
+        rij(kop_y - 0.3 * cm - (g + 1 + rijen) * rij_h, str(g + 1))
+    p.y = kop_y - 0.3 * cm - (pogingen + rijen) * rij_h
 
 
 def teken_profiel(p: Pdf, pr: dict, t: dict, taalnr: int, seed: int) -> None:
@@ -212,30 +257,93 @@ def antwoord_van(params: dict) -> str:
     return maak_profiel(params)["wachtwoord"]
 
 
+def maak_varianten(params: dict) -> list[tuple[dict, dict]]:
+    """Per variant (parameters, profiel); variant i gebruikt seed + i en een eigen naam."""
+    resultaat, namen = [], ()
+    for i in range(params["varianten"]):
+        pi = {**params, "seed": params["seed"] + i}
+        pr = maak_profiel(pi, namen)
+        namen += (pr["naam"],)
+        resultaat.append((pi, pr))
+    return resultaat
+
+
+def digitaal_varianten(items: list, params: dict, taalnr: int, uit: Path, hints: list[str]) -> None:
+    """Spelbare versie per variant (digitaal.html, digitaal-2.html, ...): de pagina geeft de feedback per vak, zoals de begeleider op papier, maar zegt nooit of je het wachtwoord gevonden hebt."""
+    css = """
+.profiel-raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.item{display:grid;grid-template-columns:46px 1fr;grid-template-rows:auto auto;gap:0 12px;text-align:left;align-items:center;padding:10px 12px}
+.item .badge{grid-row:1 / span 2;width:46px;height:46px;background:var(--cyaan);border:3px solid var(--lijn);font-family:var(--mono);font-size:22px;font-weight:900;display:grid;place-items:center}
+.item:nth-child(even) .badge{background:var(--magenta)}
+.item .label{font-size:13px;color:var(--muted);font-weight:600}
+.item .waarde{font-size:20px}
+.gokrij{display:flex;gap:10px;margin:10px 0;align-items:stretch}
+.gokrij .nr{width:1.6em;display:flex;align-items:center;font-family:var(--mono);font-weight:900;font-size:20px}
+.vakje{flex:1;min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--lijn);padding:4px;font-family:var(--mono);font-size:28px;font-weight:900;background:#fff}
+button.vakje{box-shadow:none}
+.vakje.leeg:not(.gevuld){border-style:dashed;color:var(--muted);font-weight:400}
+.vakje.gevuld{background:var(--zacht)}
+.vakje .klein{font-family:system-ui,sans-serif;font-size:12px;font-weight:700;text-align:center;color:var(--ink)}
+.vakje.juist{background:var(--cyaan)}
+.vakje.fout{background:#e4e4ec;color:var(--muted)}
+.vakje.plaats{background:#ffb3ee}
+"""
+    for i, (pi, pr) in enumerate(items):
+        suffix = "" if i == 0 else f"-{i + 1}"
+        gegevens = {"lengte": params["lengte"], "geheim": pr["geheim"],
+                    "items": [{"letter": LETTERS[j], "label": CATEGORIEEN[cat][taalnr], "waarde": pr["waarden"][cat]}
+                              for j, cat in enumerate(pr["cats"])]}
+        body = """  <div class="kaart">
+    <h2>Het profiel van """ + pr["naam"] + """</h2>
+    <div id="profiel" class="profiel-raster"></div>
+  </div>
+  <div class="kaart">
+    <h2>Jouw gokken</h2>
+    <div id="historiek"></div>
+    <div id="nu" class="gokrij" style="margin-top:12px"></div>
+    <div class="rij"><button id="gok" class="primair" type="button">Gok!</button><button id="wis" type="button">Wis mijn gok</button><button id="opnieuw" type="button">Opnieuw beginnen</button></div>
+    <p>Als wachtwoord: <span id="tekst-gok" class="antwoordbalk"></span></p>
+  </div>
+  </div>"""
+        schrijf(uit, TEKST["nl"]["titel"], f"{pr['naam']} is het wachtwoord vergeten. Het bestaat uit {params['lengte']} dingen uit het profiel, in een bepaalde volgorde.",
+                body, Path(__file__).parent / "digitaal.js", gegevens, hints, css, naam=f"digitaal{suffix}.html")
+
+
 def generate(params: dict, uit: Path) -> str:
     params = los_seed(params)
     t = TEKST.get(params["taal"], TEKST["nl"])
     taalnr = 1 if params["taal"] == "en" else 0  # kolom in CATEGORIEEN
-    pr = maak_profiel(params)
     n = params["lengte"]
-    naam, cats = pr["naam"], pr["cats"]
+    items = maak_varianten(params)
 
-    teken_profiel(Pdf(uit / "profiel.pdf", t["profiel"].format(naam=naam)), pr, t, taalnr, params["seed"])
+    oplossing, antwoorden = [], []
+    for i, (pi, pr) in enumerate(items):
+        naam, cats = pr["naam"], pr["cats"]
+        suffix = "" if i == 0 else f"-{i + 1}"  # variant 1 houdt de standaardnamen
+        teken_profiel(Pdf(uit / f"profiel{suffix}.pdf", t["profiel"].format(naam=naam)), pr, t, taalnr, pi["seed"])
 
-    p = Pdf(uit / "deelnemer.pdf", t["titel"])
-    p.regel(t["intro"].format(naam=naam, n=n))
-    for r in t["regels"]:
-        p.regel("- " + r.format(n=n), 10)
-    teken_schema(p, n, params["pogingen"], t)
-    p.opslaan()
+        p = Pdf(uit / f"deelnemer{suffix}.pdf", t["titel"])
+        p.regel(t["intro"].format(naam=naam, n=n))
+        for r in t["regels"]:
+            p.regel("- " + r.format(n=n), 10)
+        teken_schema(p, n, params["aantal"], params["pogingen"], t)
+        p.opslaan()
 
-    letters = " ".join(LETTERS[i] for i in pr["geheim"])
-    delen = " + ".join(pr["waarden"][cats[i]] for i in pr["geheim"])
-    b = begeleider(uit / "begeleider.pdf", t["titel"], pr["wachtwoord"],
-                   [t["oplossing"].format(naam=naam, letters=letters, delen=delen, antwoord=pr["wachtwoord"], seed=params["seed"]), t["controle"]],
+        letters = " ".join(LETTERS[j] for j in pr["geheim"])
+        delen = " + ".join(pr["waarden"][cats[j]] for j in pr["geheim"])
+        tekst = t["oplossing"].format(naam=naam, letters=letters, delen=delen, antwoord=pr["wachtwoord"], seed=pi["seed"])
+        if len(items) > 1:
+            tekst = t["variant"].format(i=i + 1, naam=naam) + ". " + tekst
+        oplossing.append(tekst)
+        antwoorden.append(pr["wachtwoord"] if len(items) == 1 else f"{naam}: {pr['wachtwoord']}")
+
+    antwoord = "\n".join(antwoorden)
+    b = begeleider(uit / "begeleider.pdf", t["titel"], antwoorden[0] if len(items) == 1 else None, oplossing + [t["controle"]],
                    [h.format(n=n) for h in t["hints"]], params["taal"])
     b.opslaan()
-    return pr["wachtwoord"]
+    if params.get("digitaal"):
+        digitaal_varianten(items, params, taalnr, uit, [h.format(n=n) for h in t["hints"]])
+    return antwoord
 
 
 def check(params: dict) -> None:
@@ -249,3 +357,8 @@ def check(params: dict) -> None:
     assert pr["wachtwoord"].isalnum() and pr["wachtwoord"] == pr["wachtwoord"].lower()
     # elk profielonderdeel is uniek bruikbaar: geen twee categorieen met dezelfde waarde
     assert len(set(pr["waarden"].values())) == len(pr["waarden"])
+    # variants: eigen naam per variant, en het voorbeeld toont juist, fout en verkeerde plaats
+    namen = [v[1]["naam"] for v in maak_varianten({**params, "varianten": 3})]
+    assert len(set(namen)) == 3
+    geheim, gok = voorbeeld(n, params["aantal"])
+    assert set(feedback(geheim, gok)) == {"juist", "plaats", "fout"} or n < 3

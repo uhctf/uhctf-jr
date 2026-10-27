@@ -1,0 +1,42 @@
+# Het antwoord (de naam van de hacker) wordt berekend uit de seed.
+type = "generated"
+
+[opties]
+taal = "nl"
+# Vaste seed: dezelfde puzzel bij elke bouw
+seed = 2025
+# Aantal verdachten (3 tot 8)
+verdachten = 6
+# Minimaal aantal getuigenverklaringen: hoe hoger, hoe meer ze moeten combineren
+minimum = 5
+# Aantal verschillende puzzels (1 tot 3), met eigen verdachten en hacker, zodat groepjes elkaar niets kunnen doorvertellen. Variant 1 heet deelnemer.pdf, variant 2 deelnemer-2.pdf, enz.
+varianten = 1
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt, per variant
+digitaal = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "8–12"
+duur = "10 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Wie is de hacker?"
+onderwerp = "Logisch redeneren, deductie"
+materiaal = "geprinte puzzel (`deelnemer.pdf`), potlood"
+beschrijving = '''
+Iemand heeft het wachtwoord van de computerklas veranderd! Er zijn een paar verdachten, en de getuigen weten elk een stukje van het verhaal. Combineer wat ze zeggen en schrap de verdachten één voor één. Wie is de hacker?
+'''
+hints = [
+  "Begin met de verklaring die het meeste zegt en schrap wie niet past.",
+  "Een zin met 'geen' schrapt wie dat kenmerk wél heeft.",
+  "Houd de tabel bij: wie nog geen kruisje heeft, blijft verdacht.",
+]
+opzet = '''
+Print `deelnemer.pdf` per kind of team en geef potloden mee. Op het blad staat een tabel met de verdachten en hun kenmerken, en een lijst verklaringen van getuigen. Per verklaring zetten de kinderen een kruisje in de kolom van elke verdachte die het niet kan zijn; wie overblijft, is de hacker. Elke verklaring is waar voor de hacker, maar geen enkele is op zichzelf genoeg. Het antwoord is de naam van de hacker, in kleine letters.
+
+Met `verdachten` en `minimum` bepaal je de moeilijkheid: meer verdachten en meer verklaringen is moeilijker. Met `varianten = 3` krijg je drie puzzels met andere verdachten en een andere hacker (`deelnemer.pdf`, `deelnemer-2.pdf`, `deelnemer-3.pdf`), zodat een volgend groepje het antwoord niet kan doorvertellen. `begeleider.pdf` toont per puzzel de ingevulde tabel. Met `digitaal = true` komt er per variant ook een klikbare versie bij voor op een laptop (`digitaal.html`, `digitaal-2.html`, ...): een digitaal potlood waarmee de kinderen verdachten schrappen en verklaringen afvinken. De pagina controleert niets en kent de hacker niet. Dezelfde `seed` geeft altijd dezelfde puzzel; elke puzzel heeft precies één oplossing.
+
+Na afloop kun je bespreken hoe echte onderzoekers sporen combineren: één aanwijzing is nooit genoeg, samen vertellen ze het verhaal.
+'''

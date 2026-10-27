@@ -1,0 +1,51 @@
+# Instellingen en uitdagingen voor dit event. [laptop] bevat de instellingen van de laptopmap; elke andere tabel is een uitdaging.
+# Sleutels in een uitdaging overschrijven de standaardwaarden.
+# digitaal = true bouwt er ook een versie bij voor op de laptop (in out/laptop/); false of weglaten laat alleen het papier.
+
+# Laptopmap: ./jr event build talim-workshop maakt events/talim-workshop/out/laptop/
+# Kopieer die map naar de laptop en open index.html. Er is geen internet of server nodig.
+[laptop]
+titel = "TALim-workshop: kraak de kluis"
+# Aantal sloten dat open moet voor de kluis opengaat. Elk team kiest zelf welke opdrachten het oplost.
+nodig = 3
+# Tekst bovenaan de startpagina ({nodig} wordt het aantal sloten). Laat weg voor de standaardtekst.
+intro = "Welkom, ethische hacker! Los opdrachten op, en typ de antwoorden in de kluis. Open {nodig} sloten."
+
+[romeinse-geheimen]
+digitaal = true
+antwoord = "wachtwoord"
+met_decoder = true
+oefenwoorden = ["kat", "hond", "vis", "hamster"]
+oefenhint = "Veel voorkomende huisdieren"
+
+[doolhof]
+digitaal = false
+antwoord = "veilig"
+breedte = 10
+hoogte = 12
+
+[woordzoeker]
+digitaal = false
+antwoord = "veiligheid"
+grootte = 8
+woorden = ["slot", "sleutel", "geheim", "code", "robot", "cijfer", "scherm", "toets", "hacker", "bericht"]
+
+[lockpicking]
+
+[wachtwoord-mastermind]
+digitaal = true
+# vaste seed: bij elke bouw hetzelfde profiel en wachtwoord, op papier en digitaal
+seed = 178084
+
+[wie-is-de-hacker]
+digitaal = true
+# vaste seed: bij elke bouw dezelfde puzzel, op papier en digitaal
+seed = 2025
+
+[phishing-of-echt]
+digitaal = true
+antwoord = "vissen"
+
+[laag-na-laag]
+digitaal = true
+antwoord = "geheimtaal"

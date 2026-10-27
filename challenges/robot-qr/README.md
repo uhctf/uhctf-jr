@@ -36,7 +36,7 @@ Op de foto staat een zwarte 3D-geprinte robot met een QR-code op zijn borst. De 
 
 ## Opzet
 
-De QR-code wordt gegenereerd uit het antwoord, in donkerblauw op zwart. Deelnemers openen `beeldbewerker/index.html` lokaal in de browser (geen internet nodig). De QR-code is als standaardafbeelding ingebouwd, dus de afbeelding staat meteen klaar. `qr.png` is de afbeelding zelf, handig om te printen. Optie `schaal` stelt de grootte van de pixels in. Voor extra beleving kan de QR-code in donkerblauw op zwart filament op een 3D-geprinte robot staan. Een event kan een foto van die robot gebruiken: zet `afbeelding = "robot.jpg"` in `uitdagingen.toml` (pad vanaf de eventmap, bv. `./jr event add <event> robot-qr --set afbeelding=robot.jpg`). De foto wordt dan in de beeldbewerker ingebouwd in plaats van de gegenereerde code, en het antwoord moet overeenkomen met de QR-code op de foto.
+De QR-code wordt gegenereerd uit het antwoord, in donkerblauw op zwart. Deelnemers openen `beeldbewerker/index.html` lokaal in de browser (geen internet nodig). De QR-code is als standaardafbeelding ingebouwd, dus de afbeelding staat meteen klaar. `qr.png` is de afbeelding zelf, handig om te printen. Optie `schaal` stelt de grootte van de pixels in. Voor extra beleving kan de QR-code in donkerblauw op zwart filament op een 3D-geprinte robot staan. Een event kan een foto van die robot gebruiken: zet `afbeelding = "robot.jpg"` in `event.toml` (pad vanaf de eventmap, bv. `./jr event add <event> robot-qr --set afbeelding=robot.jpg`). De foto wordt dan in de beeldbewerker ingebouwd in plaats van de gegenereerde code, en het antwoord moet overeenkomen met de QR-code op de foto.
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 

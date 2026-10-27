@@ -113,7 +113,35 @@ De README van `_gedeeld` wordt net als die van uitdagingen gegenereerd (`./jr re
 ./jr event build mijn-event                  # schrijft events/mijn-event/out/
 ```
 
-De keuze staat in `events/<event>/uitdagingen.toml`. `out/` bevat per uitdaging het materiaal en `ANTWOORDEN.pdf` met alle antwoorden (voor begeleiders). `out/` wordt niet in git bewaard: bouw het vlak voor het event, en deel de pdf's.
+De keuze staat in `events/<event>/event.toml`. `out/` bevat per uitdaging het materiaal en `ANTWOORDEN.pdf` met alle antwoorden (voor begeleiders). `out/` wordt niet in git bewaard: bouw het vlak voor het event, en deel de pdf's.
+
+### Laptopmap
+
+Staat er een tabel `[laptop]` in `events/<event>/event.toml`, dan maakt `./jr event build` ook `out/laptop/`: een map die je naar een laptop kopieert en zonder internet of server opent via `index.html`. Ze bevat een startpagina, de decoder, de kluis en de digitale versies van de uitdagingen.
+
+```toml
+[laptop]                     # gereserveerde tabel: dit is geen uitdaging
+titel = "Naam op de startpagina"
+nodig = 3                    # aantal sloten voor de kluis opengaat
+intro = "Welkom! ... {nodig} sloten"  # optioneel: tekst bovenaan de startpagina; {nodig} wordt het aantal sloten
+```
+
+De kluis kent de antwoorden van alle uitdagingen in het event, als hash. Bij meerdere antwoorden (varianten) geeft `generate()` meerdere regels terug in de vorm `label: antwoord`; het deel na de eerste `: ` telt als antwoord. Hoofdletters, spaties en leestekens tellen niet mee.
+
+### Digitale versie van een uitdaging
+
+Een gegenereerde uitdaging kan er ook een digitale versie bij maken: een zelfstandige webpagina die offline werkt. In `challenge.toml` staat daarvoor de optie `digitaal = false` onder `[opties]`. Een event zet hem aan met `digitaal = true` in `event.toml` (of `./jr event add <event> <uitdaging> --set digitaal=ja`).
+
+In `generate()`:
+
+```python
+from jr.digitaal import schrijf
+
+if params.get("digitaal"):
+    schrijf(uit, "Titel", "uitleg", body_html, Path(__file__).parent / "digitaal.js", data, hints)
+```
+
+`schrijf` maakt `uit/digitaal.html` met de puzzel als `DATA` (JSON), `HINTS` en het script uit `digitaal.js`, in de stijl van de laptopmap. Het script mag `$(id)` gebruiken. Heeft de uitdaging varianten, geef dan `naam="digitaal-2.html"` mee voor de volgende. In de laptopmap komen die als `<uitdaging>/index.html` en `<uitdaging>/variant-2.html`, met een terug-link en een knop naar de kluis. Verwijs naar de decoder als `decoder/index.html`: dat pad wordt in de laptopmap aangepast. Een digitale versie is een hulpmiddel, zoals de decoder: ze helpt met de puzzel maar controleert niet of de oplossing juist is en zegt niet wanneer je klaar bent. De kinderen typen het antwoord zelf in de kluis. Een uitzondering is een mechanisme dat bij het spel hoort, zoals de feedback per vak bij de mastermind (de rol van de begeleider op papier). De pagina's hebben de huisstijl van UHCTF: licht, scherpe hoeken (geen afgeronde hoeken, ook niet bij knoppen of badges; alleen een figuur die echt rond is, zoals het caesarwiel, blijft rond), donkergrijs met magenta en cyaan als accent. `tools/jr/laptop_sjablonen/stijl.css` zit er al in; gebruik de variabelen daarvan (`var(--cyaan)`, `var(--lijn)`, ...) in de eigen `css` van een uitdaging. Houd de tekst op de pagina kort (een zin uitleg, geen paragrafen): kinderen worden overdonderd door veel tekst. Houd de puzzel gelijk aan de papieren versie, zodat het antwoord hetzelfde blijft, en zet geen antwoord of oplossing in `DATA` als dat vermijdbaar is.
 
 ## Regels
 

@@ -36,7 +36,7 @@ Het bericht: `PXIXA`
 
 ## Opzet
 
-Deelnemers gebruiken de strook op `deelnemer.pdf`, of de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig). De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. Zet `met_decoder = false` voor een versie volledig op papier. `verschuiving` is het aantal letters. Met `oefenwoorden` (bv. `["kat", "hond"]`) en een `oefenhint` (bv. "Veel voorkomende huisdieren") komen er korte, makkelijk te raden woorden op het blad met dezelfde verschuiving: raad ze en je vindt de verschuiving, om daarna het moeilijkere bericht te ontcijferen. Het bericht staat ook in `bericht.txt`.
+Deelnemers gebruiken de strook op `deelnemer.pdf`, of de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig). De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. Zet `met_decoder = false` voor een versie volledig op papier. `verschuiving` is het aantal letters. Met `oefenwoorden` (bv. `["kat", "hond"]`) en een `oefenhint` (bv. "Veel voorkomende huisdieren") komen er korte, makkelijk te raden woorden op het blad met dezelfde verschuiving: raad ze en je vindt de verschuiving, om daarna het moeilijkere bericht te ontcijferen. Het bericht staat ook in `bericht.txt`. Met `digitaal = true` komt er ook een versie bij voor op een laptop (`digitaal.html`): een caesarwiel dat de kinderen draaien tot de oefenwoorden gewone woorden worden, waarna ze het bericht lezen. De verschuiving staat niet in de pagina zelf.
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 
@@ -53,6 +53,6 @@ Voor een event met een eigen antwoord:
 
 De uitvoer bevat minstens `deelnemer.pdf` (uitdelen) en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Opties (standaardwaarde): `taal` ("nl"), `verschuiving` (3), `met_decoder` (true), `oefenwoorden` ([]), `oefenhint` ("").
+Opties (standaardwaarde): `taal` ("nl"), `verschuiving` (3), `met_decoder` (true), `digitaal` (false), `oefenwoorden` ([]), `oefenhint` ("").
 
 [SOLUTION.md](SOLUTION.md)

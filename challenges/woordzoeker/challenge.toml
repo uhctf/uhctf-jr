@@ -7,6 +7,8 @@ seed = 2025
 grootte = 7
 # ja: woorden mogen ook achterstevoren en schuin omhoog staan
 moeilijk = false
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt
+digitaal = false
 woorden = ["encrypt", "flag", "puzzle", "byte", "code", "key", "shift", "file", "web", "hash", "bit", "login"]
 
 [meta]
@@ -29,5 +31,5 @@ hints = [
   "Lees de overgebleven letters in leesrichting (links naar rechts, boven naar onder).",
 ]
 opzet = '''
-Print `deelnemer.pdf` en geef potloden mee. Met `moeilijk = true` mogen woorden ook achterstevoren en schuin omhoog staan. `grootte` en `woorden` bepalen het raster; de overgebleven letters spellen altijd het antwoord.
+Print `deelnemer.pdf` en geef potloden mee. Met `moeilijk = true` mogen woorden ook achterstevoren en schuin omhoog staan. `grootte` en `woorden` bepalen het raster; de overgebleven letters spellen altijd het antwoord. Met `digitaal = true` komt er ook een versie bij voor op een laptop (`digitaal.html`): een digitaal potlood waarmee de kinderen letters markeren en woorden doorstrepen, met onderaan de letters die niet gemarkeerd zijn. De pagina controleert niets.
 '''

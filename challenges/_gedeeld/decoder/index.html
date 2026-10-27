@@ -5,27 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Decoder</title>
   <style>
-    :root{--accent:#d7263d;--bg:#f6f7fb;--card:#fff;--rand:#e5e7eb;--muted:#6b7280}
+    :root{color-scheme:light;--accent:#222;--bg:#f5f5f8;--card:#fff;--rand:#222;--zacht:#d9d9e0;--muted:#555;--magenta:#ff00cc;--cyaan:#00efe1}
     *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#111;margin:0;padding:16px}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#222;margin:0;padding:16px}
     main{max-width:960px;margin:0 auto}
     header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-    h1{margin:0 0 4px;font-size:22px}
-    .kaart{background:var(--card);border:1px solid var(--rand);border-radius:10px;padding:14px;margin-top:14px}
+    h1{margin:0 0 4px;font-size:26px;text-shadow:-2px 0 var(--magenta),2px 0 var(--cyaan)}
+    .kaart{background:var(--card);border:2px solid var(--rand);border-radius:10px;padding:14px;margin-top:14px;box-shadow:4px 4px 0 var(--cyaan)}
     .kolommen{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     @media(max-width:700px){.kolommen{grid-template-columns:1fr}}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
-    textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;border:1px solid var(--rand);border-radius:6px;padding:8px;resize:vertical}
-    textarea[readonly]{background:#f3f4f6}
-    button,select,input{font:inherit;padding:6px 10px;border:1px solid #bbb;border-radius:6px;background:#fff}
-    button{cursor:pointer}
-    button.primair{background:var(--accent);border-color:var(--accent);color:#fff}
-    .taal button.actief{background:var(--accent);border-color:var(--accent);color:#fff}
-    .stap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--rand)}
+    textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;border:2px solid var(--rand);border-radius:6px;padding:8px;resize:vertical}
+    textarea[readonly]{background:#f3f3f7}
+    button,select,input{font:inherit;color:#222;padding:6px 10px;border:2px solid var(--accent);border-radius:6px;background:#fff}
+    button{cursor:pointer;box-shadow:2px 2px 0 var(--cyaan)}
+    button:hover{box-shadow:2px 2px 0 var(--magenta)}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--magenta);outline-offset:2px}
+    button.primair{background:var(--accent);color:#fff;box-shadow:3px 3px 0 var(--magenta)}
+    .taal button.actief{background:var(--accent);color:#fff;box-shadow:2px 2px 0 var(--magenta)}
+    .stap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--zacht)}
     .stap:first-child{border-top:0}
     .stap .nr{color:var(--muted);width:1.5em}
     .stap input{width:140px}
-    .fout{color:#b00020;font-size:13px;flex-basis:100%}
+    .fout{color:#b3007f;font-size:13px;flex-basis:100%}
     .rij{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     .klein{color:var(--muted);font-size:13px}
   </style>

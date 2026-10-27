@@ -6,11 +6,10 @@
 
 ## Uitdagingen
 
-De uitdagingen en onze eigen antwoorden staan in [uitdagingen.toml](uitdagingen.toml). Bouw de pdf's en pagina's met `./jr event build dfl-workshop`.
+De uitdagingen en onze eigen antwoorden staan in [event.toml](event.toml). Bouw de pdf's en pagina's met `./jr event build dfl-workshop`.
 
 | Uitdaging | Leeftijd | Type | Wat leren ze |
 | --- | --- | --- | --- |
-| [De verloren uitdaging](../../challenges/verloren-uitdaging/) | 8–12 | statisch | foutmeldingen en URL's lezen (opwarmer) |
 | [Kraak de code](../../challenges/kraak-de-code/) | 12–15 | gegenereerd | recursie. Hier rekenen ze Code(12) en Code(15) uit. |
 | [Laag na laag](../../challenges/laag-na-laag/) | 12–15 | gegenereerd | ROT13, binair, hexadecimaal en Base64 in lagen. Vier lagen in plaats van drie. |
 | [Robot-QR](../../challenges/robot-qr/) | 12–15 | gegenereerd | afbeeldingen bewerken tot een verborgen QR-code leesbaar wordt. De QR scannen ze met hun smartphone. |

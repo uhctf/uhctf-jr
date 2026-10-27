@@ -1,6 +1,7 @@
 """Meerdere lagen codering (binair, hex, base64, ...) om een antwoord heen."""
 from pathlib import Path
 
+from jr.digitaal import schrijf
 from jr.pdf import Pdf, begeleider
 from jr import codecs as c
 from jr.shared import gebruik
@@ -17,9 +18,9 @@ LAGEN = {
 TEKST = {
     "nl": {
         "titel": "Laag na laag",
-        "verhaal": "Dit bericht lijkt moeilijk te ontcijferen, alsof iemand het meerdere lagen diep heeft verborgen.",
+        "verhaal": "Dit bericht zit in lagen verstopt.",
         "bericht": "Het bericht:",
-        "tip": "Gebruik de decoder op de computer. Het bericht staat ook in bericht.txt om te kopieren.",
+        "tip": "Pak de lagen een voor een uit met de decoder.",
         "oplossing": "{n} lagen. Pak ze uit in deze volgorde: {volgorde}.",
         "hints": ["Kijk naar hoe het bericht eruitziet. Welke soort code is dit?",
                   "Als je een laag hebt uitgepakt, ziet het resultaat er weer als code uit. Ga door.",
@@ -27,9 +28,9 @@ TEKST = {
     },
     "en": {
         "titel": "Layer after layer",
-        "verhaal": "This message seems hard to decode, as if someone hid it several layers deep.",
+        "verhaal": "This message is hidden in layers.",
         "bericht": "The message:",
-        "tip": "Use the decoder on the computer. The message is also in bericht.txt for copying.",
+        "tip": "Unpack the layers one by one with the decoder.",
         "oplossing": "{n} layers. Unpack them in this order: {volgorde}.",
         "hints": ["Look at what the message looks like. What kind of code is it?",
                   "When you unpacked a layer, the result may look like code again. Keep going.",
@@ -84,7 +85,23 @@ def generate(params: dict, uit: Path) -> str:
                    [t["oplossing"].format(n=len(lagen), volgorde=volgorde)] + stappen, t["hints"], params["taal"])
     b.opslaan()
     gebruik(uit, params["taal"], "decoder", "spiekbrief")
+    if params.get("digitaal"):
+        digitaal(bericht, uit, t)
     return antwoord
+
+
+def digitaal(bericht: str, uit: Path, t: dict) -> None:
+    """Pagina met het bericht om te kopiëren en een knop die het in de decoder opent. De decoder staat in decoder/ naast de pagina."""
+    body = """  <div class="kaart">
+    <h2>Het bericht</h2>
+    <textarea id="bericht" rows="7" readonly spellcheck="false"></textarea>
+    <div class="rij">
+      <button id="kopieer" type="button">Kopieer</button>
+      <a id="decoder" href="decoder/index.html"><button class="primair" type="button">Open in de decoder</button></a>
+      <span class="klein" id="gekopieerd"></span>
+    </div>
+  </div>"""
+    schrijf(uit, t["titel"], t["verhaal"], body, Path(__file__).parent / "digitaal.js", {"bericht": bericht}, t["hints"])
 
 
 def check(params: dict) -> None:

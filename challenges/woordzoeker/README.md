@@ -34,7 +34,7 @@ Soms zit de meeste waarde verborgen in het volle zicht.
 
 ## Opzet
 
-Print `deelnemer.pdf` en geef potloden mee. Met `moeilijk = true` mogen woorden ook achterstevoren en schuin omhoog staan. `grootte` en `woorden` bepalen het raster; de overgebleven letters spellen altijd het antwoord.
+Print `deelnemer.pdf` en geef potloden mee. Met `moeilijk = true` mogen woorden ook achterstevoren en schuin omhoog staan. `grootte` en `woorden` bepalen het raster; de overgebleven letters spellen altijd het antwoord. Met `digitaal = true` komt er ook een versie bij voor op een laptop (`digitaal.html`): een digitaal potlood waarmee de kinderen letters markeren en woorden doorstrepen, met onderaan de letters die niet gemarkeerd zijn. De pagina controleert niets.
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 
@@ -51,6 +51,6 @@ Voor een event met een eigen antwoord:
 
 De uitvoer bevat minstens `deelnemer.pdf` (uitdelen) en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Opties (standaardwaarde): `taal` ("nl"), `seed` (2025), `grootte` (7), `moeilijk` (false), `woorden` (["encrypt", "flag", "puzzle", "byte", "code", "key", "shift", "file", "web", "hash", "bit", "login"]).
+Opties (standaardwaarde): `taal` ("nl"), `seed` (2025), `grootte` (7), `moeilijk` (false), `digitaal` (false), `woorden` (["encrypt", "flag", "puzzle", "byte", "code", "key", "shift", "file", "web", "hash", "bit", "login"]).
 
 [SOLUTION.md](SOLUTION.md)

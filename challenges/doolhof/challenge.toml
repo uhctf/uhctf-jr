@@ -6,6 +6,8 @@ taal = "nl"
 seed = 2025
 breedte = 14
 hoogte = 18
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt
+digitaal = false
 
 [meta]
 auteur = "UHCTF"
@@ -27,5 +29,5 @@ hints = [
   "Schrijf de letters op die je tegenkomt, in de juiste volgorde.",
 ]
 opzet = '''
-Print `deelnemer.pdf` (1 per deelnemer of team) en geef potloden mee. Dezelfde `seed` geeft altijd hetzelfde doolhof; verander hem voor een nieuw doolhof. `begeleider.pdf` bevat een afbeelding van de juiste route.
+Print `deelnemer.pdf` (1 per deelnemer of team) en geef potloden mee. Dezelfde `seed` geeft altijd hetzelfde doolhof; verander hem voor een nieuw doolhof. `begeleider.pdf` bevat een afbeelding van de juiste route. Met `digitaal = true` komt er ook een versie bij die je op een laptop speelt (`digitaal.html`): de kinderen lopen zelf door het doolhof en de letters op hun route verschijnen onderaan. De pagina is een hulpmiddel en zegt niet wanneer je klaar bent. Het antwoord is hetzelfde.
 '''
