@@ -7,9 +7,12 @@ Herbruikbare uitdagingen. Eén map per uitdaging; elke README wordt gegenereerd 
 | Uitdaging | Type | Formaat | Leeftijd | Duur | Onderwerp |
 | --- | --- | --- | --- | --- | --- |
 | [Doolhof](doolhof/) | gegenereerd | booth | 8–12 | 5–10 min | Puzzelen, geduld |
+| [Gatenkaart](gatenkaart/) | gegenereerd | booth | 8–12 | 10–15 min | Cardan-rooster, steganografie, sleutels |
+| [Geheime kleuren](geheime-kleuren/) | gegenereerd | booth | 8–12 | 5–10 min | Kleurfilters, licht en kleur, verborgen informatie |
 | [Kraak de code](kraak-de-code/) | gegenereerd | booth | 12–15 | 10–15 min | Programmeren, recursie |
 | [Laag na laag](laag-na-laag/) | gegenereerd | booth | 12–15 | 10–15 min | Base64, hexadecimaal, binair |
 | [Lockpicking](lockpicking/) | gegenereerd | booth | 12–18 | 10–20 min | Hoe sloten werken, ethiek van beveiligingsonderzoek |
+| [Matroesjka](matroesjka/) | gegenereerd | booth | 12–15 | 10–15 min | Bestanden in bestanden, bestandsformaten en extensies |
 | [Phishing of echt?](phishing-of-echt/) | gegenereerd | booth | 8–12 | 10 min | Phishing herkennen, veilig omgaan met berichten |
 | [Robot-QR](robot-qr/) | gegenereerd | booth | 12–15 | 10–15 min | Afbeeldingen bewerken, QR-codes, verborgen informatie |
 | [Romeinse geheimen](romeinse-geheimen/) | gegenereerd | booth | 8–12 | 5–10 min | Caesarcijfer (ROT-N) |
