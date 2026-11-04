@@ -9,9 +9,13 @@ Herbruikbare uitdagingen. Eén map per uitdaging; elke README wordt gegenereerd 
 | [Doolhof](doolhof/) | gegenereerd | booth | 8–12 | 5–10 min | Puzzelen, geduld |
 | [Gatenkaart](gatenkaart/) | gegenereerd | booth | 8–12 | 10–15 min | Cardan-rooster, steganografie, sleutels |
 | [Geheime kleuren](geheime-kleuren/) | gegenereerd | booth | 8–12 | 5–10 min | Kleurfilters, licht en kleur, verborgen informatie |
+| [Hack het portaal](hack-het-portaal/) | gegenereerd | booth | 15–18 | 15–25 min | Webbeveiliging: elementen aanpassen, URL's wijzigen, sessiesleutels (tokens), wat de browser mag vertrouwen |
+| [Hash-kraker](hash-kraker/) | gegenereerd | booth | 15–18 | 15–25 min | Hashes, wachtwoorden kraken, zout, veilig wachtwoordgebruik |
+| [Kies je kant](kies-je-kant/) | gegenereerd | booth | 12–18 | 3–5 min | Kleuren en kleurcodes (hexadecimaal, RGB), de groep in twee ploegen verdelen |
 | [Kraak de code](kraak-de-code/) | gegenereerd | booth | 12–15 | 10–15 min | Programmeren, recursie |
 | [Laag na laag](laag-na-laag/) | gegenereerd | booth | 12–15 | 10–15 min | Base64, hexadecimaal, binair |
 | [Lockpicking](lockpicking/) | gegenereerd | booth | 12–18 | 10–20 min | Hoe sloten werken, ethiek van beveiligingsonderzoek |
+| [Luister naar de stilte](luister-naar-de-stilte/) | gegenereerd | booth | 15–18 | 15–25 min | Geluid ontleden, spectrogram, morse, verborgen informatie |
 | [Matroesjka](matroesjka/) | gegenereerd | booth | 12–15 | 10–15 min | Bestanden in bestanden, bestandsformaten en extensies |
 | [Phishing of echt?](phishing-of-echt/) | gegenereerd | booth | 8–12 | 10 min | Phishing herkennen, veilig omgaan met berichten |
 | [Robot-QR](robot-qr/) | gegenereerd | booth | 12–15 | 10–15 min | Afbeeldingen bewerken, QR-codes, verborgen informatie |

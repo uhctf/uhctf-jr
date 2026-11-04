@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{SCHOOL}} - leerlingenportaal</title>
+  <link rel="stylesheet" href="portaal.css">
+</head>
+<body>
+  <header>
+    <div><span class="logo">{{SCHOOL}}</span><a href="index.html">Start</a><a href="rapport.html?leerling=24">Mijn rapport</a><a href="klas.html">Klas</a><a href="beheer.html">Beheer</a></div>
+    <span class="gebruiker" id="gebruiker"></span>
+  </header>
+  <main>
+    <h1>Leerlingenportaal</h1>
+    <p class="klein">Welkom terug, Sam (5B). Je bent ingelogd als leerling.</p>
+
+    <div class="kaart">
+      <h2>Opdracht: test het portaal</h2>
+      <p>De school heeft jullie ingehuurd om het portaal te testen. Er zijn drie testwoorden verstopt op plaatsen waar enkel leraren, de directie en de beheerders mogen komen. Wie ze vindt, bewijst dat een kwaadwillende dat ook zou kunnen. Samen vormen de drie woorden de zin voor de kluis.</p>
+      <p class="klein">Jullie mogen enkel dit portaal testen, op deze laptop, en alleen omdat de school het vraagt. Doe dit nooit bij echte websites zonder toestemming: dat is strafbaar.</p>
+      <div id="hints"></div>
+      <button id="hint-knop" type="button">Hint</button>
+    </div>
+
+    <div class="raster">
+      <a class="kaart" href="rapport.html?leerling=24"><h3>Mijn rapport</h3><p class="klein">Bekijk je punten van dit schooljaar.</p></a>
+      <a class="kaart" href="klas.html"><h3>Klasgemiddelde <span class="label">leraren</span></h3><p class="klein">Cijfers van de hele klas.</p></a>
+      <a class="kaart" href="beheer.html"><h3>Beheer <span class="label">beheerders</span></h3><p class="klein">Gebruikers en instellingen van het portaal.</p></a>
+    </div>
+
+    <div class="kaart">
+      <h3>Mededelingen</h3>
+      <ul>
+        <li>Woensdag 12 maart: pedagogische studiedag, geen school.</li>
+        <li>De bibliotheek is open tot 16 uur.</li>
+        <li>Vergeet je rapport niet door te nemen met je ouders.</li>
+      </ul>
+    </div>
+  </main>
+  <footer><!--TERUG--> <button id="herstel" type="button" title="Maakt een nieuwe sessie als je iets stuk gemaakt hebt">Sessie herstellen</button></footer>
+  <script src="portaal.js"></script>
+  <script>
+    const HINTS = {{HINTS}};
+    let getoond = 0;
+    $("hint-knop").addEventListener("click", () => {
+      const p = document.createElement("div");
+      p.className = "hint";
+      p.textContent = (getoond + 1) + ". " + HINTS[getoond];
+      $("hints").appendChild(p);
+      if (++getoond >= HINTS.length) $("hint-knop").disabled = true;
+    });
+  </script>
+</body>
+</html>

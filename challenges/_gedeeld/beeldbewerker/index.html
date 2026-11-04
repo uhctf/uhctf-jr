@@ -251,7 +251,7 @@
     });
   });
   document.querySelectorAll("[data-voorinstelling]").forEach((b) => b.addEventListener("click", () => {
-    waarden = { ...standaard(), ...VOORINSTELLINGEN[b.dataset.voorinstelling] };
+    waarden = { ...waarden, ...VOORINSTELLINGEN[b.dataset.voorinstelling] };  // combineert met wat al staat: Alleen blauw + Inverteren
     tekenRegelaars(); toepassen();
   }));
   $("taal-nl").addEventListener("click", () => { taal = "nl"; tekenTaal(); bewaar(); });

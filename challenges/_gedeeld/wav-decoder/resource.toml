@@ -1,0 +1,11 @@
+# Gedeeld hulpmiddel, door uitdagingen mee te leveren. De README van _gedeeld wordt hieruit gegenereerd (./jr readme).
+type = "generated"
+
+[opties]
+# Pad naar een WAV-bestand dat bij het openen al geladen is (ingebouwd in index.html). Leeg = geen standaardgeluid.
+geluid = ""
+
+[nl]
+naam = "WAV-decoder"
+beschrijving = "Webpagina om een WAV-bestand te bekijken en te ontleden: de kop van het bestand, de golfvorm met versterking en een spectrogram met instelbare helderheid, contrast en frequentiebereik. Het toont wat er in het geluid zit, maar interpreteert het niet. Werkt offline in de browser, in het Nederlands."
+gebruik = "Bouw met `./jr shared build wav-decoder --set geluid=pad/naar/geluid.wav` (optie `geluid`). Het geluid zit dan in `wav-decoder/index.html` zelf, zodat de pagina ook vanaf schijf zonder internet werkt. Andere WAV-bestanden opent een deelnemer met 'Open WAV' of door ze op de pagina te slepen."

@@ -87,12 +87,16 @@ ICONEN = {
     "webvlaggen": f'<svg {_S}><rect x="5" y="8" width="38" height="32" fill="#fff"/><path d="M5 16h38"/><path d="M17 24l-6 5 6 5M31 24l6 5-6 5"/></svg>',
     "vigenere": f'<svg {_S}><rect x="6" y="6" width="36" height="36" fill="#fff"/><path d="M6 18h36M6 30h36M18 6v36M30 6v36"/><path d="M6 6l36 36"/></svg>',
     "verborgen-bestanden": f'<svg {_S}><path d="M10 5h20l8 8v30H10z" fill="#fff"/><path d="M30 5v8h8"/><path d="M16 22h4M24 22h8M16 29h8M28 29h4M16 36h4"/></svg>',
+    "hack-het-portaal": f'<svg {_S}><rect x="6" y="6" width="36" height="36" fill="#fff"/><path d="M6 16h36"/><rect x="15" y="24" width="18" height="14" fill="#222"/><path d="M19 24v-4a5 5 0 0 1 10 0v4"/></svg>',
+    "luister-naar-de-stilte": f'<svg {_S}><path d="M6 24h5l4-12 6 24 6-20 4 8h11" fill="none"/></svg>',
+    "hash-kraker": f'<svg {_S}><path d="M18 8l-4 32M32 8l-4 32M8 18h32M6 30h32"/></svg>',
     "decoder": f'<svg {_S}><path d="M16 14L6 24l10 10M32 14l10 10-10 10M27 10l-6 28"/></svg>',
     "kluis": f'<svg {_S}><rect x="6" y="8" width="36" height="32" fill="#fff"/><rect x="17" y="17" width="14" height="14" transform="rotate(45 24 24)"/><path d="M24 12v4M24 32v4M12 24h4M32 24h4"/></svg>',
 }
 ICOON_STANDAARD = f'<svg {_S}><path d="M10 10h12v6h8v-6h8v12h-6v8h6v8H10z" fill="#fff"/></svg>'
 
 
+TERUGLINK = '<a href="../index.html">&larr; Terug naar de opdrachten</a>'
 KLUISKNOP = '<a class="kluislink" href="../kluis/index.html"><button class="primair" type="button">Naar de kluis &rarr;</button></a>'
 
 
@@ -134,7 +138,8 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
         if antwoorden:
             opdrachten.append({"id": r["naam"], "naam": titel, "hashes": sorted({hash_antwoord(salt, a) for a in antwoorden})})
             slot_ids[r["naam"]] = [r["naam"]]
-    nodig = int(cfg.get("nodig", 3))
+    totaal = len(opdrachten)  # aantal sloten; 'opdrachten' wordt verderop hergebruikt voor de HTML van de tegels
+    nodig = len(opdrachten) if cfg.get("nodig") == "alle" else int(cfg.get("nodig", 3))
     if not 1 <= nodig <= len(opdrachten):
         raise ToolError(f"event.toml, [laptop]: nodig = {nodig}, maar het event heeft {len(opdrachten)} sloten (antwoorden)")
     (doel / "kluis").mkdir()
@@ -150,12 +155,17 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
     opdrachtkaarten = []
     for r in resultaten:
         map_ = r["config"].get("laptop_map")
-        if r["config"].get("type") == "static" and map_:
-            # statisch materiaal dat zelf een site is (bv. webvlaggen): zoals het is, zonder terug-link in de pagina
+        if map_:
+            # materiaal dat zelf een site is (bv. webvlaggen, of de gegenereerde hack-het-portaal): de map zoals ze is.
+            # Een pagina kan <!--TERUG--> bevatten: daar komt een link naar de startpagina (buiten de laptopmap blijft het commentaar).
             bron = r["uit"] / map_
             if not (bron / "index.html").is_file():
                 raise ToolError(f"{r['naam']}: laptop_map '{map_}' heeft geen index.html")
             shutil.copytree(bron, doel / r["naam"])
+            for pagina in (doel / r["naam"]).rglob("*.html"):
+                tekst = pagina.read_text()
+                if "<!--TERUG-->" in tekst:
+                    pagina.write_text(tekst.replace("<!--TERUG-->", TERUGLINK))
             nl = r["config"].get("nl", {})
             opdrachtkaarten.append((r["naam"], nl.get("naam", r["naam"]), nl.get("onderwerp", ""), [(1, f"{r['naam']}/index.html")]))
             continue
@@ -191,7 +201,7 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
     hulp = [tegel("decoder", "decoder/index.html#t=nl", "Decoder", "Hulpmiddel voor codes."),
             tegel("kluis", "kluis/index.html", "De kluis", "Typ hier je antwoorden.", True)]
     (doel / "index.html").write_text(vul("landing.html", {
-        "NAV": nav_html(), "INTRO": html.escape(cfg.get("intro", INTRO).replace("{nodig}", str(nodig))),
+        "NAV": nav_html(), "INTRO": html.escape(cfg.get("intro", INTRO).replace("{nodig}", str(nodig)).replace("{totaal}", str(totaal))),
         "TITEL": html.escape(cfg.get("titel", eventnaam)), "OPDRACHTEN": opdrachten, "KAARTEN": "\n".join(hulp), "NODIG": str(nodig),
         "EVENT": eventnaam}))
     return doel

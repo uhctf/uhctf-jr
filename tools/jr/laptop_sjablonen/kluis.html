@@ -43,7 +43,7 @@
 <main>
   {{NAV}}
   <h1>De kluis</h1>
-  <p>Typ je antwoorden. Open <strong id="nodig"></strong> sloten.</p>
+  <p>Typ je antwoorden. Open <strong id="nodig"></strong> sloten<span id="totaal"></span>.</p>
 
   <div class="kluis-wrap">
     <div class="kaart" style="margin-top:0">
@@ -148,6 +148,8 @@
 
   function toon() {
     $("nodig").textContent = data.nodig;
+    // meer sloten dan nodig: de teams kiezen zelf welke opdrachten ze doen
+    $("totaal").textContent = data.opdrachten.length > data.nodig ? " (van de " + data.opdrachten.length + ")" : "";
     $("sloten").innerHTML = "";
     for (let i = 0; i < data.nodig; i++) {
       const s = document.createElement("div");
@@ -201,6 +203,8 @@
   $("reset").addEventListener("click", () => {
     if (!confirm("Alles wissen voor een nieuw team?")) return;
     schrijf(OPSLAG, "[]"); schrijf(TEAM, "");
+    // ook de voortgang in opdrachten die zelf iets onthouden (sleutels met het voorvoegsel opdracht-) en de kladblokken wissen
+    try { Object.keys(localStorage).filter(k => k.startsWith("opdracht-") || k.startsWith("uhctf-kladblok-")).forEach(k => localStorage.removeItem(k)); } catch (e) {}
     open = []; melding("", "");
     toon();
   });

@@ -27,3 +27,11 @@ Gebruik: Open `decoder/index.html` in een browser. De opstelling (invoer en stap
 Afdrukbare spiekbrief (pdf) over binair, hexadecimaal, Base64, ROT-N, XOR en morse, met voorbeelden die de generator zelf uitrekent.
 
 Gebruik: Bouw met `./jr shared build spiekbrief` (optie `--set taal=en`). Uitdagingen die codering gebruiken, leveren de spiekbrief mee in hun uitvoer.
+
+## WAV-decoder
+
+- `wav-decoder/` (gegenereerd)
+
+Webpagina om een WAV-bestand te bekijken en te ontleden: de kop van het bestand, de golfvorm met versterking en een spectrogram met instelbare helderheid, contrast en frequentiebereik. Het toont wat er in het geluid zit, maar interpreteert het niet. Werkt offline in de browser, in het Nederlands.
+
+Gebruik: Bouw met `./jr shared build wav-decoder --set geluid=pad/naar/geluid.wav` (optie `geluid`). Het geluid zit dan in `wav-decoder/index.html` zelf, zodat de pagina ook vanaf schijf zonder internet werkt. Andere WAV-bestanden opent een deelnemer met 'Open WAV' of door ze op de pagina te slepen.

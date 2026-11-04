@@ -1,0 +1,52 @@
+# Gegenereerde uitdaging: ./jr build luister-naar-de-stilte maakt stilte.wav, de WAV-decoder en de pdf's met de standaardwaarden.
+# Events kunnen het antwoord en de opties overschrijven (./jr event add <event> luister-naar-de-stilte --antwoord ...).
+# De README wordt hieruit gegenereerd: pas dit bestand aan en draai ./jr readme.
+type = "generated"
+# Het woord in morse. Enkel letters, cijfers en koppeltekens (een koppelteken is een woordscheiding).
+antwoord = "radiostilte"
+
+[opties]
+taal = "nl"
+# Vaste seed: dezelfde toon en dezelfde ruis bij elke bouw
+seed = 1
+# makkelijk: duidelijke pieptonen die je hoort | middel: zachte toon in ruis | moeilijk: bijna onhoorbaar boven 16 kHz, met een lokvogel
+niveau = "moeilijk"
+# Hoe vaak het bericht na elkaar klinkt (met een pauze ertussen). Zo kan een gemiste letter bij de herhaling nog.
+herhalingen = 2
+# ja: bouw ook een digitale versie (digitaal.html) die je op een laptop speelt: de WAV-decoder met het geluid erin
+digitaal = true
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "15–18"
+duur = "15–25 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Luister naar de stilte"
+onderwerp = "Geluid ontleden, spectrogram, morse, verborgen informatie"
+materiaal = "laptop met de WAV-decoder (de digitale pagina), de morsetabel (spiekbrief) en de Decoder; koptelefoon is niet nodig"
+beschrijving = '''
+Een onderzoeker nam in een verlaten radiohut een halve minuut stilte op. Toch beweert zijn collega dat er een boodschap in zit. Je hoort bijna niets, maar een geluidsbestand is meer dan wat je hoort.
+'''
+hints = [
+  "Je hoort bijna niets. Maar een geluid kun je ook bekijken: kijk naar de golfvorm en naar het spectrogram.",
+  "Zet 'Versterken' hoger en pas helderheid en contrast van het spectrogram aan. De x-as is tijd, de y-as is frequentie. Zoek een rij streepjes en puntjes die steeds op dezelfde hoogte staat.",
+  "Zie je meer dan een rij? Lees ze allemaal af. Niet elk bericht dat je vindt, is het antwoord.",
+  "Zoom in en lees de korte en lange streepjes af. Een streep is drie keer zo lang als een punt.",
+  "Schrijf de punten en strepen op en zet ze om met de morsetabel van de spiekbrief, of met de Decoder (stap Morse naar tekst).",
+]
+opzet = '''
+`stilte.wav` is een gewoon WAV-bestand (44,1 kHz, mono, 16 bit) dat de generator met enkel de standaardbibliotheek van Python maakt. In het standaardniveau (`moeilijk`) zit de morse in een toon van ongeveer 17 kHz met een amplitude van 0,55% van de volle schaal, onder witte ruis en een zacht netbrom. Een laptopluidspreker geeft die toon nauwelijks weer en veel mensen horen hem niet. In het spectrogram is hij een rij streepjes en puntjes (met Helderheid en Contrast goed te lezen). Daarnaast speelt een duidelijker morsesignaal op 1300 Hz dat 'lokvogel' seint: wie enkel op de golfvorm of de oren afgaat, vindt dat eerst en typt een fout antwoord. Het echte bericht staat twee keer na elkaar.
+
+De digitale versie is de **WAV-decoder** met het geluid ingebouwd: de kop van het bestand, de golfvorm met versterking en een spectrogram. De morse wordt dus enkel zichtbaar gemaakt, niet gedecodeerd. De deelnemers moeten zelf (1) inzien dat er iets in zit, (2) de rij vinden in het spectrogram, (3) de puntjes en streepjes aflezen en (4) ze omzetten naar tekst met de morsetabel of de Decoder.
+
+Niveaus: `makkelijk` (een hoorbare piep van 700 Hz, ook te volgen op het gehoor), `middel` (een zachte toon rond 1200 Hz in ruis) en `moeilijk` (standaard). Met `seed` verandert de exacte frequentie.
+
+Tips voor het event:
+
+- Het werkt volledig met de ogen. Laat dus niet zes teams tegelijk geluid afspelen: koptelefoons zijn niet nodig.
+- Test de pagina op elke laptop (Chrome of Edge): de spectrogramberekening duurt even bij het openen.
+- Bespreking: onhoorbaar is niet afwezig, net zoals onzichtbaar niet verborgen is (zie Robot-QR). Audio-steganografie: informatie in geluid verstoppen, bijvoorbeeld in het spectrogram.
+'''

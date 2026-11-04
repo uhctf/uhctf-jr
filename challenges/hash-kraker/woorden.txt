@@ -1,0 +1,24 @@
+# Woordenlijst voor het kladblok van Hash-kraker: gewone woorden, namen en klassieke wachtwoorden, in kleine letters.
+# Het kladblok kent ze als WOORDEN; een deelnemer combineert ze zelf met cijfers en jaartallen.
+wachtwoord welkom password qwerty azerty geheim admin beheerder login letmein master dragon monkey shadow sunshine princess football
+voetbal basketbal tennis hockey zwemmen fietsen turnen judo karate volleybal badminton atletiek handbal rugby golf schaken gamen
+zomer winter lente herfst voorjaar najaar sneeuw regen zon wind storm onweer ijs vorst warm koud
+liefde vriend vriendin familie moeder vader zus broer opa oma kind baby school vakantie feest
+hond kat konijn paard muis vis vogel hamster cavia schildpad leeuw tijger beer wolf vos haas olifant giraf aap panter adelaar
+rood blauw groen geel oranje paars roze zwart wit grijs bruin
+appel peer banaan druif kers aardbei citroen pizza friet pasta chocolade koekje taart snoep pannenkoek wafel
+brussel gent antwerpen brugge leuven hasselt luik mechelen oostende genk aalst kortrijk namen charleroi
+belgie nederland frankrijk duitsland spanje italie engeland amsterdam parijs londen berlijn madrid rome
+jan piet joris korneel sofie lotte emma lisa anna sara julie laura marie eva tom tim thomas lucas noah liam louis arthur jules
+mathis robin bram sam senne wout maxim milan nathan finn adam victor mohamed ahmed youssef ayoub
+computer laptop telefoon internet netwerk server router toetsenbord muis scherm printer camera robot
+hacker hacken virus beveiliging slot sleutel kluis geheim code cijfer codeknaker cyber digitaal online
+spelen speler winnen kampioen team ploeg doel bal veld stadion trainer coach club
+muziek gitaar piano drum viool zingen dansen film serie boek stripboek tekenen
+auto fiets bus trein vliegtuig boot motor scooter
+huis tuin kamer keuken bed tafel stoel lamp
+sterren maan zon planeet heelal ruimte raket
+koning koningin prins prinses ridder draak kasteel heks tovenaar
+pokemon minecraft fortnite roblox zelda mario sonic tetris
+iloveyou trustno1 abc123 hello hallo test testen welcome secret freedom whatever batman superman spiderman
+123456 12345678 123456789 1234567890 111111 000000 654321 987654321 123123 112233 password1 qwerty123 azerty123

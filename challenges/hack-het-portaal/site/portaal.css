@@ -1,0 +1,30 @@
+:root{--blauw:#1d4e89;--lichtblauw:#e8f0fa;--rand:#d5dde8;--muted:#5b6675;--rood:#b3261e}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;color:#1d2733;line-height:1.55;background:#f6f8fb}
+header{background:var(--blauw);color:#fff;padding:.9rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem}
+header a{color:#fff;text-decoration:none;margin-right:1.1rem}
+header .logo{font-weight:700;font-size:1.15rem;margin-right:2rem}
+header .gebruiker{font-size:.9rem;opacity:.9}
+main{max-width:920px;margin:0 auto;padding:1.4rem 1.2rem 3rem}
+h1{margin:.2rem 0 .8rem;font-size:1.7rem}
+.kaart{background:#fff;border:1px solid var(--rand);border-radius:.6rem;padding:1.1rem 1.2rem;margin:1rem 0}
+.raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem}
+.raster a.kaart{display:block;color:inherit;text-decoration:none;margin:0}
+.raster a.kaart:hover{border-color:var(--blauw);box-shadow:0 2px 8px rgba(29,78,137,.15)}
+.klein{color:var(--muted);font-size:.9rem}
+.label{display:inline-block;background:var(--lichtblauw);color:var(--blauw);border-radius:.3rem;padding:.05rem .5rem;font-size:.8rem;margin-left:.4rem}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--rand);padding:.45rem .6rem;text-align:left}
+th{background:var(--lichtblauw)}
+.sleutel{font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff8d6;border:2px dashed #c9a400;padding:.5rem .8rem;display:inline-block;margin:.4rem 0}
+.fout{color:var(--rood);font-weight:600}
+.beveiligd{position:relative;overflow:hidden;border:1px solid var(--rand);border-radius:.6rem}
+.beveiligd .inhoud{padding:1.2rem;filter:blur(7px);user-select:none}
+.beveiligd .laag{position:absolute;inset:0;background:rgba(255,255,255,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem}
+.beveiligd .laag strong{font-size:1.2rem}
+button{font:inherit;padding:.4rem .9rem;border:1px solid var(--blauw);background:#fff;color:var(--blauw);border-radius:.3rem;cursor:pointer}
+button:hover{background:var(--lichtblauw)}
+.hint{border-left:5px solid var(--blauw);background:var(--lichtblauw);padding:.5rem .9rem;margin:.6rem 0}
+footer{border-top:1px solid var(--rand);color:var(--muted);padding:1rem 1.2rem;text-align:center;font-size:.9rem}
+footer a,footer button{color:var(--blauw)}
+footer button{border:none;background:none;text-decoration:underline;padding:0;margin-left:.6rem}

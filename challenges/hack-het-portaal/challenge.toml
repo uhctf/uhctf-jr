@@ -1,0 +1,54 @@
+# Gegenereerde uitdaging: ./jr build hack-het-portaal maakt de site (site/), de decoder, de spiekbrief en de pdf's met de standaardwaarden.
+# Events kunnen het antwoord en de opties overschrijven (./jr event add <event> hack-het-portaal --antwoord ...).
+# De README wordt hieruit gegenereerd: pas dit bestand aan en draai ./jr readme.
+type = "generated"
+# Minstens 3 woorden met koppeltekens: woord 1 staat in fase 1, woord 2 in fase 2 en de rest in fase 3.
+antwoord = "vertrouw-nooit-de-browser"
+# De map met de site in de uitvoer: in de laptopmap van een event komt ze als <uitdaging>/index.html
+laptop_map = "site"
+
+[opties]
+taal = "nl"
+# Vaste seed: dezelfde sleutels, handtekening en rapporten bij elke bouw
+seed = 1
+# Naam van de (verzonnen) school in het portaal
+school = "Zandberg College"
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "15–18"
+duur = "15–25 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Hack het portaal"
+onderwerp = "Webbeveiliging: elementen aanpassen, URL's wijzigen, sessiesleutels (tokens), wat de browser mag vertrouwen"
+materiaal = "laptop met Chrome of Edge (ontwikkelaarstools), de Decoder; `deelnemer.pdf` is de opdrachtbrief"
+beschrijving = '''
+Het leerlingenportaal van een school staat online en niemand weet hoe veilig het is. Jullie mogen het testen. Er zijn drie testwoorden verstopt op plaatsen waar enkel leraren, de directie of beheerders mogen komen. Je bent ingelogd als een gewone leerling. Vind de drie woorden: samen vormen ze de zin voor de kluis.
+'''
+hints = [
+  "Je bent ingelogd als een gewone leerling. Zoek pagina's waar je niet mag komen en kijk wat de browser eigenlijk al gekregen heeft. Open de ontwikkelaarstools met F12.",
+  "Iets wazig of afgedekt? Wat je ziet is niet alles wat de browser kreeg. Kijk in het tabblad Elementen (Inspecteren) en pas de laag aan of lees de tekst.",
+  "De URL van je rapport bevat een nummer. Wie zegt dat dit nummer van jou is? Probeer een ander nummer. Wie heeft vast een laag nummer?",
+  "De beheerderspagina kijkt naar je sessiesleutel (token). Die staat in de ontwikkelaarstools, bij Toepassing (Chrome, Edge) of Opslag (Firefox), onder Local Storage.",
+  "Een token is vaak Base64. Zet het deel voor de punt in de Decoder om naar tekst en kijk bij 'rol'. Verander die, zet het terug om naar Base64 en plak het op dezelfde plaats.",
+]
+opzet = '''
+Dit is het vervolg op Webvlaggen: daar lezen de leerlingen wat een site naar hun browser stuurt, hier **wijzigen** ze het. De site (`site/`, in de laptopmap `hack-het-portaal/`) is een nep-leerlingenportaal met drie fasen, elk met een eigen testwoord van het antwoord:
+
+1. **Klasgemiddelde** (`klas.html`): de inhoud zit achter een wazige laag. De tekst staat gewoon in de pagina. Wie in Elementen kijkt, leest ze of verwijdert de laag.
+2. **Mijn rapport** (`rapport.html?leerling=24`): het nummer in de adresbalk bepaalt wiens rapport je ziet. Leerling 1 is de directeur: zijn notitie bevat het tweede woord en verwijst naar de beheerpagina (een IDOR).
+3. **Beheer** (`beheer.html`): de pagina kijkt naar de `rol` in de sessiesleutel (token) in Local Storage. Die token is Base64 van een stukje JSON, gevolgd door een punt en een handtekening die niemand controleert. Wie de rol in `beheerder` verandert, krijgt het derde woord. Dit sluit aan op Laag na laag: Base64 met de Decoder.
+
+Het antwoord heeft minstens 3 woorden, het laatste deel krijgt de rest (bij het standaardantwoord: `vertrouw`, `nooit` en `de browser`). De woorden voor fase 2 en 3 zijn versleuteld met een sleutel die uit de aanvraag komt (het nummer, de rol): wie enkel de broncode leest, vindt ze niet, wie de aanvraag aanpast wel.
+
+**Belangrijk bij de bespreking:** alles gebeurt in de browser, dus dit is een simulatie. Een echte site controleert toegang op de server en tekent een token met een geheim dat de gebruiker niet kent. De pagina zegt zelf in het commentaar dat de handtekening niet gecontroleerd wordt. Dit mag een leerling nooit bij een echte site proberen zonder toestemming.
+
+Praktisch:
+
+- Chrome of Edge werkt het best (tabblad Application). In Firefox heet dat Opslag. De pagina's slaan enkel de token op, onder `opdracht-portaal-token`; "Sessie herstellen" onderaan maakt een nieuwe als een team iets stuk maakt. "Nieuw team" in de kluis wist hem ook.
+- Alle pagina's moeten in dezelfde map blijven, anders ziet de ene pagina de token van de andere niet (zie de opmerking over Firefox bij de laptopmap).
+- Leerlingen die de token zelf in Base64 omzetten kunnen de handtekening weglaten: de pagina leest alleen het deel voor de punt.
+'''

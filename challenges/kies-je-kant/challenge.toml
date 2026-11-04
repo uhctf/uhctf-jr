@@ -1,0 +1,39 @@
+# Intro-opdracht zonder vlag: elke deelnemer krijgt een kaartje met een kleurcode, leest de kleur af en zoekt de anderen met dezelfde kleur. Zo ontstaan twee helften die tegen elkaar strijden.
+# Er is geen antwoord voor de kluis: de uitdaging telt niet mee als slot.
+type = "generated"
+
+[opties]
+taal = "nl"
+# willekeurige maar vaste kleurcodes: dezelfde seed geeft dezelfde kaartjes
+seed = 1
+# Aantal kaartjes (even, 8 per pagina). Maak er iets meer dan er deelnemers zijn; de begeleider deelt ze om en om uit.
+aantal = 16
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–18"
+duur = "3–5 min"
+vlag_formaat = "geen"
+
+[nl]
+naam = "Kies je kant"
+onderwerp = "Kleuren en kleurcodes (hexadecimaal, RGB), de groep in twee ploegen verdelen"
+materiaal = "uitgeknipte kaartjes (`deelnemer.pdf`), zwart-wit printen volstaat"
+beschrijving = '''
+Op je kaartje staat een kleurcode. Lees ze af: welke kleur is het, Cyaan of Magenta? Zoek dan de anderen met dezelfde kleur, zonder die hardop te zeggen. Samen vormen jullie een ploeg.
+'''
+hints = [
+  "De grijze achtergrond zegt niets. Kijk naar de code.",
+  "De code bestaat uit drie paren (rood, groen, blauw). Een paar dat met 0 tot 7 begint, is laag; één paar is laag.",
+  "Rood laag is Cyaan, groen laag is Magenta.",
+]
+opzet = '''
+Print `deelnemer.pdf` (zwart-wit volstaat) en knip de kaartjes uit. Elk kaartje heeft enkel een kleurcode op een grijze, gearceerde achtergrond: de achtergrond zegt niets over de kleur, ze moeten de code lezen. Bovenaan de eerste pagina staat een korte uitleg voor op het bord of de beamer (niet op de kaartjes). Deel de kaartjes één voor één uit, in de volgorde van de stapel: ze staan per twee in willekeurige volgorde (één Cyaan, één Magenta), dus de ploegen zijn even groot. Bij een oneven aantal deelnemers is één ploeg één persoon groter.
+
+Laat iedereen zijn kleur uit de code afleiden en de anderen met dezelfde kleur vinden. Ze mogen elkaars kaartjes bekijken maar de kleur niet hardop zeggen. Dat kost twee à vijf minuten. Controleer daarna met `begeleider.pdf` of iedereen in de juiste ploeg staat.
+
+De twee ploegen, Cyaan en Magenta, strijden tegen elkaar. `begeleider.pdf` heeft achteraan een scoreblad om per team de open sloten en het uur van de open kluis te noteren. Binnen elke ploeg vormen de deelnemers teams van 2 à 3. Er is geen antwoord en geen slot in de kluis.
+
+Het is een eerste kennismaking met hexadecimale kleurcodes, die ze later bij Robot-QR terugzien (kleurkanalen).
+'''

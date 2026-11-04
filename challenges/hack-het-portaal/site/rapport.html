@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rapport - {{SCHOOL}}</title>
+  <link rel="stylesheet" href="portaal.css">
+</head>
+<body>
+  <header>
+    <div><span class="logo">{{SCHOOL}}</span><a href="index.html">Start</a><a href="rapport.html?leerling=24">Mijn rapport</a><a href="klas.html">Klas</a><a href="beheer.html">Beheer</a></div>
+    <span class="gebruiker" id="gebruiker"></span>
+  </header>
+  <main>
+    <h1 id="titel">Rapport</h1>
+    <div class="kaart" id="inhoud"></div>
+  </main>
+  <footer><!--TERUG--></footer>
+  <script src="portaal.js"></script>
+  <script>
+    // De "server": geeft het rapport dat bij het nummer in de adresbalk hoort.
+    const RAPPORTEN = {{RAPPORTEN}};
+    const id = new URLSearchParams(location.search).get("leerling") || String((leesToken() || {}).leerling || 24);
+    const inhoud = $("inhoud");
+    $("titel").textContent = "Rapport van leerling " + id;
+    function toon(r) {
+      inhoud.innerHTML = "";
+      const naam = document.createElement("h2"); naam.textContent = r.naam + " (" + r.klas + ")"; inhoud.appendChild(naam);
+      if (r.vakken.length) {
+        const tabel = document.createElement("table");
+        tabel.innerHTML = "<tr><th>Vak</th><th>Punten</th></tr>";
+        for (const [vak, punt] of r.vakken) { const tr = document.createElement("tr"); tr.innerHTML = "<td></td><td></td>"; tr.children[0].textContent = vak; tr.children[1].textContent = punt; tabel.appendChild(tr); }
+        inhoud.appendChild(tabel);
+      }
+      if (r.notitie) { const p = document.createElement("p"); p.className = "sleutel"; p.textContent = r.notitie; inhoud.appendChild(p); }
+    }
+    if (RAPPORTEN[id]) toon(JSON.parse(ontsleutel(RAPPORTEN[id], id)));
+    else inhoud.innerHTML = '<p class="fout">Geen rapport gevonden voor leerling ' + id.replace(/[<>&]/g, "") + '.</p>';
+  </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WAV-decoder</title>
+  <style>
+    :root{--accent:#d7263d;--bg:#f6f7fb;--card:#fff;--rand:#e5e7eb;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:#111;margin:0;padding:16px}
+    main{max-width:1100px;margin:0 auto}
+    h1{margin:0 0 4px;font-size:22px}
+    .klein{color:var(--muted);font-size:13px}
+    .kaart{background:var(--card);border:1px solid var(--rand);border-radius:10px;padding:14px;margin-top:14px}
+    .kaart h2{margin:0 0 8px;font-size:16px}
+    canvas{display:block;width:100%;height:auto;background:#111;cursor:crosshair}
+    button,input[type=number]{font:inherit;padding:6px 10px;border:1px solid #bbb;border-radius:6px;background:#fff;cursor:pointer}
+    button.primair{background:var(--accent);border-color:var(--accent);color:#fff}
+    input[type=number]{cursor:text;width:110px}
+    input[type=file]{display:none}
+    .rij{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+    .regel{display:flex;align-items:center;gap:8px;font-size:14px}
+    .regel input[type=range]{width:180px}
+    .melding{color:#b00020;font-size:13px;min-height:1.2em}
+    #drop{border:2px dashed transparent}
+    #drop.over{border-color:var(--accent)}
+    pre{margin:6px 0 0;font-size:13px;white-space:pre-wrap;word-break:break-all}
+    dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 14px;margin:0;font-size:14px}
+    dt{color:var(--muted)}
+    dd{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace}
+    #status{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;min-height:1.2em;color:var(--muted)}
+  </style>
+</head>
+<body>
+<main>
+  <h1>WAV-decoder</h1>
+  <p class="klein">Open een WAV-bestand en onderzoek het: de kop van het bestand, de golfvorm en het spectrogram (tijd naar rechts, frequentie naar boven). Zoom in om te meten.</p>
+
+  <div class="kaart" id="drop">
+    <h2>Geluid</h2>
+    <div class="rij">
+      <button id="open" class="primair" type="button">Open WAV</button>
+      <button id="standaard" type="button" hidden>Standaardgeluid</button>
+      <button id="speel" type="button" disabled>&#9654; Afspelen</button>
+      <button id="stop" type="button" disabled>&#9632; Stop</button>
+      <span class="klein">Afspelen wordt nooit harder dan 10&times; versterkt.</span>
+    </div>
+    <input type="file" id="bestand" accept=".wav,audio/wav,audio/x-wav">
+    <div class="melding" id="melding"></div>
+    <dl id="info"></dl>
+    <details><summary class="klein">De eerste bytes van het bestand</summary><pre id="bytes"></pre></details>
+  </div>
+
+  <div class="kaart">
+    <h2>Golfvorm</h2>
+    <div class="rij">
+      <label class="regel">Versterken <input type="range" id="gain" min="0" max="100" value="0"> <span id="gain-w">1&times;</span></label>
+      <span class="regel"><button id="zin" type="button">Inzoomen +</button><button id="zuit" type="button">Uitzoomen &minus;</button>
+        <button id="zlinks" type="button">&larr;</button><button id="zrechts" type="button">&rarr;</button><button id="zalles" type="button">Alles</button></span>
+    </div>
+    <canvas id="golf" width="1100" height="170"></canvas>
+  </div>
+
+  <div class="kaart">
+    <h2>Spectrogram</h2>
+    <div class="rij">
+      <label class="regel">Helderheid <input type="range" id="helder" min="-10" max="40" value="2"></label>
+      <label class="regel">Contrast <input type="range" id="contrast" min="8" max="80" value="28"></label>
+      <label class="regel">Van <input type="number" id="fmin" min="0" step="100"> tot <input type="number" id="fmax" min="100" step="100"> Hz</label>
+      <button id="fall" type="button">Alle frequenties</button>
+    </div>
+    <canvas id="spec" width="1100" height="380"></canvas>
+    <div id="status"></div>
+    <div class="klein">Beweeg de muis over het spectrogram: onderaan zie je de tijd en de frequentie. Zoom in bij de golfvorm voor de tijdas, en pas Helderheid, Contrast en het frequentiebereik aan.</div>
+  </div>
+</main>
+
+<script>
+"use strict";
+const STANDAARD_GELUID = "";            // base64 van een WAV die bij het openen al geladen is (ingebouwd door generate.py)
+const $ = (id) => document.getElementById(id);
+
+// ---------- WAV lezen: we ontleden de bytes zelf, zodat we de kop kunnen tonen en geen audiospeler nodig hebben ----------
+function leesWav(buf) {
+  const v = new DataView(buf);
+  const tag = (o) => String.fromCharCode(v.getUint8(o), v.getUint8(o + 1), v.getUint8(o + 2), v.getUint8(o + 3));
+  if (buf.byteLength < 12 || tag(0) !== "RIFF" || tag(8) !== "WAVE") throw new Error("Dit is geen WAV-bestand: het begint niet met RIFF ... WAVE.");
+  let o = 12, fmt = null, data = null;
+  const brokken = [];
+  while (o + 8 <= buf.byteLength) {
+    const id = tag(o), len = v.getUint32(o + 4, true);
+    brokken.push(id + " (" + len + " bytes)");
+    if (id === "fmt ") fmt = { formaat: v.getUint16(o + 8, true), kanalen: v.getUint16(o + 10, true), sr: v.getUint32(o + 12, true), bits: v.getUint16(o + 22, true) };
+    else if (id === "data") data = { start: o + 8, len: Math.min(len, buf.byteLength - (o + 8)) };
+    o += 8 + len + (len & 1);
+  }
+  if (!fmt || !data) throw new Error("Dit WAV-bestand mist een 'fmt ' of 'data' deel.");
+  const float = fmt.formaat === 3;
+  if (!(fmt.formaat === 1 || fmt.formaat === 0xfffe || float) || ![8, 16, 24, 32].includes(fmt.bits)) throw new Error("Dit soort WAV (" + fmt.formaat + ", " + fmt.bits + " bit) ondersteunt de decoder niet. Gebruik PCM met 8, 16, 24 of 32 bit.");
+  const bytes = fmt.bits / 8, kader = bytes * fmt.kanalen, n = Math.floor(data.len / kader);
+  const samples = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let som = 0;
+    for (let k = 0; k < fmt.kanalen; k++) {
+      const p = data.start + i * kader + k * bytes;
+      let x;
+      if (float) x = v.getFloat32(p, true);
+      else if (fmt.bits === 8) x = (v.getUint8(p) - 128) / 128;
+      else if (fmt.bits === 16) x = v.getInt16(p, true) / 32768;
+      else if (fmt.bits === 24) x = ((v.getUint8(p) | (v.getUint8(p + 1) << 8) | (v.getInt8(p + 2) << 16))) / 8388608;
+      else x = v.getInt32(p, true) / 2147483648;
+      som += x;
+    }
+    samples[i] = som / fmt.kanalen;
+  }
+  return { sr: fmt.sr, kanalen: fmt.kanalen, bits: fmt.bits, formaat: float ? "float" : "PCM", samples, duur: n / fmt.sr, brokken, grootte: buf.byteLength,
+           eerste: Array.from(new Uint8Array(buf, 0, Math.min(48, buf.byteLength))) };
+}
+
+// ---------- FFT en spectrogram ----------
+const N = 2048;
+const HANN = Float32Array.from({ length: N }, (_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N));
+const BITREV = (() => { const r = new Uint16Array(N); for (let i = 0; i < N; i++) { let x = i, y = 0; for (let b = 1; b < N; b <<= 1) { y = (y << 1) | (x & 1); x >>= 1; } r[i] = y; } return r; })();
+const COS = Float32Array.from({ length: N / 2 }, (_, i) => Math.cos(2 * Math.PI * i / N));
+const SIN = Float32Array.from({ length: N / 2 }, (_, i) => -Math.sin(2 * Math.PI * i / N));
+function fft(re, im) {
+  for (let i = 0; i < N; i++) { const j = BITREV[i]; if (j > i) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+  for (let len = 2; len <= N; len <<= 1) {
+    const half = len >> 1, stap = N / len;
+    for (let i = 0; i < N; i += len) {
+      for (let k = 0, w = 0; k < half; k++, w += stap) {
+        const a = i + k, b = a + half;
+        const tr = re[b] * COS[w] - im[b] * SIN[w], ti = re[b] * SIN[w] + im[b] * COS[w];
+        re[b] = re[a] - tr; im[b] = im[a] - ti; re[a] += tr; im[a] += ti;
+      }
+    }
+  }
+}
+function maakSpectrogram(samples, sr) {
+  const bins = N / 2;
+  const hop = Math.max(512, Math.ceil((samples.length - N) / 4000));  // hoogstens ongeveer 4000 kolommen
+  const frames = Math.max(1, Math.floor((samples.length - N) / hop) + 1);
+  const db = new Float32Array(frames * bins);
+  const re = new Float32Array(N), im = new Float32Array(N);
+  for (let f = 0; f < frames; f++) {
+    const s = f * hop;
+    for (let i = 0; i < N; i++) { re[i] = (samples[s + i] || 0) * HANN[i]; im[i] = 0; }
+    fft(re, im);
+    for (let b = 0; b < bins; b++) db[f * bins + b] = 10 * Math.log10(re[b] * re[b] + im[b] * im[b] + 1e-20);
+  }
+  // typisch niveau (mediaan) van een deel van de cellen: dat is de ruisvloer
+  const sub = []; for (let i = 0; i < db.length; i += 7) sub.push(db[i]);
+  sub.sort((a, b) => a - b);
+  return { db, frames, bins, hop, mediaan: sub[Math.floor(sub.length / 2)], sr };
+}
+
+// ---------- toestand ----------
+let wav = null, spec = null, ctxAudio = null, bron = null;
+const view = { t0: 0, t1: 1 };
+let versterking = 1;
+const PLOT = { x0: 56, rechts: 8, boven: 6, onder: 22 };  // marges in beeldpunten, voor de assen
+
+const gainVan = (waarde) => Math.pow(10, waarde / 100 * 2.3);  // 0..100 -> 1x..200x
+function plotBreedte(c) { return c.width - PLOT.x0 - PLOT.rechts; }
+function tijdVanX(c, x) { return view.t0 + (x - PLOT.x0) / plotBreedte(c) * (view.t1 - view.t0); }
+function xVanTijd(c, t) { return PLOT.x0 + (t - view.t0) / (view.t1 - view.t0) * plotBreedte(c); }
+
+function tekenTijdas(ctx, c) {
+  const span = view.t1 - view.t0;
+  const stappen = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 30, 60, 120];
+  const stap = stappen.find((s) => span / s <= 12) || 300;
+  ctx.fillStyle = "#ddd"; ctx.font = "12px system-ui,sans-serif"; ctx.textAlign = "center";
+  ctx.strokeStyle = "rgba(255,255,255,.12)";
+  for (let t = Math.ceil(view.t0 / stap) * stap; t <= view.t1; t += stap) {
+    const x = Math.round(xVanTijd(c, t)) + 0.5;
+    ctx.beginPath(); ctx.moveTo(x, PLOT.boven); ctx.lineTo(x, c.height - PLOT.onder); ctx.stroke();
+    ctx.fillText((Math.round(t * 1000) / 1000) + " s", x, c.height - 6);
+  }
+}
+
+// ---------- golfvorm ----------
+function tekenGolf() {
+  const c = $("golf"), ctx = c.getContext("2d");
+  ctx.fillStyle = "#111"; ctx.fillRect(0, 0, c.width, c.height);
+  if (!wav) return;
+  const w = plotBreedte(c), h = c.height - PLOT.boven - PLOT.onder, mid = PLOT.boven + h / 2;
+  tekenTijdas(ctx, c);
+  ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.beginPath(); ctx.moveTo(PLOT.x0, mid); ctx.lineTo(PLOT.x0 + w, mid); ctx.stroke();
+  const s0 = Math.max(0, Math.floor(view.t0 * wav.sr)), s1 = Math.min(wav.samples.length, Math.ceil(view.t1 * wav.sr));
+  const per = (s1 - s0) / w;
+  for (let x = 0; x < w; x++) {
+    const a = s0 + Math.floor(x * per), b = Math.max(a + 1, s0 + Math.floor((x + 1) * per));
+    let lo = 1e9, hi = -1e9;
+    for (let i = a; i < b && i < s1; i++) { const s = wav.samples[i]; if (s < lo) lo = s; if (s > hi) hi = s; }
+    if (lo > hi) continue;
+    const y1 = mid - Math.max(-1, Math.min(1, hi * versterking)) * h / 2, y2 = mid - Math.max(-1, Math.min(1, lo * versterking)) * h / 2;
+    const afgekapt = Math.abs(hi * versterking) > 1 || Math.abs(lo * versterking) > 1;
+    ctx.fillStyle = afgekapt ? "#ff00cc" : "#00efe1";
+    ctx.fillRect(PLOT.x0 + x, y1, 1, Math.max(1, y2 - y1));
+  }
+  ctx.fillStyle = "#ddd"; ctx.textAlign = "right"; ctx.font = "12px system-ui,sans-serif";
+  ctx.fillText("+1", PLOT.x0 - 6, PLOT.boven + 10); ctx.fillText("0", PLOT.x0 - 6, mid + 4); ctx.fillText("−1", PLOT.x0 - 6, PLOT.boven + h);
+}
+
+// ---------- spectrogram ----------
+function fRange() {
+  const nyq = wav.sr / 2;
+  let lo = parseFloat($("fmin").value), hi = parseFloat($("fmax").value);
+  if (!(lo >= 0)) lo = 0;
+  if (!(hi > lo)) hi = nyq;
+  return [Math.min(lo, nyq - 100), Math.min(hi, nyq)];
+}
+function kleur(x) {  // 0..1 -> zwart, magenta, cyaan, wit (kleuren van het logo)
+  x = Math.max(0, Math.min(1, x));
+  const stops = [[0, [8, 8, 20]], [0.4, [200, 0, 160]], [0.75, [0, 239, 225]], [1, [255, 255, 255]]];
+  for (let i = 1; i < stops.length; i++) {
+    if (x <= stops[i][0]) {
+      const [x0, c0] = stops[i - 1], [x1, c1] = stops[i], t = (x - x0) / (x1 - x0);
+      return [c0[0] + (c1[0] - c0[0]) * t, c0[1] + (c1[1] - c0[1]) * t, c0[2] + (c1[2] - c0[2]) * t];
+    }
+  }
+  return [255, 255, 255];
+}
+const KLEURTABEL = Array.from({ length: 256 }, (_, i) => kleur(i / 255));
+function tekenSpec() {
+  const c = $("spec"), ctx = c.getContext("2d");
+  ctx.fillStyle = "#111"; ctx.fillRect(0, 0, c.width, c.height);
+  if (!wav || !spec) return;
+  const w = plotBreedte(c), h = c.height - PLOT.boven - PLOT.onder;
+  const [fLo, fHi] = fRange();
+  const lo = spec.mediaan + parseFloat($("helder").value), bereik = parseFloat($("contrast").value);
+  const binHz = wav.sr / N;
+  const img = ctx.createImageData(w, h), px = img.data;
+  const bovenBin = new Int32Array(h), onderBin = new Int32Array(h);
+  for (let y = 0; y < h; y++) {  // rij y bedekt de frequenties [fa, fb]
+    const fb = fHi - y / h * (fHi - fLo), fa = fHi - (y + 1) / h * (fHi - fLo);
+    onderBin[y] = Math.max(0, Math.min(spec.bins - 1, Math.floor(fa / binHz)));
+    bovenBin[y] = Math.max(onderBin[y], Math.min(spec.bins - 1, Math.ceil(fb / binHz)));
+  }
+  for (let x = 0; x < w; x++) {
+    const ta = view.t0 + x / w * (view.t1 - view.t0), tb = view.t0 + (x + 1) / w * (view.t1 - view.t0);
+    let fa = Math.round((ta * wav.sr - N / 2) / spec.hop), fb = Math.round((tb * wav.sr - N / 2) / spec.hop);
+    if (fb < 0 || fa >= spec.frames) continue;
+    fa = Math.max(0, fa); fb = Math.max(fa, Math.min(spec.frames - 1, fb));
+    for (let y = 0; y < h; y++) {
+      let m = -1e9;
+      for (let f = fa; f <= fb; f++) {
+        const basis = f * spec.bins;
+        for (let b = onderBin[y]; b <= bovenBin[y]; b++) { const d = spec.db[basis + b]; if (d > m) m = d; }
+      }
+      const k = KLEURTABEL[Math.max(0, Math.min(255, Math.round((m - lo) / bereik * 255)))], p = (y * w + x) * 4;
+      px[p] = k[0]; px[p + 1] = k[1]; px[p + 2] = k[2]; px[p + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, PLOT.x0, PLOT.boven);
+  // frequentie-as
+  tekenTijdas(ctx, c);
+  const span = fHi - fLo, stappen = [100, 200, 500, 1000, 2000, 2500, 5000];
+  const stap = stappen.find((s) => span / s <= 10) || 5000;
+  ctx.fillStyle = "#ddd"; ctx.textAlign = "right"; ctx.font = "12px system-ui,sans-serif";
+  for (let f = Math.ceil(fLo / stap) * stap; f <= fHi; f += stap) {
+    const y = PLOT.boven + (fHi - f) / span * h;
+    ctx.fillRect(PLOT.x0 - 4, Math.round(y), 4, 1);
+    ctx.fillText((f >= 1000 ? (f / 1000) + " k" : f), PLOT.x0 - 7, Math.round(y) + 4);
+  }
+}
+function frequentieVanY(y) {
+  const c = $("spec"), h = c.height - PLOT.boven - PLOT.onder, [fLo, fHi] = fRange();
+  return fHi - (y - PLOT.boven) / h * (fHi - fLo);
+}
+function muisPositie(c, e) {
+  const r = c.getBoundingClientRect();
+  return [(e.clientX - r.left) * c.width / r.width, (e.clientY - r.top) * c.height / r.height];
+}
+// ---------- tekenen en bijwerken ----------
+function alles() { tekenGolf(); tekenSpec(); }
+function infoTonen() {
+  const dl = $("info"); dl.innerHTML = "";
+  const rij = (k, v) => { const dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); };
+  rij("Soort", wav.formaat + " (RIFF/WAVE)"); rij("Kanalen", wav.kanalen); rij("Samplefrequentie", wav.sr + " Hz (hoogste frequentie die erin past: " + wav.sr / 2 + " Hz)");
+  rij("Bits per sample", wav.bits); rij("Duur", wav.duur.toFixed(2) + " s"); rij("Grootte", wav.grootte + " bytes"); rij("Delen in het bestand", wav.brokken.join(", "));
+  $("bytes").textContent = wav.eerste.map((b) => b.toString(16).padStart(2, "0").toUpperCase()).join(" ") + "\n" +
+    wav.eerste.map((b) => (b >= 32 && b < 127 ? String.fromCharCode(b) : ".")).join("");
+}
+function laad(buf, naam) {
+  $("melding").textContent = "";
+  try { wav = leesWav(buf); }
+  catch (e) { wav = null; spec = null; $("melding").textContent = e.message; alles(); return; }
+  $("melding").textContent = "";
+  stopAfspelen();
+  spec = maakSpectrogram(wav.samples, wav.sr);
+  view.t0 = 0; view.t1 = wav.duur;
+  $("fmin").value = 0; $("fmax").value = wav.sr / 2;
+  $("speel").disabled = false;
+  infoTonen();
+  alles();
+}
+function laadStandaard() {
+  const bin = atob(STANDAARD_GELUID), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  laad(bytes.buffer);
+}
+function laadBestand(f) { if (f) f.arrayBuffer().then((b) => laad(b, f.name)); }
+
+// ---------- afspelen ----------
+function stopAfspelen() { if (bron) { try { bron.stop(); } catch (e) {} bron = null; } $("stop").disabled = true; }
+$("speel").addEventListener("click", () => {
+  if (!wav) return;
+  stopAfspelen();
+  ctxAudio = ctxAudio || new (window.AudioContext || window.webkitAudioContext)();
+  const buf = ctxAudio.createBuffer(1, wav.samples.length, wav.sr);
+  buf.copyToChannel(wav.samples, 0);
+  bron = ctxAudio.createBufferSource(); bron.buffer = buf;
+  const g = ctxAudio.createGain(); g.gain.value = Math.min(10, versterking);
+  bron.connect(g); g.connect(ctxAudio.destination);
+  bron.onended = () => { $("stop").disabled = true; };
+  bron.start(); $("stop").disabled = false;
+});
+$("stop").addEventListener("click", stopAfspelen);
+
+// ---------- bediening ----------
+$("open").addEventListener("click", () => $("bestand").click());
+$("bestand").addEventListener("change", (e) => { laadBestand(e.target.files[0]); e.target.value = ""; });
+$("standaard").addEventListener("click", laadStandaard);
+const drop = $("drop");
+["dragenter", "dragover"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => laadBestand(e.dataTransfer.files[0]));
+
+$("gain").addEventListener("input", () => { versterking = gainVan(parseFloat($("gain").value)); $("gain-w").innerHTML = (versterking < 10 ? versterking.toFixed(1) : Math.round(versterking)) + "&times;"; tekenGolf(); });
+function zoom(factor, midden) {
+  if (!wav) return;
+  const span = Math.max(0.05, Math.min(wav.duur, (view.t1 - view.t0) * factor));
+  const m = midden ?? (view.t0 + view.t1) / 2;
+  view.t0 = Math.max(0, Math.min(wav.duur - span, m - span / 2)); view.t1 = view.t0 + span;
+  alles();
+}
+function schuif(delta) { if (!wav) return; const span = view.t1 - view.t0; view.t0 = Math.max(0, Math.min(wav.duur - span, view.t0 + delta * span)); view.t1 = view.t0 + span; alles(); }
+$("zin").addEventListener("click", () => zoom(0.5)); $("zuit").addEventListener("click", () => zoom(2));
+$("zlinks").addEventListener("click", () => schuif(-0.4)); $("zrechts").addEventListener("click", () => schuif(0.4));
+$("zalles").addEventListener("click", () => { if (wav) { view.t0 = 0; view.t1 = wav.duur; alles(); } });
+["helder", "contrast"].forEach((id) => $(id).addEventListener("input", tekenSpec));
+["fmin", "fmax"].forEach((id) => $(id).addEventListener("change", tekenSpec));
+$("fall").addEventListener("click", () => { if (wav) { $("fmin").value = 0; $("fmax").value = wav.sr / 2; tekenSpec(); } });
+$("spec").addEventListener("mousemove", (e) => {
+  if (!wav) return;
+  const [x, y] = muisPositie($("spec"), e);
+  $("status").textContent = x >= PLOT.x0 ? "tijd " + tijdVanX($("spec"), x).toFixed(2) + " s, frequentie " + Math.round(frequentieVanY(y)) + " Hz" : "";
+});
+["golf", "spec"].forEach((id) => $(id).addEventListener("wheel", (e) => { if (!wav) return; e.preventDefault(); const [x] = muisPositie($(id), e); zoom(e.deltaY < 0 ? 0.7 : 1.4, tijdVanX($(id), x)); }, { passive: false }));
+
+if (STANDAARD_GELUID) { $("standaard").hidden = false; laadStandaard(); } else alles();
+</script>
+</body>
+</html>

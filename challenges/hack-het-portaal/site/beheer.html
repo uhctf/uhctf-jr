@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beheer - {{SCHOOL}}</title>
+  <link rel="stylesheet" href="portaal.css">
+</head>
+<body>
+  <header>
+    <div><span class="logo">{{SCHOOL}}</span><a href="index.html">Start</a><a href="rapport.html?leerling=24">Mijn rapport</a><a href="klas.html">Klas</a><a href="beheer.html">Beheer</a></div>
+    <span class="gebruiker" id="gebruiker"></span>
+  </header>
+  <main>
+    <h1>Beheerderspaneel</h1>
+    <div class="kaart" id="inhoud"></div>
+  </main>
+  <footer><!--TERUG--></footer>
+  <script src="portaal.js"></script>
+  <script>
+    const GEHEIM = "{{GEHEIM3}}";
+    const inhoud = $("inhoud");
+    const token = leesToken();
+    // TODO: de handtekening van de token nog controleren (komt in de volgende versie). Voorlopig kijken we enkel naar de rol.
+    if (!token) {
+      inhoud.innerHTML = '<p class="fout">Ongeldige sessiesleutel (token). Gebruik "Sessie herstellen" onderaan.</p>';
+    } else if (token.rol === "beheerder") {
+      inhoud.innerHTML = "<h2>Welkom, beheerder</h2><table><tr><th>Onderdeel</th><th>Status</th></tr><tr><td>Gebruikers</td><td>412 actief</td></tr><tr><td>Back-up</td><td>vannacht gelukt</td></tr><tr><td>Rapporten</td><td>5B afgewerkt</td></tr></table>";
+      const p = document.createElement("p"); p.className = "sleutel"; p.textContent = ontsleutel(GEHEIM, "beheerder"); inhoud.appendChild(p);
+    } else {
+      inhoud.innerHTML = '<p class="fout">Geen toegang.</p><p>Je sessiesleutel (token) zegt dat je rol <strong></strong> is. Dit paneel is enkel voor beheerders.</p>';
+      inhoud.querySelector("strong").textContent = String(token.rol);
+    }
+  </script>
+</body>
+</html>

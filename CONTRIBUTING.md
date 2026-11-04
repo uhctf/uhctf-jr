@@ -122,13 +122,13 @@ Staat er een tabel `[laptop]` in `events/<event>/event.toml`, dan maakt `./jr ev
 ```toml
 [laptop]                     # gereserveerde tabel: dit is geen uitdaging
 titel = "Naam op de startpagina"
-nodig = 3                    # aantal sloten voor de kluis opengaat
+nodig = 3                    # aantal sloten voor de kluis opengaat; "alle" = elk slot van het event
 intro = "Welkom! ... {nodig} sloten"  # optioneel: tekst bovenaan de startpagina; {nodig} wordt het aantal sloten
 ```
 
 De kluis kent de antwoorden van alle uitdagingen in het event, als hash. Bij meerdere antwoorden (varianten) geeft `generate()` meerdere regels terug in de vorm `label: antwoord`; het deel na de eerste `: ` telt als antwoord. Hoofdletters, spaties en leestekens tellen niet mee. Een statische uitdaging met meerdere `vlaggen` krijgt een slot per vlag.
 
-Een statische uitdaging die zelf een site is (zoals `webvlaggen`), komt in de laptopmap met `laptop_map = "src"` in haar `challenge.toml`: die map wordt `laptop/<uitdaging>/`, zonder aanpassingen aan de pagina. De site moet dan vanaf schijf werken (geen `fetch`, wel `<script src>`).
+Een statische uitdaging die zelf een site is (zoals `webvlaggen`), komt in de laptopmap met `laptop_map = "src"` in haar `challenge.toml`: die map wordt `laptop/<uitdaging>/`, zonder aanpassingen aan de pagina. De site moet dan vanaf schijf werken (geen `fetch`, wel `<script src>`). Dat kan ook voor een gegenereerde uitdaging (zoals `hack-het-portaal`): `generate.py` schrijft de site in de map uit `laptop_map` (bv. `site/`) in de uitvoer. Staat er `<!--TERUG-->` in een pagina, dan komt daar in de laptopmap een link naar de startpagina; elders blijft het commentaar. Een uitdaging die zelf iets onthoudt in `localStorage` gebruikt sleutels met het voorvoegsel `opdracht-`: "Nieuw team" in de kluis wist die (en de kladblokken).
 
 ### Digitale versie van een uitdaging
 
