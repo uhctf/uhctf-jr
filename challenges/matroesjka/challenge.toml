@@ -1,0 +1,42 @@
+type = "generated"
+antwoord = "verstoppertje"
+
+[opties]
+taal = "nl"
+seed = 1
+# naam van het bestand dat de deelnemers krijgen
+bestandsnaam = "vakantiefoto.png"
+# aantal foto's in elkaar: 1 = foto met zip; 2 = de zip bevat weer een foto met een zip, ...
+lagen = 1
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "12–15"
+duur = "10–15 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Matroesjka"
+onderwerp = "Bestanden in bestanden, bestandsformaten en extensies"
+materiaal = "laptop met de foto (`vakantiefoto.png`, bv. op een netwerkshare of usb-stick), `deelnemer.pdf`; optioneel 7-Zip"
+beschrijving = '''
+Een hacker heeft een geheim verstopt. We vonden alleen deze vakantiefoto op de gedeelde map. Volgens onze speurders zit er meer in de foto dan je op het eerste zicht ziet.
+'''
+hints = [
+  "Een bestand kan meer bevatten dan wat je programma toont. Hoe groot is deze foto?",
+  "Wat als het geen foto was, maar een ander soort bestand? Probeer de extensie te veranderen.",
+  "Hernoem het bestand naar .zip (of open het met 7-Zip) en kijk wat erin zit.",
+]
+opzet = '''
+Achter een gewone PNG-afbeelding zit een zip-bestand geplakt (zoals `copy /b foto.png + geheim.zip`). Een fotoviewer leest het begin van het bestand en toont de foto; een zip-programma leest de inhoudstafel aan het einde en vindt `geheim.txt` met het antwoord. De generator zet de offsets in de zip juist voor het hele bestand, zodat ook strenge zip-programma's het archief openen. `./jr check matroesjka` test het bestand met `unzip` en `7z` als die aanwezig zijn. Met `lagen = 2` of meer zit er in de zip weer een foto met een zip, als een matroesjka-pop.
+
+**Test vooraf op de laptops van het event, met het bestand op dezelfde plek als de deelnemers het krijgen (bv. de netwerkshare):**
+
+- Grootte en SHA-256 van het bestand moeten gelijk zijn aan die in `begeleider.pdf`. Deel het bestand niet via chat-apps, mail of cloudopslag die afbeeldingen opnieuw comprimeren: dan verdwijnt de zip.
+- Toon bestandsextensies in Windows Verkenner (Beeld > Weergeven > Bestandsnaamextensies). Anders wordt hernoemen `vakantiefoto.zip.png` en werkt het niet.
+- Is de share alleen-lezen, dan lukt hernoemen daar niet. Laat deelnemers het bestand eerst naar het bureaublad kopiëren, of maak per laptop een schrijfbare kopie.
+- Een share die je via een IP-adres of volledige domeinnaam opent (`\\192.168.1.10\...`) valt in Windows standaard in de internetzone. Bestanden kunnen dan een beveiligingswaarschuwing geven of geblokkeerd worden bij openen of uitpakken. Test dit; gebruik zo nodig een servernaam zonder punten, of zet de server in de zone Lokaal intranet.
+- Test of de ingebouwde zip-ondersteuning van Windows het bestand na hernoemen opent, en of 7-Zip werkt (rechtsklik > 7-Zip > Archief openen) als dat geïnstalleerd is.
+- Een virusscanner kan een bestand met een zip achter een afbeelding verdacht vinden. Controleer dat het bestand niet in quarantaine verdwijnt.
+'''
