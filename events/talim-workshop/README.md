@@ -8,26 +8,26 @@ Het thema is Techniek & IT, met een workshop rond security. De focus ligt op doe
 
 ## Verloop van een sessie (30 minuten)
 
-Een groepje van 6 à 8 leerlingen verdeel je in teams van 2 à 3. Elk team krijgt een eigen laptop en een pakket opdrachten op papier. Doolhof, woordzoeker en lockpicking blijven op papier (of fysiek). De andere opdrachten bestaan op papier en op de laptop: dezelfde puzzel met hetzelfde antwoord, dus een team kan beide proberen of per opdracht kiezen. De digitale versies zijn hulpmiddelen, zoals de decoder: ze controleren niets. Het team bepaalt zelf wanneer het klaar is en typt het antwoord in de kluis. Ze lossen zoveel mogelijk op binnen de tijd, in de volgorde die ze zelf kiezen. Er zijn bewust meer opdrachten dan tijd.
+Een groepje van 6 à 8 leerlingen verdeel je in teams van 2 à 3. Elk team krijgt een eigen laptop en een pakket opdrachten op papier. Doolhof, woordzoeker en lockpicking blijven op papier (of fysiek), Laag na laag doe je op de laptop. De andere opdrachten bestaan op papier en op de laptop: dezelfde puzzel met hetzelfde antwoord, dus een team kan beide proberen of per opdracht kiezen. De digitale versies zijn hulpmiddelen, zoals de decoder: ze controleren niets. Het team bepaalt zelf wanneer het klaar is en typt het antwoord in de kluis. Ze lossen zoveel mogelijk op binnen de tijd, in de volgorde die ze zelf kiezen. Er zijn bewust meer opdrachten dan tijd.
 
 | Wanneer | Wat |
 | --- | --- |
 | 0–5 min | welkom, korte uitleg over security en de kluis, teamnaam invullen op de laptop |
-| 5–28 min | de teams werken zelfstandig; begeleiders lopen rond met hints en controleren de mastermind-gokken |
+| 5–28 min | de teams werken zelfstandig; begeleiders lopen rond met hints en controleren de mastermind-gokken op papier |
 | 28–30 min | kluis open? Diploma's printen en bespreken: wat leerden we over wachtwoorden en phishing? |
 
 Elk antwoord typen de teams in **de kluis** op de laptop. Met 3 goede antwoorden gaat de kluis open en kunnen ze hun diploma printen. Elk extra antwoord opent een extra slot, dus snelle teams blijven bezig.
 
-Het pakket per team. Behalve doolhof en woordzoeker bestaan alle opdrachten op papier en op de laptop, met dezelfde puzzel en hetzelfde antwoord:
+Het pakket per team. Behalve doolhof, woordzoeker en laag na laag bestaan alle opdrachten op papier en op de laptop, met dezelfde puzzel en hetzelfde antwoord:
 
 | Opdracht | Op papier | Op de laptop |
 | --- | --- | --- |
 | [Romeinse geheimen](../../challenges/romeinse-geheimen/) | bericht en alfabetstrook, de decoder om te controleren | een caesarwiel dat je draait |
-| [Laag na laag](../../challenges/laag-na-laag/) | het bericht geprint | het bericht om te kopiëren, de lagen pak je uit met de decoder. Dat sluit aan op het Caesarcijfer van Romeinse geheimen (de decoder heeft ook een ROT-stap) |
+| [Laag na laag](../../challenges/laag-na-laag/) | alleen het blad met de opdracht: het bericht is te lang om over te typen | het bericht om te kopiëren, de lagen pak je uit met de decoder |
 | [Doolhof](../../challenges/doolhof/) | potlood op het doolhof | alleen op papier |
 | [Wie is de hacker?](../../challenges/wie-is-de-hacker/) | schrappen in een tabel | verdachten schrappen en verklaringen afvinken |
 | [Phishing of echt?](../../challenges/phishing-of-echt/) | berichtenkaartjes aankruisen | rode vlaggen aanvinken en berichten als nep markeren |
-| [Wachtwoord-mastermind](../../challenges/wachtwoord-mastermind/) | een begeleider controleert de gokken | de pagina geeft de feedback per vak, zoals de begeleider |
+| [Wachtwoord-mastermind](../../challenges/wachtwoord-mastermind/) | een begeleider controleert de gokken | de pagina geeft de feedback per vak, zoals de begeleider. Stuur teams liefst hierheen: op papier wacht elk team op een begeleider |
 
 Voor teams die eerder klaar zijn:
 
@@ -71,8 +71,8 @@ De instellingen van de laptopmap (titel, aantal sloten en introtekst) staan in d
 ## Voorbereiding
 
 1. Bouw alles één keer: `./jr event build talim-workshop`. Print alles uit dezelfde bouw. Mastermind en Wie is de hacker? hebben vaste seeds, zodat een herbouw hetzelfde geeft.
-2. Kopieer de map `out/laptop/` (bv. met een USB-stick) naar elke laptop. Open `index.html` in Chrome of Firefox en maak er een bladwijzer van. Er is geen internet nodig.
-3. Test de kluis één keer met een paar antwoorden uit `ANTWOORDEN.pdf` en druk daarna op "Nieuw team".
+2. Kopieer de map `out/laptop/` (bv. met een USB-stick) naar elke laptop. Open `index.html` in Chrome (of Edge) en maak er een bladwijzer van. Er is geen internet nodig. Firefox houdt de opslag van pagina's vanaf schijf soms per map apart: dan ziet de startpagina de open sloten van de kluis niet.
+3. Test de kluis één keer met een paar antwoorden uit `ANTWOORDEN.pdf`. Ga terug naar de startpagina en kijk of de sloten daar ook open staan. Druk daarna in de kluis op "Nieuw team".
 4. Maak per team een pakket: één blad van elke opdracht (bij mastermind ook `profiel.pdf`).
 5. Speel het voorbeeld op het mastermind-blad (grijze rij) hardop voor als een team die opdracht start.
 

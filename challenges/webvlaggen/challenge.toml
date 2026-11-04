@@ -1,6 +1,8 @@
 type = "static"
 materiaal = ["src"]
-vlaggen = [["web 1 (makkelijk)", "web-not-so-hidden"], ["web 2 (moeilijk)", "web-flag-in-transit"], ["web 3 (extreem)", "le-langue-secrete"]]
+# Map uit het materiaal die in de laptopmap van een event komt (als <uitdaging>/index.html).
+laptop_map = "src"
+vlaggen = [["web 1 (makkelijk)", "web-not-so-hidden"], ["web 2 (gemiddeld)", "web-flag-in-transit"], ["web 3 (moeilijker)", "la-langue-secrete"]]
 
 [meta]
 auteur = "UHCTF"
@@ -12,7 +14,7 @@ vlag_formaat = "antwoord"
 [nl]
 naam = "Webvlaggen"
 onderwerp = "Webpagina's bekijken, bronnen en bestanden, talen"
-materiaal = "laptop met browser, Python 3 (`python3 -m http.server` in [src/](src/))"
+materiaal = "laptop met browser"
 beschrijving = '''
 Op de website van de Open Dag staat een gratis flag, maar die is niet altijd zichtbaar. Er zijn drie vlaggen te vinden, in oplopende moeilijkheid:
 
@@ -23,8 +25,8 @@ Op de website van de Open Dag staat een gratis flag, maar die is niet altijd zic
 hints = [
   "Een browser kan de broncode van een pagina tonen (rechtsklik, 'Paginabron weergeven', of Ctrl+U).",
   "Zoek in de bron naar 'flag'. Kijk ook naar commentaar en naar wat er staat voordat de taal geladen wordt.",
-  "De tekst van de pagina komt uit bestanden per taal. Kijk in het tabblad Netwerk van de ontwikkelaarstools welk bestand geladen wordt, en probeer een andere taal.",
+  "De tekst van de pagina komt uit een bestand per taal. Kijk in het tabblad Netwerk van de ontwikkelaarstools welk bestand geladen wordt, en open dat bestand zelf. Bestaat er nog een andere taal?",
 ]
 opzet = '''
-Start in [src/](src/) een lokale server: `python3 -m http.server` en open `http://localhost:8000`. Openen vanaf schijf werkt niet, omdat de pagina taalbestanden inlaadt met `fetch`. De pagina gebruikt geen externe bibliotheken en werkt offline.
+Open [src/index.html](src/index.html) in de browser. De pagina laadt haar teksten uit `taal/<taal>.js` met een scripttag, dus ze werkt vanaf schijf en via een webserver (`python3 -m http.server` in `src/`). Ze gebruikt geen externe bibliotheken en werkt offline. In een event met een laptopmap komt de site in `laptop/webvlaggen/` en telt elke vlag als een eigen slot in de kluis.
 '''

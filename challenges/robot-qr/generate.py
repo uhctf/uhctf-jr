@@ -7,6 +7,7 @@ from pathlib import Path
 import segno
 from reportlab.lib.units import cm
 
+from jr.digitaal import inpakken
 from jr.pdf import MARGE, Pdf, begeleider
 from jr.shared import gebruik
 
@@ -17,6 +18,8 @@ TEKST = {
                  "maar je ogen zien het nauwelijks.",
         "opdracht": "Open beeldbewerker/index.html op de computer: de afbeelding staat al klaar. Bewerk ze tot je iets herkent. "
                     "Scan het resultaat met je telefoon en schrijf het antwoord op.",
+        "opdracht_laptop": "Open Robot-QR op de laptop: de afbeelding staat al klaar. Bewerk ze tot je iets herkent. "
+                           "Scan het scherm met een telefoon en typ het antwoord in de kluis.",
         "oplossing": "De QR-code is donkerblauw op zwart. Verhoog helderheid en contrast, of zet het blauwe kanaal hoog en de andere "
                      "kanalen laag, tot het patroon scherp zichtbaar is. Werkt scannen niet, gebruik dan ook Inverteren (de code staat 'negatief'). Scan de code: het antwoord staat erin.",
         "zichtbaar": "Zo ziet de QR-code er na bewerking uit:",
@@ -31,6 +34,8 @@ TEKST = {
         "intro": "Images can contain more than meets the eye. This robot carries a secret on its chest, but your eyes can barely see it.",
         "opdracht": "Open beeldbewerker/index.html on the computer: the image is already loaded. Edit it until you recognise something. "
                     "Scan the result with your phone and write down the answer.",
+        "opdracht_laptop": "Open Robot QR on the laptop: the image is already loaded. Edit it until you recognise something. "
+                           "Scan the screen with a phone and type the answer into the vault.",
         "oplossing": "The QR code is dark blue on black. Raise brightness and contrast, or set the blue channel high and the others "
                      "low, until the pattern is sharp. If scanning fails, also use Invert (the code is 'negative'). Scan the code: the answer is inside.",
         "zichtbaar": "This is what the QR code looks like after editing:",
@@ -58,10 +63,12 @@ def generate(params: dict, uit: Path) -> str:
     qr = maak_qr(antwoord)
     qr.save(str(uit / "qr.png"), scale=schaal, border=2, dark=params["kleur"], light="#000000")
     gebruik(uit, params["taal"], "beeldbewerker", opties={"beeldbewerker": {"afbeelding": eigen or str(uit / "qr.png")}})
+    if params.get("digitaal"):  # de beeldbewerker met de afbeelding is de digitale versie; de hints komen eronder
+        (uit / "digitaal.html").write_text(inpakken((uit / "beeldbewerker" / "index.html").read_text(), t["hints"]))
 
     p = Pdf(uit / "deelnemer.pdf", t["titel"])
     p.regel(t["intro"])
-    p.regel(t["opdracht"])
+    p.regel(t["opdracht_laptop" if params.get("digitaal") else "opdracht"])
     if not eigen:  # de gegenereerde code staat ook op papier; een eigen foto zit enkel in de beeldbewerker
         breedte = 12 * cm
         p.ruimte(breedte)

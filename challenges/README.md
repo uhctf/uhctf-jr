@@ -14,6 +14,8 @@ Herbruikbare uitdagingen. Eén map per uitdaging; elke README wordt gegenereerd 
 | [Robot-QR](robot-qr/) | gegenereerd | booth | 12–15 | 10–15 min | Afbeeldingen bewerken, QR-codes, verborgen informatie |
 | [Romeinse geheimen](romeinse-geheimen/) | gegenereerd | booth | 8–12 | 5–10 min | Caesarcijfer (ROT-N) |
 | [Schatkaart](schatkaart/) | gegenereerd | booth | 8–12 | 10 min | Raadsels oplossen, coördinaten |
+| [Verborgen bestanden](verborgen-bestanden/) | gegenereerd | booth | 15–18 | 20–30 min | Digitaal speurwerk (forensics), bestandsformaten, magic bytes |
+| [Vigenère](vigenere/) | gegenereerd | booth | 15–18 | 20–30 min | Klassieke cryptografie, Vigenèrecijfer, aanval met bekende klare tekst |
 | [Wachtwoord-mastermind](wachtwoord-mastermind/) | gegenereerd | booth | 8–12 | 10 min | Veilige wachtwoorden, logisch redeneren |
 | [Webvlaggen](webvlaggen/) | statisch | booth | 12–18 | 15–20 min | Webpagina's bekijken, bronnen en bestanden, talen |
 | [Wie is de hacker?](wie-is-de-hacker/) | gegenereerd | booth | 8–12 | 10 min | Logisch redeneren, deductie |

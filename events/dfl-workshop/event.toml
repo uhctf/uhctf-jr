@@ -1,16 +1,42 @@
-# Uitdagingen voor dit event. Elke tabel is een uitdaging; sleutels overschrijven de standaardwaarden.
+# Instellingen en uitdagingen voor dit event. [laptop] bevat de instellingen van de laptopmap; elke andere tabel is een uitdaging.
+# Sleutels in een uitdaging overschrijven de standaardwaarden. De standaardantwoorden staan publiek in de repo: daarom eigen antwoorden.
+# digitaal = true bouwt er ook een versie bij voor op de laptop (in out/laptop/).
 
+# Laptopmap: ./jr event build dfl-workshop maakt events/dfl-workshop/out/laptop/
+# Kopieer die map naar de laptop en open index.html in Chrome. Er is geen internet of server nodig.
+[laptop]
+titel = "DFL-workshop: kraak de kluis"
+# 8 sloten in totaal (webvlaggen telt 3 keer). Met 5 gaat de kluis open; snelle teams jagen op de rest.
+nodig = 5
+intro = "Welkom, ethische hackers. Kraak codes, onderzoek bestanden en lees broncode. Typ elk antwoord in de kluis: met {nodig} sloten gaat ze open."
+
+# opwarmer: vier lagen, de laatste is ROT13
 [laag-na-laag]
+digitaal = true
 antwoord = "defense-in-depth"
 lagen = ["rot13", "binair", "hex", "base64"]
 
+# donkerder dan standaard: zonder de kleurkanalen te bewerken zie je niets
 [robot-qr]
+digitaal = true
 antwoord = "zero-trust"
-
-[kraak-de-code]
-a = 12
-b = 15
+kleur = "#000014"
 
 [webvlaggen]
+
+# boven 30 is de rechtstreekse recursie te traag: ze moeten slimmer programmeren
+[kraak-de-code]
+digitaal = true
+a = 40
+b = 70
+
+[vigenere]
+digitaal = true
+antwoord = "kerckhoffs"
+sleutel = "HACKER"
+
+[verborgen-bestanden]
+digitaal = true
+antwoord = "extensies-liegen"
 
 [lockpicking]

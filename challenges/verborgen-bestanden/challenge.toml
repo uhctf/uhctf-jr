@@ -1,0 +1,34 @@
+# Gegenereerde uitdaging: ./jr build verborgen-bestanden maakt de bestanden en de pdf's met de standaardwaarden.
+type = "generated"
+# Twee delen met een koppelteken: het eerste deel zit in de vermomde afbeelding, het tweede achter het einde van de foto.
+antwoord = "magische-bytes"
+
+[opties]
+taal = "nl"
+# ja: bouw ook een digitale versie (digitaal.html) met de bestanden en een bestandsinspecteur (hex, tekst, afbeelding)
+digitaal = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "15–18"
+duur = "20–30 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Verborgen bestanden"
+onderwerp = "Digitaal speurwerk (forensics), bestandsformaten, magic bytes"
+materiaal = "de bestanden in `usb/` of de digitale versie op een laptop, het blad met magic bytes (`deelnemer.pdf`)"
+beschrijving = '''
+Op een USB-stick van een verdachte staan drie onschuldige bestanden: een vakantiefoto, notities en een boodschappenlijst. Of toch niet? De naam van een bestand zegt niet wat erin zit. Kijk naar de bytes zelf.
+'''
+hints = [
+  "De extensie (.txt, .jpg) is maar een naam. De eerste bytes van een bestand verraden het echte formaat: vergelijk ze met de tabel.",
+  "notities.txt begint niet met tekst. Welk formaat begint met 89 50 4E 47? Open het bestand als dat formaat.",
+  "Een JPEG eindigt altijd met FF D9. Kijk in de hexweergave of als tekst naar het einde van vakantie.jpg: staat er nog iets na?",
+]
+opzet = '''
+De generator maakt drie bestanden in `usb/`: `notities.txt` is in werkelijkheid een PNG-afbeelding met het eerste deel van het antwoord, `vakantie.jpg` is een echte foto met na het einde van de afbeelding (de bytes `FF D9`) nog tekst met het tweede deel, en `boodschappen.txt` is gewoon tekst (een afleider). Het antwoord is beide delen met een koppelteken (hoofdletters en leestekens tellen niet mee in de kluis). Op `deelnemer.pdf` staat een tabel met magic bytes. Met `digitaal = true` komt er een pagina bij met de bestanden en een bestandsinspecteur: een hexweergave, weergave als tekst en weergave als afbeelding. Met eigen gereedschap kan het ook: `file`, `xxd` of `strings` op de map `usb/`.
+
+Na afloop: waarom kijken virusscanners en e-mailfilters naar de inhoud en niet naar de extensie, en hoe verstoppen aanvallers gegevens in onschuldige bestanden?
+'''

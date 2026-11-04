@@ -44,7 +44,7 @@
   veld.addEventListener("input", () => { try { localStorage.setItem("uhctf-team-{{EVENT}}", veld.value); } catch (e) {} });
   let open = [];
   try { open = JSON.parse(lees("uhctf-kluis-{{EVENT}}") || "[]"); } catch (e) {}
-  for (const t of document.querySelectorAll("a.tegel[data-id]")) if (open.includes(t.dataset.id)) t.classList.add("klaar");
+  for (const t of document.querySelectorAll("a.tegel[data-id]")) if (t.dataset.id.split(" ").every(id => open.includes(id))) t.classList.add("klaar");
   const sloten = document.getElementById("sloten");
   sloten.innerHTML = '<span class="tekst">Sloten</span>';
   for (let i = 0; i < nodig; i++) {

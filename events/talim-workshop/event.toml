@@ -20,7 +20,8 @@ oefenhint = "Veel voorkomende huisdieren"
 
 [doolhof]
 digitaal = false
-antwoord = "veilig"
+# niet "veilig": dat is het begin van het woordzoeker-antwoord en dan raad je het ene uit het andere
+antwoord = "schild"
 breedte = 10
 hoogte = 12
 

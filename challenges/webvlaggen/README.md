@@ -12,7 +12,7 @@
 
 - Topic: Webpagina's bekijken, bronnen en bestanden, talen
 
-- Materials: laptop met browser, Python 3 (`python3 -m http.server` in [src/](src/))
+- Materials: laptop met browser
 
 - Flag Format: het antwoord zelf (hoofdletterongevoelig)
 
@@ -20,8 +20,8 @@ Flag:
 
 <details><summary>TOON</summary><ul><ul>
 <li>web 1 (makkelijk): <code>web-not-so-hidden</code></li>
-<li>web 2 (moeilijk): <code>web-flag-in-transit</code></li>
-<li>web 3 (extreem): <code>le-langue-secrete</code></li>
+<li>web 2 (gemiddeld): <code>web-flag-in-transit</code></li>
+<li>web 3 (moeilijker): <code>la-langue-secrete</code></li>
 </ul></ul></details>
 
 ## Beschrijving
@@ -36,11 +36,11 @@ Op de website van de Open Dag staat een gratis flag, maar die is niet altijd zic
 
 1. Een browser kan de broncode van een pagina tonen (rechtsklik, 'Paginabron weergeven', of Ctrl+U).
 2. Zoek in de bron naar 'flag'. Kijk ook naar commentaar en naar wat er staat voordat de taal geladen wordt.
-3. De tekst van de pagina komt uit bestanden per taal. Kijk in het tabblad Netwerk van de ontwikkelaarstools welk bestand geladen wordt, en probeer een andere taal.
+3. De tekst van de pagina komt uit een bestand per taal. Kijk in het tabblad Netwerk van de ontwikkelaarstools welk bestand geladen wordt, en open dat bestand zelf. Bestaat er nog een andere taal?
 
 ## Opzet
 
-Start in [src/](src/) een lokale server: `python3 -m http.server` en open `http://localhost:8000`. Openen vanaf schijf werkt niet, omdat de pagina taalbestanden inlaadt met `fetch`. De pagina gebruikt geen externe bibliotheken en werkt offline.
+Open [src/index.html](src/index.html) in de browser. De pagina laadt haar teksten uit `taal/<taal>.js` met een scripttag, dus ze werkt vanaf schijf en via een webserver (`python3 -m http.server` in `src/`). Ze gebruikt geen externe bibliotheken en werkt offline. In een event met een laptopmap komt de site in `laptop/webvlaggen/` en telt elke vlag als een eigen slot in de kluis.
 
 Dit is een statische uitdaging: het materiaal staat vast en er is geen event-specifieke versie. `./jr event build` kopieert `src/` ongewijzigd.
 

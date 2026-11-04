@@ -1,4 +1,5 @@
-{
+// Teksten van de site in het Nederlands.
+laadTaal("nl", {
   "nav.about": "Over",
   "nav.program": "Programma",
   "nav.practical": "Praktische info",
@@ -43,4 +44,4 @@
   "practical.transport": "Met de trein/bus: Station Hasselt en lokale bussen",
   "practical.accessibility": "Rolstoeltoegankelijke locaties — neem contact met ons op voor hulp",
   "practical.contact": "Contact: info@example.org"
-}
+});

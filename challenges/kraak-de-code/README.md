@@ -34,7 +34,7 @@ Geen mens zal dit ooit oplossen, je hebt zeker een computer nodig om deze code u
 
 ## Opzet
 
-Het antwoord wordt berekend uit `functie` (`fibonacci`, `driehoek` of `verdubbel`), `a` en `b`. Er is dus geen vrij antwoord: pas die opties aan voor een ander event. Zet `hulp = true` voor een invultabel voor jongere deelnemers. Deelnemers kunnen de functie met de hand uitrekenen of in een programmeeromgeving naar keuze uitvoeren.
+Het antwoord wordt berekend uit `functie` (`fibonacci`, `driehoek` of `verdubbel`), `a` en `b`. Er is dus geen vrij antwoord: pas die opties aan voor een ander event. Zet `hulp = true` voor een invultabel voor jongere deelnemers. `a` en `b` gaan tot 78. Boven 30 is de functie rechtstreeks uitvoeren te traag (bij Fibonacci groeit het aantal oproepen exponentieel), dus moeten deelnemers slimmer programmeren: een extra hint over memoization komt er dan vanzelf bij. Met `digitaal = true` komt er een pagina bij met de opgave en een JavaScript-kladblok, zodat ze op de laptop kunnen programmeren zonder ontwikkelaarstools. Deelnemers kunnen de functie met de hand uitrekenen of in een programmeeromgeving naar keuze uitvoeren.
 
 Dit is een gegenereerde uitdaging. Bouw met de standaardwaarden:
 
@@ -51,6 +51,6 @@ Voor een event met andere opties:
 
 De uitvoer bevat minstens `deelnemer.pdf` (uitdelen) en `begeleider.pdf` (antwoord, oplossing, hints).
 
-Opties (standaardwaarde): `taal` ("nl"), `functie` ("fibonacci"), `a` (9), `b` (10), `hulp` (false).
+Opties (standaardwaarde): `taal` ("nl"), `functie` ("fibonacci"), `a` (9), `b` (10), `hulp` (false), `digitaal` (false).
 
 [SOLUTION.md](SOLUTION.md)

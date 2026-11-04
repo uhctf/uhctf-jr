@@ -82,6 +82,11 @@ ICONEN = {
     "doolhof": f'<svg {_S}><path d="M6 6h36v36H6zM6 18h24M18 30h24M18 18v12"/></svg>',
     "woordzoeker": f'<svg {_S}><path d="M6 6h36v36H6zM18 6v36M30 6v36M6 18h36M6 30h36"/></svg>',
     "schatkaart": f'<svg {_S}><path d="M6 10l12-4 12 4 12-4v32l-12 4-12-4-12 4z" fill="#fff"/><path d="M18 6v32M30 10v32M20 20l8 8M28 20l-8 8"/></svg>',
+    "kraak-de-code": f'<svg {_S}><path d="M14 8c-5 0-5 4-5 8s-1 6-4 8c3 2 4 4 4 8s0 8 5 8M34 8c5 0 5 4 5 8s1 6 4 8c-3 2-4 4-4 8s0 8-5 8"/><path d="M20 30l8-12"/></svg>',
+    "robot-qr": f'<svg {_S}><rect x="6" y="6" width="14" height="14" fill="#fff"/><rect x="28" y="6" width="14" height="14" fill="#fff"/><rect x="6" y="28" width="14" height="14" fill="#fff"/><path d="M28 28h6v6h-6zM36 36h6v6h-6z" fill="#222"/></svg>',
+    "webvlaggen": f'<svg {_S}><rect x="5" y="8" width="38" height="32" fill="#fff"/><path d="M5 16h38"/><path d="M17 24l-6 5 6 5M31 24l6 5-6 5"/></svg>',
+    "vigenere": f'<svg {_S}><rect x="6" y="6" width="36" height="36" fill="#fff"/><path d="M6 18h36M6 30h36M18 6v36M30 6v36"/><path d="M6 6l36 36"/></svg>',
+    "verborgen-bestanden": f'<svg {_S}><path d="M10 5h20l8 8v30H10z" fill="#fff"/><path d="M30 5v8h8"/><path d="M16 22h4M24 22h8M16 29h8M28 29h4M16 36h4"/></svg>',
     "decoder": f'<svg {_S}><path d="M16 14L6 24l10 10M32 14l10 10-10 10M27 10l-6 28"/></svg>',
     "kluis": f'<svg {_S}><rect x="6" y="8" width="36" height="32" fill="#fff"/><rect x="17" y="17" width="14" height="14" transform="rotate(45 24 24)"/><path d="M24 12v4M24 32v4M12 24h4M32 24h4"/></svg>',
 }
@@ -92,8 +97,10 @@ KLUISKNOP = '<a class="kluislink" href="../kluis/index.html"><button class="prim
 
 
 def maak_pagina(tekst: str) -> str:
-    """Zet een digitale pagina van een uitdaging in de laptopmap: terug-link, knop naar de kluis en het pad naar de decoder."""
+    """Zet een digitale pagina van een uitdaging in de laptopmap: terug-link, knop naar de kluis en het pad naar de decoder.
+    Een ingepakte pagina met eigen stijl (digitaal.inpakken) krijgt op <!--STIJL--> ook de huisstijl."""
     return (tekst.replace("<!--NAV-->", nav_html("../")).replace("<!--KLUIS-->", KLUISKNOP)
+            .replace("<!--STIJL-->", '<link rel="stylesheet" href="../stijl.css">')
             .replace('"decoder/index.html', '"../decoder/index.html'))
 
 
@@ -111,18 +118,25 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
     # kluis: de antwoorden staan enkel als hash in de pagina; een kind dat de broncode opent, leest ze dus niet zomaar
     salt = f"uhctf-{eventnaam}"
     opdrachten = []
+    slot_ids: dict[str, list[str]] = {}  # uitdaging -> de ids van haar sloten (een statische uitdaging heeft er een per vlag)
     for r in resultaten:
         config = r["config"]
+        titel = config.get("nl", {}).get("naam", r["naam"])
         if config.get("type") == "static":
-            antwoorden = [waarde for _, waarde in config.get("vlaggen", [])]
-        else:
-            antwoorden = antwoorden_van(r["antwoord"])
+            vlaggen = config.get("vlaggen", [])
+            for i, (label, waarde) in enumerate(vlaggen, 1):
+                id_ = r["naam"] if len(vlaggen) == 1 else f"{r['naam']}#{i}"
+                opdrachten.append({"id": id_, "naam": titel if len(vlaggen) == 1 else f"{titel}: {label}",
+                                   "hashes": [hash_antwoord(salt, waarde)]})
+                slot_ids.setdefault(r["naam"], []).append(id_)
+            continue
+        antwoorden = antwoorden_van(r["antwoord"])
         if antwoorden:
-            opdrachten.append({"id": r["naam"], "naam": config.get("nl", {}).get("naam", r["naam"]),
-                               "hashes": sorted({hash_antwoord(salt, a) for a in antwoorden})})
+            opdrachten.append({"id": r["naam"], "naam": titel, "hashes": sorted({hash_antwoord(salt, a) for a in antwoorden})})
+            slot_ids[r["naam"]] = [r["naam"]]
     nodig = int(cfg.get("nodig", 3))
     if not 1 <= nodig <= len(opdrachten):
-        raise ToolError(f"event.toml, [laptop]: nodig = {nodig}, maar het event heeft {len(opdrachten)} uitdagingen met een antwoord")
+        raise ToolError(f"event.toml, [laptop]: nodig = {nodig}, maar het event heeft {len(opdrachten)} sloten (antwoorden)")
     (doel / "kluis").mkdir()
     (doel / "kluis" / "index.html").write_text(vul("kluis.html", {"NAV": nav_html("../"), "DATA": json_in_script(
         {"event": eventnaam, "salt": salt, "nodig": nodig, "datum": date.today().strftime("%d-%m-%Y"), "opdrachten": opdrachten})}))
@@ -135,6 +149,16 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
     # digitale versies: elke uitdaging met digitaal = true levert digitaal.html (en digitaal-2.html, ... bij varianten)
     opdrachtkaarten = []
     for r in resultaten:
+        map_ = r["config"].get("laptop_map")
+        if r["config"].get("type") == "static" and map_:
+            # statisch materiaal dat zelf een site is (bv. webvlaggen): zoals het is, zonder terug-link in de pagina
+            bron = r["uit"] / map_
+            if not (bron / "index.html").is_file():
+                raise ToolError(f"{r['naam']}: laptop_map '{map_}' heeft geen index.html")
+            shutil.copytree(bron, doel / r["naam"])
+            nl = r["config"].get("nl", {})
+            opdrachtkaarten.append((r["naam"], nl.get("naam", r["naam"]), nl.get("onderwerp", ""), [(1, f"{r['naam']}/index.html")]))
+            continue
         gevonden = {}
         for pagina in r["uit"].glob(f"{digitaal.BESTAND.removesuffix('.html')}*.html"):
             m = re.fullmatch(r"digitaal(?:-(\d+))?\.html", pagina.name)
@@ -153,7 +177,8 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
 
     def tegel(naam: str, href: str, titel: str, tekst: str, groot: bool = False) -> str:
         icoon = ICONEN.get(naam, ICOON_STANDAARD)
-        return (f'    <a class="kaart tegel{" groot" if groot else ""}" href="{href}" data-id="{naam}"><span class="icoon">{icoon}</span>'
+        ids = " ".join(slot_ids.get(naam, [naam]))  # de tegel krijgt een vinkje als al haar sloten open zijn
+        return (f'    <a class="kaart tegel{" groot" if groot else ""}" href="{href}" data-id="{ids}"><span class="icoon">{icoon}</span>'
                 f'<span><h2>{html.escape(titel)}</h2><p class="klein">{html.escape(tekst)}</p></span><span class="vink">&#10003;</span></a>')
 
     opdrachten = ""

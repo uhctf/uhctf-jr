@@ -18,7 +18,7 @@ KENMERKEN = {
     "apparaat": ("Apparaat", ["een laptop", "een tablet", "een gsm", "een spelconsole"],
                  "De hacker werkte op {}.", "De hacker werkte niet op {}."),
     "schoenen": ("Schoenen", ["rode", "blauwe", "witte", "zwarte"],
-                 "De hacker droeg {} schoenen.", "De hacker droeg geen {} schoenen."),
+                 "De hacker draagt {} schoenen.", "De hacker draagt geen {} schoenen."),
 }
 
 TEKST = {

@@ -1,0 +1,36 @@
+# Gegenereerde uitdaging: ./jr build vigenere maakt de pdf's met de standaardwaarden.
+type = "generated"
+# Het woord voor de kluis. Staat in het ontcijferde bericht.
+antwoord = "polyalfabetisch"
+
+[opties]
+taal = "nl"
+# Het sleutelwoord (3 tot 8 letters). Deelnemers vinden het terug uit het bekende begin van het bericht.
+sleutel = "ROBOT"
+# Hoe elk bericht begint: dit krijgen de deelnemers cadeau. Minstens twee keer zo veel letters als de sleutel.
+bekend = "proficiat agent"
+# ja: bouw ook een digitale versie (digitaal.html) met het bericht en een ontcijferaar waarin je een sleutel probeert
+digitaal = false
+
+[meta]
+auteur = "UHCTF"
+formaat = "booth"
+leeftijd = "15–18"
+duur = "20–30 min"
+vlag_formaat = "antwoord"
+
+[nl]
+naam = "Vigenère"
+onderwerp = "Klassieke cryptografie, Vigenèrecijfer, aanval met bekende klare tekst"
+materiaal = "geprint bericht met Vigenèretabel (`deelnemer.pdf`), pen; of de digitale versie op een laptop"
+beschrijving = '''
+Een onderschept bericht van een geheim agent. Het is versleuteld met het Vigenèrecijfer: een Caesarcijfer waarbij de verschuiving per letter verandert, volgens een sleutelwoord dat zich herhaalt. De sleutel kennen we niet. Wel weten we hoe elk bericht van deze agenten begint.
+'''
+hints = [
+  "Zet de eerste letters van het bericht onder het begin dat je kent. Hoeveel plaatsen is elke letter verschoven?",
+  "Schrijf elke verschuiving als letter (0 = A, 1 = B, ...). Zie je een woord dat zich herhaalt? Dat is de sleutel.",
+  "Ontcijferen: schuif elke letter terug met de sleutelletter eronder. Spaties tellen niet mee voor de sleutel.",
+]
+opzet = '''
+Het bericht wordt gemaakt uit `bekend`, een vaste tekst en het `antwoord`, en versleuteld met `sleutel`. Alleen letters worden versleuteld en de sleutel schuift enkel op bij letters; spaties blijven staan. Op het blad staan het bericht, het bekende begin en een Vigenèretabel. Deelnemers vinden de sleutel door het bekende begin met het bericht te vergelijken (een aanval met bekende klare tekst, zoals bij Enigma) en ontcijferen daarna de rest. Met `digitaal = true` komt er een pagina bij waarin ze een sleutel intypen en de ontcijfering meteen zien. De pagina zoekt de sleutel niet zelf. Na afloop: waarom is een sleutel die zich herhaalt zwak, en wat doet moderne cryptografie anders?
+'''

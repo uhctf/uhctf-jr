@@ -1,4 +1,5 @@
-{
+// Teksten van de site in het Engels.
+laadTaal("en", {
   "nav.about": "About",
   "nav.program": "Program",
   "nav.practical": "Practical info",
@@ -43,4 +44,4 @@
   "practical.transport": "By train/bus: Hasselt station and local buses",
   "practical.accessibility": "Wheelchair accessible venues — contact us for assistance",
   "practical.contact": "Contact: info@example.org"
-}
+});
