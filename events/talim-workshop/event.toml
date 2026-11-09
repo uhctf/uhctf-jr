@@ -50,3 +50,7 @@ antwoord = "vissen"
 [laag-na-laag]
 digitaal = true
 antwoord = "geheimtaal"
+
+[geheime-kleuren]
+antwoord = "ik eet graag pizza scampi"
+volgorde = ["rood", "groen", "blauw"]

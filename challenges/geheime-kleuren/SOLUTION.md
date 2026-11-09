@@ -1,14 +1,17 @@
 # Oplossing
 
-Een gekleurde filter laat enkel licht van zijn eigen kleur door. Camouflage in de kleur van de filter lijkt daardoor even licht als het papier en verdwijnt. Het woord in een andere kleur blijft donker over.
+De woorden liggen over elkaar, elk in een andere inkt. Elke inkt houdt precies één kleur licht tegen: cyaan houdt rood tegen, magenta houdt groen tegen en geel houdt blauw tegen. Door een gekleurde mica wordt dus enkel het woord in de inkt die dat licht tegenhoudt donker. De andere woorden lijken even licht als het papier.
 
-Met de standaardwaarden:
+Met de standaardwaarden is de kleurcode rood → groen → blauw:
 
-1. Vak 1 heeft rode camouflage: door de **rode** mica lees je **KIJK**.
-2. Vak 2 heeft blauwe camouflage: door de **blauwe** (of cyaan) mica lees je **BETER**.
+1. Door de **rode** mica lees je **IK** (cyaan inkt).
+2. Door de **groene** mica lees je **EET** (magenta inkt).
+3. Door de **blauwe** mica lees je **PIZZA** (gele inkt).
 
-Samen: **kijk-beter**.
+Samen: **ik eet pizza**.
 
-Flag: `kijk-beter` (streepjes en spaties tellen niet mee in de kluis)
+Flag: `ik eet pizza` (spaties tellen niet mee in de kluis)
 
-Zonder mica's kan het ook digitaal: open `kleuren.png` in de [beeldbewerker](../_gedeeld/beeldbewerker/) en toon één kleurkanaal (rood voor vak 1, blauw voor vak 2).
+Bij meer woorden dan kleuren zijn er meerdere vakken: volg de kleurcode eerst in vak 1, dan in vak 2, enzovoort. Bijvoorbeeld `ik eet graag pizza scampi`: vak 1 geeft IK, EET, GRAAG en vak 2 geeft PIZZA, SCAMPI.
+
+Zonder mica's kan het ook digitaal: open `kleuren.png` in de [beeldbewerker](../_gedeeld/beeldbewerker/) en toon telkens één kleurkanaal.
