@@ -13,15 +13,15 @@ intro = "Welkom, ethische hackers. Los puzzels op, onderzoek bestanden en lees b
 
 # intro (zonder slot): iedereen zoekt de anderen met dezelfde kleur; zo ontstaan twee ploegen, Cyaan en Magenta, die tegen elkaar strijden
 [kies-je-kant]
-aantal = 16
+aantal = 10
 
 # opwarmer: Caesarcijfer met het caesarwiel op het scherm (antwoord eigen keuze: de standaard staat publiek in de repo)
 [romeinse-geheimen]
 digitaal = true
-antwoord = "firewall"
+verschuivingen = [3, 21, 13]  # één woord: één verschuiving
+antwoord = "veni vidi vici"
 met_decoder = true
-oefenwoorden = ["kat", "hond", "vis", "hamster"]
-oefenhint = "Veel voorkomende huisdieren"
+oefenwoorden = []
 
 # opwarmer: vier lagen, de laatste is ROT13
 [laag-na-laag]
@@ -62,6 +62,10 @@ aantal = 8
 digitaal = true
 antwoord = "extensies-liegen"
 
+# forensics: een zip achter een foto geplakt; ze hernoemen vakantiefoto.png naar .zip (het bestand komt in out/matroesjka/, niet in de laptopmap)
+[matroesjka]
+antwoord = "dubbele-bodem"
+
 # extra: webbeveiliging 2: een nep-portaal hacken (Elementen, URL, token). Het antwoord heeft minstens 3 woorden
 [hack-het-portaal]
 antwoord = "controleer-alles-op-de-server"
@@ -71,10 +75,10 @@ antwoord = "controleer-alles-op-de-server"
 digitaal = true
 antwoord = "stilte-spreekt"
 
-# extra: hashes kraken: een woord met een jaartal, de beheerder gebruikt een zout (het woord moet in woorden.txt staan)
+# extra: hashes kraken: een woord met een jaartal, de beheerder gebruikt een zout (het woord moet een sportwoord zijn, zie '# @sport' in woorden.txt)
 [hash-kraker]
 digitaal = true
-antwoord = "gitaar2019"
+antwoord = "tennis2019"
 
 # station aan een aparte tafel, zonder vlag
 [lockpicking]

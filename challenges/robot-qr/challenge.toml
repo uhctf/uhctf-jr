@@ -32,7 +32,7 @@ Op de foto staat een zwarte 3D-geprinte robot met een QR-code op zijn borst. De 
 '''
 hints = [
   "Je ogen zien de QR-code nauwelijks. Een beeld kan aangepast worden.",
-  "Speel met belichting en de kleurkanalen in de bewerker.",
+  "Speel met helderheid, contrast en de kleurkanalen in de bewerker.",
   "Een QR-code is meestal zwart op wit. Probeer ook Inverteren, en scan dan met een telefoon.",
 ]
 opzet = '''

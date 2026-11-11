@@ -153,6 +153,7 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
 
     # digitale versies: elke uitdaging met digitaal = true levert digitaal.html (en digitaal-2.html, ... bij varianten)
     opdrachtkaarten = []
+    hulpkaarten = []
     for r in resultaten:
         map_ = r["config"].get("laptop_map")
         if map_:
@@ -183,11 +184,14 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
             naam = "index.html" if variant == 1 else f"variant-{variant}.html"
             (doel / r["naam"] / naam).write_text(maak_pagina(pagina.read_text()))
             links.append((variant, f"{r['naam']}/{naam}"))
-        opdrachtkaarten.append((r["naam"], nl.get("naam", r["naam"]), nl.get("onderwerp", ""), links))
+        if r["config"].get("laptop_hulpmiddel"):  # een hulpmiddel (zoals de decoder), geen opdracht: onder Hulpmiddelen, zonder vinkje
+            hulpkaarten.append((r["naam"], r["config"]["laptop_hulpmiddel"] if isinstance(r["config"]["laptop_hulpmiddel"], str) else nl.get("naam", r["naam"]), links[0][1]))
+        else:
+            opdrachtkaarten.append((r["naam"], nl.get("naam", r["naam"]), nl.get("onderwerp", ""), links))
 
-    def tegel(naam: str, href: str, titel: str, tekst: str, groot: bool = False) -> str:
+    def tegel(naam: str, href: str, titel: str, tekst: str, groot: bool = False, vinkje: bool = True) -> str:
         icoon = ICONEN.get(naam, ICOON_STANDAARD)
-        ids = " ".join(slot_ids.get(naam, [naam]))  # de tegel krijgt een vinkje als al haar sloten open zijn
+        ids = " ".join(slot_ids.get(naam, [naam])) if vinkje else naam + "-hulpmiddel"  # de tegel krijgt een vinkje als al haar sloten open zijn
         return (f'    <a class="kaart tegel{" groot" if groot else ""}" href="{href}" data-id="{ids}"><span class="icoon">{icoon}</span>'
                 f'<span><h2>{html.escape(titel)}</h2><p class="klein">{html.escape(tekst)}</p></span><span class="vink">&#10003;</span></a>')
 
@@ -198,8 +202,9 @@ def bouw(eventnaam: str, cfg: dict | None, resultaten: list[dict], uit: Path) ->
             for variant, href in links:
                 tegels.append(tegel(naam, href, titel + (f" (variant {variant})" if len(links) > 1 else ""), tekst))
         opdrachten = '  <h2 class="sectie">Opdrachten op de laptop</h2>\n  <div class="raster">\n' + "\n".join(tegels) + "\n  </div>\n"
-    hulp = [tegel("decoder", "decoder/index.html#t=nl", "Decoder", "Hulpmiddel voor codes."),
-            tegel("kluis", "kluis/index.html", "De kluis", "Typ hier je antwoorden.", True)]
+    hulp = [tegel("decoder", "decoder/index.html#t=nl", "Decoder", "Hulpmiddel voor codes.")]
+    hulp += [tegel(naam, href, titel, "Tik een woord in en vertaal het.", vinkje=False) for naam, titel, href in hulpkaarten]
+    hulp += [tegel("kluis", "kluis/index.html", "De kluis", "Typ hier je antwoorden.", True)]
     (doel / "index.html").write_text(vul("landing.html", {
         "NAV": nav_html(), "INTRO": html.escape(cfg.get("intro", INTRO).replace("{nodig}", str(nodig)).replace("{totaal}", str(totaal))),
         "TITEL": html.escape(cfg.get("titel", eventnaam)), "OPDRACHTEN": opdrachten, "KAARTEN": "\n".join(hulp), "NODIG": str(nodig),

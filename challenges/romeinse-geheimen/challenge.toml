@@ -1,14 +1,19 @@
 type = "generated"
-antwoord = "salad"
+# Veni, vidi, vici: drie woorden, elk met een eigen verschuiving (zie verschuivingen). Woorden gescheiden door spaties (of '-').
+antwoord = "veni vidi vici"
+# in de laptopmap staat het wiel bij de hulpmiddelen (zoals de decoder), niet bij de opdrachten
+laptop_hulpmiddel = "Caesarwiel"  # de naam van de tegel
 
 [opties]
 taal = "nl"
-verschuiving = 3
+# één verschuiving per woord van het antwoord, allemaal verschillend. Eén getal (bv. [3]) geldt voor alle woorden.
+verschuivingen = [3, 7, 11]
 # false: geen verwijzing naar de decoder/spiekbrief (alles op papier)
 met_decoder = true
 # ja: bouw ook een digitale versie (digitaal.html) met een caesarwiel op het scherm
 digitaal = false
-# korte, gewone woorden met dezelfde verschuiving, op het blad om de verschuiving te vinden; [] = geen
+# korte, gewone woorden met dezelfde verschuiving, op het blad om de verschuiving te vinden; [] = geen.
+# Bij meer verschuivingen hoort oefenwoord 1 bij woord 1, enzovoort (een leeg woord "" slaat er een over)
 oefenwoorden = []
 # hint bij de oefenwoorden, bv. "Veel voorkomende huisdieren"; leeg = geen
 oefenhint = ""
@@ -27,13 +32,14 @@ materiaal = "geprint bericht (`deelnemer.pdf`), potlood; optioneel een laptop of
 beschrijving = '''
 Een archeoloog vond een bericht dat lijkt te zijn gecodeerd door een keizer.
 
-Het bericht: `PXIXA`
+Het bericht: `SBKF OBWB KXRX`
 '''
 hints = [
   "Welke keizer gebruikte een geheimschrift waarbij je letters verschuift?",
-  "Het is een Caesarcijfer: elke letter is een vast aantal plaatsen verschoven.",
+  "Het is een Caesarcijfer: in elk woord is elke letter een vast aantal plaatsen verschoven.",
+  "Bestaat het bericht uit meer woorden? Dan kan elk woord een andere verschuiving hebben. Zoek ze één voor één.",
   "Probeer het met kleine getallen: verschuif 1, 2, 3 plaatsen.",
 ]
 opzet = '''
-Deelnemers gebruiken de strook op `deelnemer.pdf`, of de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig). De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. Zet `met_decoder = false` voor een versie volledig op papier. `verschuiving` is het aantal letters. Met `oefenwoorden` (bv. `["kat", "hond"]`) en een `oefenhint` (bv. "Veel voorkomende huisdieren") komen er korte, makkelijk te raden woorden op het blad met dezelfde verschuiving: raad ze en je vindt de verschuiving, om daarna het moeilijkere bericht te ontcijferen. Het bericht staat ook in `bericht.txt`. Met `digitaal = true` komt er ook een versie bij voor op een laptop (`digitaal.html`): een caesarwiel dat de kinderen draaien tot de oefenwoorden gewone woorden worden, waarna ze het bericht lezen. De verschuiving staat niet in de pagina zelf.
+Deelnemers gebruiken de strook op `deelnemer.pdf`, of de meegeleverde [decoder](../_gedeeld/decoder/) (lokaal in de browser, geen internet nodig). De [spiekbrief](../_gedeeld/spiekbrief/) kan er bij geprint worden. Zet `met_decoder = false` voor een versie volledig op papier. `verschuivingen` zijn de aantallen letters: één per woord van het antwoord, en ze verschillen. Met één getal (bv. `[3]`) geldt dezelfde verschuiving voor alle woorden. De deelnemers moeten dus per woord opnieuw zoeken. Met `oefenwoorden` (bv. `["kat", "hond"]`) en een `oefenhint` (bv. "Veel voorkomende huisdieren") komen er korte, makkelijk te raden woorden op het blad met dezelfde verschuiving: raad ze en je vindt de verschuiving, om daarna het moeilijkere bericht te ontcijferen. Bij meerdere verschuivingen hoort oefenwoord 1 bij woord 1, oefenwoord 2 bij woord 2, enzovoort. Het bericht staat ook in `bericht.txt`. Met `digitaal = true` komt er ook een hulpmiddel bij voor op een laptop (`digitaal.html`): een caesarwiel waarop de kinderen de verschuiving instellen en zelf woorden intikken om te laten vertalen. Er staat geen bericht of oefenwoord in de pagina: ze tikken zelf in wat ze op papier lezen. De verschuiving staat niet in de pagina zelf.
 '''

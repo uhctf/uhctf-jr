@@ -31,7 +31,7 @@ Op de foto staat een zwarte 3D-geprinte robot met een QR-code op zijn borst. De 
 ## Hints
 
 1. Je ogen zien de QR-code nauwelijks. Een beeld kan aangepast worden.
-2. Speel met belichting en de kleurkanalen in de bewerker.
+2. Speel met helderheid, contrast en de kleurkanalen in de bewerker.
 3. Een QR-code is meestal zwart op wit. Probeer ook Inverteren, en scan dan met een telefoon.
 
 ## Opzet

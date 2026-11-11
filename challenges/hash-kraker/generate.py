@@ -14,7 +14,25 @@ from pathlib import Path
 from jr.digitaal import schrijf
 from jr.pdf import Pdf, begeleider
 
-WOORDEN = [w for regel in (Path(__file__).parent / "woorden.txt").read_text().splitlines() if not regel.startswith("#") for w in regel.split()]
+def _laad_woorden() -> tuple[list[str], list[str]]:
+    """WOORDEN (alle woorden, voor het kladblok en de brute-force hints) en SPORTEN (enkel de regel na '# @sport:', voor
+    Tom's wachtwoord en het antwoord van de beheerder -- hun steuntje is 'mijn favoriete sport', dus moet een echte sport zijn)."""
+    woorden, sporten, categorie = [], [], None
+    for regel in (Path(__file__).parent / "woorden.txt").read_text().splitlines():
+        if regel.startswith("# @"):
+            categorie = regel[3:].split(":", 1)[0].strip()
+            continue
+        if regel.startswith("#") or not regel.strip():
+            continue
+        op_regel = regel.split()
+        woorden.extend(op_regel)
+        if categorie == "sport":
+            sporten.extend(op_regel)
+        categorie = None
+    return woorden, sporten
+
+
+WOORDEN, SPORTEN = _laad_woorden()
 SEIZOENEN = ["zomer", "winter", "lente", "herfst"]
 ZOUTTEKENS = "abcdefghjkmnpqrstuvwxyz23456789"
 ANTWOORD_RE = re.compile(r"^([a-z]+)(\d{4})$")
@@ -69,6 +87,9 @@ def maak_lek(antwoord: str, seed: int) -> tuple[list[dict], dict[str, str]]:
     if not m:
         raise ValueError("antwoord moet een woord in kleine letters met een jaartal van 4 cijfers zijn, bv. 'voetbal2017'")
     woord, jaar = m.group(1), m.group(2)
+    if woord not in SPORTEN:
+        raise ValueError(f"'{woord}' is geen sport (zie de regel na '# @sport:' in woorden.txt); "
+                          "Tom's steuntje zegt 'mijn favoriete sport' en de winkel heet sporthoek, dus het woord moet een echte sport zijn")
     rng = random.Random(seed)
     h = hashers()
     start = int(jaar) + 1  # alle klanten schreven zich in nadat de winkel opende
@@ -170,7 +191,7 @@ def check(params: dict) -> None:
     assert rijen[4]["zout"] and len(rijen[4]["hash"]) == 64
     assert h["sha256"](rijen[4]["zout"] + antwoord) == rijen[4]["hash"]
     assert h["sha256"](antwoord) != rijen[4]["hash"], "zonder zout mag de hash niet kloppen"
-    assert antwoord == ww["tom"] + antwoord[-4:] and antwoord[:-4] in WOORDEN, "het woord van het antwoord moet in de woordenlijst staan"
+    assert antwoord == ww["tom"] + antwoord[-4:] and antwoord[:-4] in SPORTEN, "het woord van het antwoord moet een sportwoord zijn (zie '# @sport' in woorden.txt)"
     # simuleer wat een deelnemer met code doet: elk woord, met jaartallen en variaties, tegen elke hash
     kandidaten = set()
     for w in WOORDEN:

@@ -1,4 +1,4 @@
-// Romeinse geheimen: draai de binnenste ring tot de oefenwoorden gewone woorden worden. Lees dan het bericht.
+// Romeinse geheimen: een hulpmiddel. Draai de binnenste ring, tik een woord in en het wiel vertaalt het met de gekozen verschuiving.
 const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 let verschuiving = 0;
 const svg = $("wiel");
@@ -23,23 +23,15 @@ for (const r of [80, 120, 152]) {  // klein naar groot, elk vooraan toegevoegd: 
 }
 const decodeer = (s) => s.toUpperCase().replace(/[A-Z]/g, (ch) => ABC[(ABC.indexOf(ch) + verschuiving) % 26]);
 
+// Het wiel vertaalt enkel wat je zelf intikt. Er staat geen bericht of oefenwoord in de pagina.
 function toon() {
   binnen.forEach((t, i) => { t.textContent = ABC[(i + verschuiving) % 26]; });
   $("schuif").value = verschuiving;
   $("getal").textContent = verschuiving;
-  $("uitvoer").textContent = decodeer(DATA.bericht);
-  const lijst = $("oefen");
-  lijst.innerHTML = "";
-  DATA.oefen.forEach((w) => {
-    const li = document.createElement("li");
-    li.innerHTML = "<span class='code'></span> → <strong></strong>";
-    li.querySelector(".code").textContent = w; li.querySelector("strong").textContent = decodeer(w);
-    lijst.appendChild(li);
-  });
+  $("uitvoer").textContent = decodeer($("invoer").value) || "…";
 }
 $("schuif").addEventListener("input", () => { verschuiving = Number($("schuif").value); toon(); });
 $("links").addEventListener("click", () => { verschuiving = (verschuiving + 25) % 26; toon(); });
 $("rechts").addEventListener("click", () => { verschuiving = (verschuiving + 1) % 26; toon(); });
-$("oefen-kaart").hidden = DATA.oefen.length === 0;
-$("oefenhint").textContent = DATA.hint ? "Hint: " + DATA.hint : "";
+$("invoer").addEventListener("input", toon);
 toon();

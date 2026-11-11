@@ -1,6 +1,8 @@
 # Woordenlijst voor het kladblok van Hash-kraker: gewone woorden, namen en klassieke wachtwoorden, in kleine letters.
 # Het kladblok kent ze als WOORDEN; een deelnemer combineert ze zelf met cijfers en jaartallen.
 wachtwoord welkom password qwerty azerty geheim admin beheerder login letmein master dragon monkey shadow sunshine princess football
+# @sport: enkel deze regel mag het woord zijn van Tom (steuntje "mijn favoriete sport") en dus van het antwoord. Gitaar, voetbal spelen etc.
+# staan hieronder of op een andere regel, maar zijn geen sport; muziekinstrumenten en andere hobby's horen bij hun eigen regel, niet hier.
 voetbal basketbal tennis hockey zwemmen fietsen turnen judo karate volleybal badminton atletiek handbal rugby golf schaken gamen
 zomer winter lente herfst voorjaar najaar sneeuw regen zon wind storm onweer ijs vorst warm koud
 liefde vriend vriendin familie moeder vader zus broer opa oma kind baby school vakantie feest

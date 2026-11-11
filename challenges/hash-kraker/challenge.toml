@@ -3,7 +3,8 @@
 # De README wordt hieruit gegenereerd: pas dit bestand aan en draai ./jr readme.
 type = "generated"
 # Het wachtwoord van de beheerder: een woord in kleine letters met een jaartal van 4 cijfers. Het woord is ook het wachtwoord van Tom
-# en moet in woorden.txt staan; het jaartal is het jaar waarin de winkel begon (zichtbaar in het lek).
+# en moet een sportwoord zijn (de regel na "# @sport:" in woorden.txt -- Tom's steuntje is "mijn favoriete sport", geen "gitaar" dus);
+# het jaartal is het jaar waarin de winkel begon (zichtbaar in het lek).
 antwoord = "voetbal2017"
 
 [opties]

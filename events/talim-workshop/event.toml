@@ -13,6 +13,7 @@ intro = "Welkom, ethische hacker! Los opdrachten op, en typ de antwoorden in de 
 
 [romeinse-geheimen]
 digitaal = true
+verschuivingen = [3]  # één woord: één verschuiving
 antwoord = "wachtwoord"
 met_decoder = true
 oefenwoorden = ["kat", "hond", "vis", "hamster"]

@@ -72,7 +72,7 @@
       kanNietLaden: "Deze afbeelding kon niet geladen worden. Kies ze met 'Open afbeelding'.",
       beveiligd: "Je browser laat bewerken van deze afbeelding niet toe via de URL. Kies ze met 'Open afbeelding'.",
       regelaars: {
-        belichting: "Belichting (EV)", gamma: "Gamma", helderheid: "Helderheid", contrast: "Contrast", verzadiging: "Verzadiging",
+        gamma: "Gamma", helderheid: "Helderheid", contrast: "Contrast", verzadiging: "Verzadiging",
         kleurtoon: "Kleurtoon (°)", grijs: "Grijstinten (%)", invert: "Inverteren (%)",
         rood: "Rood (%)", groen: "Groen (%)", blauw: "Blauw (%)", vervaging: "Vervagen (px)", zoom: "Zoom (x)",
       },
@@ -85,7 +85,7 @@
       kanNietLaden: "This image could not be loaded. Pick it with 'Open image'.",
       beveiligd: "Your browser does not allow editing this image through the URL. Pick it with 'Open image'.",
       regelaars: {
-        belichting: "Exposure (EV)", gamma: "Gamma", helderheid: "Brightness", contrast: "Contrast", verzadiging: "Saturation",
+        gamma: "Gamma", helderheid: "Brightness", contrast: "Contrast", verzadiging: "Saturation",
         kleurtoon: "Hue (°)", grijs: "Grayscale (%)", invert: "Invert (%)",
         rood: "Red (%)", groen: "Green (%)", blauw: "Blue (%)", vervaging: "Blur (px)", zoom: "Zoom (x)",
       },
@@ -93,7 +93,7 @@
   };
   // sleutel: [min, max, stap, standaard]
   const REGELAARS = {
-    belichting: [-3, 6, 0.1, 0], gamma: [0.1, 3, 0.05, 1], helderheid: [-100, 100, 1, 0], contrast: [-100, 100, 1, 0],
+    gamma: [0.1, 3, 0.05, 1], helderheid: [-100, 100, 1, 0], contrast: [-100, 100, 1, 0],
     verzadiging: [-100, 100, 1, 0], kleurtoon: [-180, 180, 1, 0], grijs: [0, 100, 1, 0], invert: [0, 100, 1, 0],
     rood: [0, 1000, 5, 100], groen: [0, 1000, 5, 100], blauw: [0, 1000, 5, 100], vervaging: [0, 10, 1, 0], zoom: [0.2, 3, 0.05, 1],
   };
@@ -136,7 +136,7 @@
     if (!origineel) return;
     const w = waarden, b = origineel.width, h = origineel.height;
     const data = new ImageData(new Uint8ClampedArray(origineel.data), b, h), d = data.data;
-    const exp = Math.pow(2, w.belichting), invGamma = 1 / w.gamma, helder = w.helderheid * 2.55;
+    const invGamma = 1 / w.gamma, helder = w.helderheid * 2.55;
     const c = (259 * (w.contrast * 2.55 + 255)) / (255 * (259 - w.contrast * 2.55));
     const kanaal = [w.rood / 100, w.groen / 100, w.blauw / 100];
     const hoek = (w.kleurtoon * Math.PI) / 180, cos = Math.cos(hoek), sin = Math.sin(hoek);
@@ -144,8 +144,7 @@
     for (let i = 0; i < d.length; i += 4) {
       let v = [d[i], d[i + 1], d[i + 2]];
       for (let k = 0; k < 3; k++) {
-        let x = (v[k] / 255) * exp;                 // belichting
-        x = Math.pow(Math.max(x, 0), invGamma) * 255; // gamma
+        let x = Math.pow(Math.max(v[k] / 255, 0), invGamma) * 255; // gamma
         x = x * kanaal[k] + helder;                 // kanaalversterking en helderheid
         v[k] = c * (x - 128) + 128;                 // contrast
       }
