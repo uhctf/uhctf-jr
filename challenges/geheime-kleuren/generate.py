@@ -15,11 +15,13 @@ from jr.shared import gebruik
 # Elke inkt is donker in precies één kanaal en licht in de andere twee (cyaan, magenta, geel, zoals printerinkt).
 # Door een filter zie je dus enkel het woord in de inkt die dat licht tegenhoudt; de andere woorden lijken papier.
 # Meer dan drie kan niet in één vak: een gele, magenta of cyaan filter laat twee kanalen door en toont twee woorden door elkaar.
+# Volle inkten: zo donker mogelijk door de juiste filter. Cyaan (voor rood) is ook zonder filter goed zichtbaar,
+# daarom is rood standaard de kleur van het afleidingswoord.
 # Printers en mica's verschillen: maak altijd een testafdruk.
 FILTERS = {
-    "rood": ((40, 255, 255), 0, (0.9, 0.1, 0.1)),
-    "groen": ((255, 40, 255), 1, (0.1, 0.65, 0.2)),
-    "blauw": ((255, 255, 40), 2, (0.1, 0.3, 0.9)),
+    "rood": ((0, 255, 255), 0, (0.9, 0.1, 0.1)),
+    "groen": ((255, 0, 255), 1, (0.1, 0.65, 0.2)),
+    "blauw": ((255, 255, 0), 2, (0.1, 0.3, 0.9)),
 }
 BREEDTE, HOOGTE = 1500, 750  # pixels per vak
 
@@ -40,6 +42,7 @@ TEKST = {
                      "Volg de kleurcode en lees de woorden na elkaar.",
         "per_filter": "{n}. {vak}, {filter} filter -> {woord}",
         "zicht": "Zo ziet elk vak eruit door elke filter, in de volgorde van de kleurcode:",
+        "afleiding": "Afleiding (zichtbaar zonder filter en door de {filter} filter): {woorden}. Dit is niet het antwoord.",
         "filters": {"rood": "rode", "groen": "groene", "blauw": "blauwe"},
         "hints": ["Kijk door elke mica. Zie je telkens iets anders?",
                   "Elke kleur mica toont één woord. Schrijf op welk woord bij welke kleur hoort.",
@@ -61,6 +64,7 @@ TEKST = {
                      "Follow the colour code and read the words one after the other.",
         "per_filter": "{n}. {vak}, {filter} filter -> {woord}",
         "zicht": "This is what each box looks like through each filter, in the order of the colour code:",
+        "afleiding": "Red herring (visible without a filter and through the {filter} filter): {woorden}. This is not the answer.",
         "filters": {"rood": "red", "groen": "green", "blauw": "blue"},
         "hints": ["Look through each filter. Do you see something different each time?",
                   "Each filter colour shows one word. Write down which word goes with which colour.",
@@ -73,7 +77,28 @@ def lettertype(grootte: int):
     return ImageFont.load_default(size=grootte)
 
 
-def woordmasker(woord: str, rng: random.Random) -> Image.Image:
+def driehoekjes(masker: Image.Image, cel: int, rng: random.Random) -> Image.Image:
+    """Bouw de vorm opnieuw op uit driehoekjes: elk vierkantje van het raster wordt in twee gedeeld, en een driehoekje
+    blijft als zijn midden in de vorm ligt. Tussen de driehoekjes blijft een smalle witte rand."""
+    uit = Image.new("L", masker.size, 0)
+    d = ImageDraw.Draw(uit)
+    rand = max(1, cel // 12)
+    # elk woord een eigen verschuiving van het raster, zodat de randen van verschillende woorden niet samenvallen
+    dx, dy = rng.randrange(cel), rng.randrange(cel)
+    for y in range(-dy, masker.height, cel):
+        for x in range(-dx, masker.width, cel):
+            a, b, c, e = (x, y), (x + cel, y), (x + cel, y + cel), (x, y + cel)
+            # willekeurige diagonaal, zodat het geen saai patroon wordt
+            for drie in ([a, b, c], [a, c, e]) if rng.random() < 0.5 else ([a, b, e], [b, c, e]):
+                mx, my = sum(p[0] for p in drie) / 3, sum(p[1] for p in drie) / 3
+                if 0 <= mx < masker.width and 0 <= my < masker.height and masker.getpixel((int(mx), int(my))) > 128:
+                    # iets kleiner maken naar het midden toe: zo blijft er een rand tussen de driehoekjes
+                    krimp = [(px + (mx - px) * rand / cel * 2, py + (my - py) * rand / cel * 2) for px, py in drie]
+                    d.polygon(krimp, fill=255)
+    return uit
+
+
+def woordmasker(woord: str, vorm: str, rng: random.Random) -> Image.Image:
     """Het woord, groot, een beetje verschoven en gedraaid, zodat de woorden niet netjes op elkaar liggen."""
     grootte = 450
     while lettertype(grootte).getlength(woord) > BREEDTE * 0.85:
@@ -81,46 +106,70 @@ def woordmasker(woord: str, rng: random.Random) -> Image.Image:
     masker = Image.new("L", (BREEDTE, HOOGTE), 0)
     midden = (BREEDTE / 2 + rng.uniform(-80, 80), HOOGTE / 2 + rng.uniform(-HOOGTE / 10, HOOGTE / 10))
     ImageDraw.Draw(masker).text(midden, woord, fill=255, font=lettertype(grootte), anchor="mm",
-                                stroke_width=max(4, grootte // 25), stroke_fill=255)
+                                stroke_width=max(4, grootte // 18), stroke_fill=255)
+    if vorm == "driehoekjes":
+        # voor het draaien, zodat het raster van driehoekjes mee draait en per woord een andere hoek heeft
+        masker = driehoekjes(masker, max(10, grootte // 18), rng)
     return masker.rotate(rng.uniform(-10, 10), resample=Image.BICUBIC, center=midden)
 
 
-def maak_vak(woorden: list[str], volgorde: list[str], snippers: int, rng: random.Random):
-    """Eén vak met de woorden over elkaar, het eerste woord in de inkt van de eerste kleur, enzovoort.
-    Geeft de afbeelding en per woord het masker terug.
-    Heeft het vak minder woorden dan kleuren, dan krijgen de overige kleuren enkel snippers: zo blijft de wirwar even dicht."""
+def tint(inkt: tuple, sterkte: float) -> tuple:
+    """Bleker versie van een inkt: 1 = volle inkt, 0 = papier."""
+    return tuple(round(255 - (255 - c) * sterkte) for c in inkt)
+
+
+def maak_vak(lagen: list[tuple[str, str | None, float]], params: dict, rng: random.Random):
+    """Eén vak met per (kleur, woord, sterkte) een laag in de inkt van die kleur; woord None = enkel blokjes.
+    Geeft de afbeelding en per laag het masker (None zonder woord) terug."""
     beeld = Image.new("RGB", (BREEDTE, HOOGTE), "white")
     maskers = []
-    for i, f in enumerate(volgorde):
+    for f, woord, sterkte in lagen:
         inkt = FILTERS[f][0]
-        masker = woordmasker(woorden[i], rng) if i < len(woorden) else Image.new("L", (BREEDTE, HOOGTE), 0)
+        masker = woordmasker(woord, params["vorm"], rng) if woord else Image.new("L", (BREEDTE, HOOGTE), 0)
         laag = Image.new("RGB", masker.size, "white")
-        laag.paste(inkt, mask=masker)
-        # snippers in dezelfde inkt over het hele vak: verbergen de vorm van het woord voor het blote oog
+        # blokjes in een blekere versie van dezelfde inkt: met het blote oog een wirwar die de vorm van het woord verbergt,
+        # door de filter lichtgrijs naast het zwarte woord
         d = ImageDraw.Draw(laag)
-        for _ in range(snippers):
-            x, y = rng.uniform(0, BREEDTE), rng.uniform(0, HOOGTE)
-            d.line([(x, y), (x + rng.uniform(-40, 40), y + rng.uniform(-40, 40))], fill=inkt, width=rng.randint(15, 45))
+        for _ in range(params["snippers"]):
+            x, y, z = rng.uniform(0, BREEDTE), rng.uniform(0, HOOGTE), rng.uniform(8, 22)
+            d.rectangle([x, y, x + z, y + z * rng.uniform(0.6, 1.6)], fill=tint(inkt, rng.uniform(0.35, params["blokjes_sterkte"] / 100)))
+        laag.paste(tint(inkt, sterkte), mask=masker)
         # inkt op inkt: vermenigvuldigen, zoals bij drukken
         beeld = ImageChops.multiply(beeld, laag)
-        if i < len(woorden):
-            maskers.append(masker)
+        maskers.append(masker if woord else None)
     return beeld, maskers
 
 
 def maak(params: dict):
-    """Geeft de woorden per vak en per vak (afbeelding, maskers) terug. Elk vak volgt de kleurcode."""
-    volgorde = params["volgorde"]
-    onbekend = [f for f in volgorde if f not in FILTERS]
+    """Geeft de woorden per vak, de afleidingswoorden per vak en per vak (afbeelding, maskers) terug.
+    Elk vak volgt de kleurcode; de maskers volgen de kleurcode, met het afleidingswoord (als dat er is) als laatste."""
+    volgorde, kleur_afl = params["volgorde"], params["afleiding_kleur"]
+    onbekend = [f for f in volgorde + [kleur_afl] if f not in FILTERS]
     if onbekend or not volgorde or len(set(volgorde)) != len(volgorde):
         raise ValueError(f"volgorde moet elke kleur hoogstens één keer bevatten, uit: {', '.join(FILTERS)} (kreeg {volgorde})")
+    if params["vorm"] not in ("vol", "driehoekjes"):
+        raise ValueError(f"vorm moet 'vol' of 'driehoekjes' zijn, kreeg '{params['vorm']}'")
     woorden = [w.upper() for w in params["antwoord"].replace("-", " ").split()]
+    afleiding = [w.upper() for w in params["afleiding"].replace("-", " ").split()]
     if not woorden:
         raise ValueError("Het antwoord mag niet leeg zijn")
+    if afleiding and kleur_afl in volgorde:
+        raise ValueError(f"afleiding_kleur '{kleur_afl}' staat ook in de volgorde; kies een kleur die geen echt woord toont")
     n = len(volgorde)
     per_vak = [woorden[i:i + n] for i in range(0, len(woorden), n)]
+    if len(afleiding) > len(per_vak):
+        raise ValueError(f"{len(afleiding)} afleidingswoorden maar {len(per_vak)} vakken: hoogstens één afleidingswoord per vak")
+    afl_per_vak = [afleiding[i] if i < len(afleiding) else None for i in range(len(per_vak))]
     rng = random.Random(params["seed"])
-    return per_vak, [maak_vak(ws, volgorde, params["snippers"], rng) for ws in per_vak]
+    vakken = []
+    for ws, afl in zip(per_vak, afl_per_vak):
+        # elke kleur krijgt een laag, ook zonder woord, zodat elk vak even druk is
+        lagen = [(f, ws[i] if i < len(ws) else None, params["woord_sterkte"] / 100) for i, f in enumerate(volgorde)]
+        if afleiding:
+            # de afleiding hoeft enkel zonder filter op te vallen; bleker, zodat ze de echte woorden niet zwart maakt
+            lagen.append((kleur_afl, afl, params["afleiding_sterkte"] / 100))
+        vakken.append(maak_vak(lagen, params, rng))
+    return per_vak, afl_per_vak, vakken
 
 
 def door_filter(beeld: Image.Image, filter_: str) -> Image.Image:
@@ -150,7 +199,7 @@ def teken_kleurcode(p: Pdf, volgorde: list[str], uitleg: str, t: dict) -> None:
 def generate(params: dict, uit: Path) -> str:
     t = TEKST.get(params["taal"], TEKST["nl"])
     antwoord, volgorde = params["antwoord"], params["volgorde"]
-    per_vak, vakken = maak(params)
+    per_vak, afl_per_vak, vakken = maak(params)
     meer = len(vakken) > 1
     uitleg = t["kleurcode_vakken"] if meer else t["kleurcode_uitleg"]
 
@@ -194,6 +243,9 @@ def generate(params: dict, uit: Path) -> str:
             for f, w in zip(volgorde, ws):
                 regels.append(t["per_filter"].format(n=nr, vak=t["vak"].format(n=i), filter=t["filters"][f], woord=w))
                 nr += 1
+        if any(afl_per_vak):
+            regels.append(t["afleiding"].format(filter=t["filters"][params["afleiding_kleur"]],
+                                                woorden=", ".join(w for w in afl_per_vak if w)))
         b = begeleider(uit / "begeleider.pdf", t["titel"], antwoord, [t["oplossing"]] + regels, t["hints"], params["taal"])
         b.kop(t["zicht"])
         klein = breedte * 0.3
@@ -217,10 +269,12 @@ def generate(params: dict, uit: Path) -> str:
 
 
 def check(params: dict) -> None:
-    """Door elke filter moet zijn woord duidelijk donkerder zijn dan de rest van het vak."""
-    _, vakken = maak(params)
+    """Door elke filter moet zijn woord duidelijk donkerder zijn dan de rest van het vak (de afleiding telt niet mee)."""
+    _, _, vakken = maak(params)
     for beeld, maskers in vakken:
         for f, masker in zip(params["volgorde"], maskers):
+            if masker is None:
+                continue
             zicht = door_filter(beeld, f)
             woord = [v for v, m in zip(zicht.getdata(), masker.getdata()) if m > 128]
             rest = [v for v, m in zip(zicht.getdata(), masker.getdata()) if m == 0]

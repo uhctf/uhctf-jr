@@ -54,4 +54,7 @@ antwoord = "geheimtaal"
 
 [geheime-kleuren]
 antwoord = "ik eet graag pizza scampi"
-volgorde = ["rood", "groen", "blauw"]
+volgorde = ["groen", "blauw"]
+afleiding = "geen frietjes"     # één woord per vak, leeg = geen afleiding
+afleiding_kleur = "rood"        # mag niet in de volgorde staan
+
